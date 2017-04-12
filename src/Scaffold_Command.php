@@ -992,5 +992,3 @@ class Scaffold_Command extends WP_CLI_Command {
 	}
 
 }
-
-WP_CLI::add_command( 'scaffold', 'Scaffold_Command' );
