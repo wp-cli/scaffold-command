@@ -306,7 +306,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		if ( true === $unzip_result ) {
 			$this->create_files( array(
-				"$theme_path/{$theme_slug}/.editorconfig" => file_get_contents( WP_CLI_ROOT . "/templates/.editorconfig" ),
+				"$theme_path/{$theme_slug}/.editorconfig" => file_get_contents( self::get_template_path( "templates/.editorconfig" ) ),
 			), false );
 			WP_CLI::success( "Created theme '{$data['theme_name']}'." );
 		} else {
@@ -395,7 +395,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$files_written = $this->create_files( array(
 			$theme_style_path => self::mustache_render( 'child_theme.mustache', $data ),
 			$theme_functions_path => self::mustache_render( 'child_theme_functions.mustache', $data ),
-			"$theme_dir/.editorconfig" => file_get_contents( WP_CLI_ROOT . "/templates/.editorconfig" ),
+			"$theme_dir/.editorconfig" => file_get_contents( self::get_template_path( "/templates/.editorconfig" ) ),
 		), $force );
 		$this->log_whether_files_written(
 			$files_written,
@@ -553,7 +553,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			"$plugin_dir/Gruntfile.js" => self::mustache_render( 'plugin-gruntfile.mustache', $data ),
 			"$plugin_dir/.gitignore" => self::mustache_render( 'plugin-gitignore.mustache', $data ),
 			"$plugin_dir/.distignore" => self::mustache_render( 'plugin-distignore.mustache', $data ),
-			"$plugin_dir/.editorconfig" => file_get_contents( WP_CLI_ROOT . "/templates/.editorconfig" ),
+			"$plugin_dir/.editorconfig" => file_get_contents( self::get_template_path( "/templates/.editorconfig" ) ),
 		), $force );
 
 		$this->log_whether_files_written(
@@ -773,7 +773,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			}
 			$files_written[] = $file_name;
 
-			$wp_filesystem->copy( WP_CLI_ROOT . "/templates/$file", $file_name, true );
+			$wp_filesystem->copy( self::get_template_path( "/templates/$file" ), $file_name, true );
 			if ( 'install-wp-tests.sh' === $file ) {
 				if ( ! $wp_filesystem->chmod( "$dir/$file", 0755 ) ) {
 					WP_CLI::warning( "Couldn't mark 'install-wp-tests.sh' as executable." );
@@ -989,6 +989,21 @@ class Scaffold_Command extends WP_CLI_Command {
 	 */
 	private static function mustache_render( $template, $data = array() ) {
 		return Utils\mustache_render( dirname( dirname( __FILE__ ) ) . '/templates/' . $template, $data );
+	}
+
+	/**
+	 * Get template path based on installation type
+	 */
+	private static function get_template_path( $template ) {
+		$template_path = WP_CLI_ROOT . '/vendor/wp-cli/scaffold-command/templates/' . $template;
+		if ( ! file_exists( $template_path ) ) {
+			// scaffold command must've been built with vendor/wp-cli/wp-cli
+			$template_path = WP_CLI_ROOT . '/../../../templates/' . $template;
+			if ( ! file_exists( $template_path ) ) {
+				WP_CLI::error( "Couldn't find {$template}" );
+			}
+		}
+		return $template_path;
 	}
 
 }
