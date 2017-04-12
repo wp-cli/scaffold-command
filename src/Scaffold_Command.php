@@ -987,7 +987,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Localize path to template
 	 */
-	private static function mustache_render( $template, $data ) {
+	private static function mustache_render( $template, $data = array() ) {
 		return Utils\mustache_render( dirname( dirname( __FILE__ ) ) . '/templates/' . $template, $data );
 	}
 
