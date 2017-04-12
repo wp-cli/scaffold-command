@@ -165,7 +165,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		list( $raw_template, $extended_template ) = $templates;
 
-		$raw_output = Utils\mustache_render( $raw_template, $vars );
+		$raw_output = self::mustache_render( $raw_template, $vars );
 
 		if ( ! $control_args['raw'] ) {
 			$vars = array_merge( $vars, array(
@@ -173,7 +173,7 @@ class Scaffold_Command extends WP_CLI_Command {
 				'output'       => $raw_output
 			) );
 
-			$final_output = Utils\mustache_render( $extended_template, $vars );
+			$final_output = self::mustache_render( $extended_template, $vars );
 		} else {
 			$final_output = $raw_output;
 		}
@@ -393,8 +393,8 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
 		$files_written = $this->create_files( array(
-			$theme_style_path => Utils\mustache_render( 'child_theme.mustache', $data ),
-			$theme_functions_path => Utils\mustache_render( 'child_theme_functions.mustache', $data ),
+			$theme_style_path => self::mustache_render( 'child_theme.mustache', $data ),
+			$theme_functions_path => self::mustache_render( 'child_theme_functions.mustache', $data ),
 			"$theme_dir/.editorconfig" => file_get_contents( WP_CLI_ROOT . "/templates/.editorconfig" ),
 		), $force );
 		$this->log_whether_files_written(
@@ -547,12 +547,12 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
 		$files_written = $this->create_files( array(
-			$plugin_path => Utils\mustache_render( 'plugin.mustache', $data ),
-			$plugin_readme_path => Utils\mustache_render( 'plugin-readme.mustache', $data ),
-			"$plugin_dir/package.json" => Utils\mustache_render( 'plugin-packages.mustache', $data ),
-			"$plugin_dir/Gruntfile.js" => Utils\mustache_render( 'plugin-gruntfile.mustache', $data ),
-			"$plugin_dir/.gitignore" => Utils\mustache_render( 'plugin-gitignore.mustache', $data ),
-			"$plugin_dir/.distignore" => Utils\mustache_render( 'plugin-distignore.mustache', $data ),
+			$plugin_path => self::mustache_render( 'plugin.mustache', $data ),
+			$plugin_readme_path => self::mustache_render( 'plugin-readme.mustache', $data ),
+			"$plugin_dir/package.json" => self::mustache_render( 'plugin-packages.mustache', $data ),
+			"$plugin_dir/Gruntfile.js" => self::mustache_render( 'plugin-gruntfile.mustache', $data ),
+			"$plugin_dir/.gitignore" => self::mustache_render( 'plugin-gitignore.mustache', $data ),
+			"$plugin_dir/.distignore" => self::mustache_render( 'plugin-distignore.mustache', $data ),
 			"$plugin_dir/.editorconfig" => file_get_contents( WP_CLI_ROOT . "/templates/.editorconfig" ),
 		), $force );
 
@@ -746,15 +746,15 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
 		$files_to_create = array(
-			"$tests_dir/bootstrap.php"   => Utils\mustache_render( "{$type}-bootstrap.mustache", $template_data ),
-			"$tests_dir/test-sample.php" => Utils\mustache_render( "{$type}-test-sample.mustache", $template_data ),
+			"$tests_dir/bootstrap.php"   => self::mustache_render( "{$type}-bootstrap.mustache", $template_data ),
+			"$tests_dir/test-sample.php" => self::mustache_render( "{$type}-test-sample.mustache", $template_data ),
 		);
 		if ( 'travis' === $assoc_args['ci'] ) {
-			$files_to_create["{$target_dir}/.travis.yml"] = Utils\mustache_render( 'plugin-travis.mustache', compact( 'wp_versions_to_test' ) );
+			$files_to_create["{$target_dir}/.travis.yml"] = self::mustache_render( 'plugin-travis.mustache', compact( 'wp_versions_to_test' ) );
 		} else if ( 'circle' === $assoc_args['ci'] ) {
-			$files_to_create["{$target_dir}/circle.yml"] = Utils\mustache_render( 'plugin-circle.mustache', compact( 'wp_versions_to_test' ) );
+			$files_to_create["{$target_dir}/circle.yml"] = self::mustache_render( 'plugin-circle.mustache', compact( 'wp_versions_to_test' ) );
 		} else if ( 'gitlab' === $assoc_args['ci'] ) {
-			$files_to_create["{$target_dir}/.gitlab-ci.yml"] = Utils\mustache_render( 'plugin-gitlab.mustache' );
+			$files_to_create["{$target_dir}/.gitlab-ci.yml"] = self::mustache_render( 'plugin-gitlab.mustache' );
 		}
 		$files_written = $this->create_files( $files_to_create, $force );
 
@@ -982,6 +982,13 @@ class Scaffold_Command extends WP_CLI_Command {
 		WP_Filesystem();
 
 		return $wp_filesystem;
+	}
+
+	/**
+	 * Localize path to template
+	 */
+	private static function mustache_render( $template, $data ) {
+		return Utils\mustache_render( dirname( dirname( __FILE__ ) ) . '/templates/' . $template, $data );
 	}
 
 }
