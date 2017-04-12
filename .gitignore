@@ -1,10 +1,7 @@
 .DS_Store
-config.yml
-PHAR_BUILD_VERSION
-/cache
-/packages
-/vendor
-/*.phar
-/phpunit.xml.dist
-/codesniffer
-/PHP_Codesniffer-VariableAnalysis
+wp-cli.local.yml
+node_modules/
+vendor/
+*.zip
+*.tar.gz
+composer.lock
