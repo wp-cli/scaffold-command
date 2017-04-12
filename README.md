@@ -1,7 +1,7 @@
 wp-cli/scaffold-command
 =======================
 
-Manage the wp-config.php file.
+Generate code for post types, taxonomies, plugins, child themes, etc.
 
 [![Build Status](https://travis-ci.org/wp-cli/scaffold-command.svg?branch=master)](https://travis-ci.org/wp-cli/scaffold-command)
 
@@ -13,7 +13,7 @@ This package implements the following commands:
 
 ### wp scaffold
 
-Generate code for post types, taxonomies, plugins, child themes. etc.
+Generate code for post types, taxonomies, plugins, child themes, etc.
 
 ~~~
 wp scaffold

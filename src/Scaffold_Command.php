@@ -4,7 +4,7 @@ use WP_CLI\Utils;
 use WP_CLI\Process;
 
 /**
- * Generate code for post types, taxonomies, plugins, child themes. etc.
+ * Generate code for post types, taxonomies, plugins, child themes, etc.
  *
  * ## EXAMPLES
  *
