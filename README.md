@@ -246,7 +246,7 @@ variable.
 		options:
 		  - travis
 		  - circle
-			 - gitlab
+		  - gitlab
 		---
 
 	[--force]
@@ -384,7 +384,7 @@ variable.
 		options:
 		  - travis
 		  - circle
-			 - gitlab
+		  - gitlab
 		---
 
 	[--force]
