@@ -607,7 +607,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * options:
 	 *   - travis
 	 *   - circle
-	 *	 - gitlab
+	 *   - gitlab
 	 * ---
 	 *
 	 * [--force]
@@ -659,7 +659,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * options:
 	 *   - travis
 	 *   - circle
-	 *	 - gitlab
+	 *   - gitlab
 	 * ---
 	 *
 	 * [--force]
