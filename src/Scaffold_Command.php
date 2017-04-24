@@ -1000,7 +1000,11 @@ class Scaffold_Command extends WP_CLI_Command {
 			// scaffold command must've been built with vendor/wp-cli/wp-cli
 			$template_path = WP_CLI_ROOT . '/../../../templates/' . $template;
 			if ( ! file_exists( $template_path ) ) {
-				WP_CLI::error( "Couldn't find {$template}" );
+				// scaffold command must've been built with .. as a dependency
+				$template_path = WP_CLI_ROOT . '/../scaffold-command/templates/' . $template;
+				if ( ! file_exists( $template_path ) ) {
+					WP_CLI::error( "Couldn't find {$template}" );
+				}
 			}
 		}
 		return $template_path;
