@@ -38,7 +38,7 @@ before_install:
   - phpenv config-rm xdebug.ini
 
 install:
-  - composer require wp-cli/wp-cli:dev-phar-safe-dir
+  - composer require wp-cli/wp-cli:dev-master
   - composer install
   - bash bin/install-package-tests.sh
 
