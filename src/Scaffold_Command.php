@@ -995,14 +995,13 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * Get template path based on installation type
 	 */
 	private static function get_template_path( $template ) {
-		$template_path = WP_CLI_ROOT . '/vendor/wp-cli/scaffold-command/templates/' . $template;
+		$command_root = Utils\phar_safe_path( dirname( __DIR__ ) );
+		$template_path = "{$command_root}/templates/{$template}";
+
 		if ( ! file_exists( $template_path ) ) {
-			// scaffold command must've been built with vendor/wp-cli/wp-cli
-			$template_path = WP_CLI_ROOT . '/../../../templates/' . $template;
-			if ( ! file_exists( $template_path ) ) {
-				WP_CLI::error( "Couldn't find {$template}" );
-			}
+			WP_CLI::error( "Couldn't find {$template}" );
 		}
+
 		return $template_path;
 	}
 
