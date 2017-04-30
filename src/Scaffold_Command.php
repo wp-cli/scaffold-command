@@ -792,16 +792,14 @@ class Scaffold_Command extends WP_CLI_Command {
 			$target_dir = realpath( $target_dir );
 		}
 
-		$parent_dir = dirname( $target_dir );
+		$parent_dir = str_replace( '\\', '/', dirname( $target_dir ) );
 
-		if ( "theme" === $type ) {
-			if ( WP_CONTENT_DIR . '/themes' === $parent_dir ) {
-				return true;
-			}
-		} elseif ( "plugin" === $type ) {
-			if ( WP_PLUGIN_DIR === $parent_dir ) {
-				return true;
-			}
+		if ( 'theme' === $type && str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) === $parent_dir ) {
+			return true;
+		}
+
+		if ( 'plugin' === $type && str_replace( '\\', '/', WP_PLUGIN_DIR ) === $parent_dir ) {
+			return true;
 		}
 
 		return false;
