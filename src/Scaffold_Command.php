@@ -563,7 +563,8 @@ class Scaffold_Command extends WP_CLI_Command {
 		);
 
 		if ( ! \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-tests' ) ) {
-			WP_CLI::run_command( array( 'scaffold', 'plugin-tests', $plugin_slug ), array( 'dir' => $plugin_dir, 'ci' => $assoc_args['ci'], 'force' => $force ) );
+			$ci = empty( $assoc_args['ci'] ) ? '' : $assoc_args['ci'];
+			WP_CLI::run_command( array( 'scaffold', 'plugin-tests', $plugin_slug ), array( 'dir' => $plugin_dir, 'ci' => $ci, 'force' => $force ) );
 		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'activate' ) ) {
