@@ -20,7 +20,9 @@
         "psr-4": {
             "": "src/"
         },
-        "files": [ "scaffold-command.php" ]
+        "files": [
+            "scaffold-command.php"
+        ]
     },
     "require": {},
     "require-dev": {
@@ -40,6 +42,7 @@
             "scaffold post-type",
             "scaffold taxonomy",
             "scaffold theme-tests"
-        ]
+        ],
+        "bundled": true
     }
 }
