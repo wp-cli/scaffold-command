@@ -46,7 +46,7 @@ Feature: Scaffold theme unit tests
           fi
         - |
           if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-            phpcs $(find . -name '*.php')
+            phpcs
           fi
       """
     And the {THEME_DIR}/p2child/.travis.yml file should contain:

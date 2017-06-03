@@ -49,7 +49,7 @@ Feature: Scaffold plugin unit tests
           fi
         - |
           if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-            phpcs $(find . -name '*.php')
+            phpcs
           fi
       """
     And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
