@@ -29,7 +29,7 @@ PHPunit:PHP5.3:MySQL:
   services:
     - mysql:5.6
   script:
-  - phpcs $(find . -name '*.php')
+  - phpcs
   - phpunit
 
 PHPunit:PHP5.6:MySQL:
@@ -37,5 +37,5 @@ PHPunit:PHP5.6:MySQL:
   services:
     - mysql:5.6
   script:
-  - phpcs $(find . -name '*.php')
+  - phpcs
   - phpunit
