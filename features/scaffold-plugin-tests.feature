@@ -36,7 +36,7 @@ Feature: Scaffold plugin unit tests
       install-wp-tests.sh
       """
     And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
-    And the {PLUGIN_DIR}/hello-world/phpcs.ruleset.xml file should exist
+    And the {PLUGIN_DIR}/hello-world/phpcs.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/circle.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.gitlab-ci.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
@@ -49,7 +49,7 @@ Feature: Scaffold plugin unit tests
           fi
         - |
           if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-            phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
+            phpcs
           fi
       """
     And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:

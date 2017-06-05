@@ -33,7 +33,7 @@ Feature: Scaffold theme unit tests
       install-wp-tests.sh
       """
     And the {THEME_DIR}/p2child/phpunit.xml.dist file should exist
-    And the {THEME_DIR}/p2child/phpcs.ruleset.xml file should exist
+    And the {THEME_DIR}/p2child/phpcs.xml.dist file should exist
     And the {THEME_DIR}/p2child/circle.yml file should not exist
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should not exist
     And the {THEME_DIR}/p2child/.travis.yml file should contain:
@@ -46,7 +46,7 @@ Feature: Scaffold theme unit tests
           fi
         - |
           if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-            phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
+            phpcs
           fi
       """
     And the {THEME_DIR}/p2child/.travis.yml file should contain:
