@@ -29,13 +29,13 @@ PHPunit:PHP5.3:MySQL:
   services:
     - mysql:5.6
   script:
-  - phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
-  - phpunit --configuration phpunit.xml.dist
+  - phpcs
+  - phpunit
 
 PHPunit:PHP5.6:MySQL:
   image: tetraweb/php:5.6
   services:
     - mysql:5.6
   script:
-  - phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
-  - phpunit --configuration phpunit.xml.dist
+  - phpcs
+  - phpunit
