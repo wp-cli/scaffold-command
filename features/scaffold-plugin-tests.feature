@@ -145,19 +145,19 @@ Feature: Scaffold plugin unit tests
     When I try `wp scaffold plugin-tests hello`
     Then STDERR should be:
       """
-      Error: Invalid plugin slug specified. No such target directory "{RUN_DIR}/wp-content/plugins/hello".
+      Error: Invalid plugin slug specified. No such target directory '{RUN_DIR}/wp-content/plugins/hello'.
       """
 
     When I try `wp scaffold plugin-tests .`
     Then STDERR should be:
       """
-      Error: Invalid plugin slug specified. The slug cannot be "." or "..".
+      Error: Invalid plugin slug specified. The slug cannot be '.' or '..'.
       """
 
     When I try `wp scaffold plugin-tests ../`
     Then STDERR should be:
       """
-      Error: Invalid plugin slug specified. The target directory "{RUN_DIR}/wp-content/plugins/../" is not in "{RUN_DIR}/wp-content/plugins".
+      Error: Invalid plugin slug specified. The target directory '{RUN_DIR}/wp-content/plugins/../' is not in '{RUN_DIR}/wp-content/plugins'.
       """
 
   Scenario: Scaffold plugin tests with invalid directory
@@ -170,7 +170,7 @@ Feature: Scaffold plugin unit tests
     When I try `wp scaffold plugin-tests hello-world --dir=non-existent-dir`
     Then STDERR should be:
       """
-      Error: Invalid plugin directory specified. No such directory "non-existent-dir".
+      Error: Invalid plugin directory specified. No such directory 'non-existent-dir'.
       """
 
     When I run `rm -rf {PLUGIN_DIR} && touch {PLUGIN_DIR}`
@@ -178,7 +178,7 @@ Feature: Scaffold plugin unit tests
     When I try `wp scaffold plugin-tests hello-world`
     Then STDERR should be:
       """
-      Error: Invalid plugin slug specified. No such target directory "{PLUGIN_DIR}".
+      Error: Invalid plugin slug specified. No such target directory '{PLUGIN_DIR}'.
       """
 
   Scenario: Scaffold plugin tests with a symbolic link
@@ -192,7 +192,7 @@ Feature: Scaffold plugin unit tests
     Then the return code should be 0
 
     When I run `wp scaffold plugin-tests hello-world`
-    And STDOUT should not be empty
+    Then STDOUT should not be empty
     And the {PLUGIN_DIR}/tests directory should contain:
       """
       bootstrap.php
