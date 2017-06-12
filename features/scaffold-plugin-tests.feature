@@ -140,15 +140,60 @@ Feature: Scaffold plugin unit tests
 
   Scenario: Scaffold plugin tests with invalid slug
     Given a WP install
+	Then the {RUN_DIR}/wp-content/plugins/hello.php file should exist
+
+    When I try `wp scaffold plugin-tests hello`
+    Then STDERR should be:
+      """
+      Error: Invalid plugin slug specified. No such target directory "{RUN_DIR}/wp-content/plugins/hello".
+      """
 
     When I try `wp scaffold plugin-tests .`
-    Then STDERR should contain:
+    Then STDERR should be:
       """
-      Error: Invalid plugin slug specified.
+      Error: Invalid plugin slug specified. The slug cannot be "." or "..".
       """
 
     When I try `wp scaffold plugin-tests ../`
-    Then STDERR should contain:
+    Then STDERR should be:
       """
-      Error: Invalid plugin slug specified.
+      Error: Invalid plugin slug specified. The target directory "{RUN_DIR}/wp-content/plugins/../" is not in "{RUN_DIR}/wp-content/plugins".
+      """
+
+  Scenario: Scaffold plugin tests with invalid directory
+    Given a WP install
+    And I run `wp scaffold plugin hello-world --skip-tests`
+
+    When I run `wp plugin path hello-world --dir`
+    Then save STDOUT as {PLUGIN_DIR}
+
+    When I try `wp scaffold plugin-tests hello-world --dir=non-existent-dir`
+    Then STDERR should be:
+      """
+      Error: Invalid plugin directory specified. No such directory "non-existent-dir".
+      """
+
+    When I run `rm -rf {PLUGIN_DIR} && touch {PLUGIN_DIR}`
+	Then the return code should be 0
+    When I try `wp scaffold plugin-tests hello-world`
+    Then STDERR should be:
+      """
+      Error: Invalid plugin slug specified. No such target directory "{PLUGIN_DIR}".
+      """
+
+  Scenario: Scaffold plugin tests with a symbolic link
+    Given a WP install
+    And I run `wp scaffold plugin hello-world --skip-tests`
+
+    When I run `wp plugin path hello-world --dir`
+    Then save STDOUT as {PLUGIN_DIR}
+
+	When I run `mv {PLUGIN_DIR} {RUN_DIR} && ln -s {RUN_DIR}/hello-world {PLUGIN_DIR}`
+	Then the return code should be 0
+
+    When I run `wp scaffold plugin-tests hello-world`
+    And STDOUT should not be empty
+    And the {PLUGIN_DIR}/tests directory should contain:
+      """
+      bootstrap.php
       """

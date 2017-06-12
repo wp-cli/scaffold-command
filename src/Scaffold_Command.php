@@ -239,10 +239,6 @@ class Scaffold_Command extends WP_CLI_Command {
 		$url        = "http://underscores.me";
 		$timeout    = 30;
 
-		if ( in_array( $theme_slug, array( '.', '..' ) ) ) {
-			WP_CLI::error( "Invalid theme slug specified." );
-		}
-
 		if ( ! preg_match( '/^[a-z_]\w+$/i', str_replace( '-', '_', $theme_slug ) ) ) {
 			WP_CLI::error( "Invalid theme slug specified. Theme slugs can only contain letters, numbers, underscores and hyphens, and can only start with a letter or underscore." );
 		}
@@ -255,8 +251,8 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$_s_theme_path = "$theme_path/$data[theme_name]";
 
-		if ( ! $this->check_target_directory( "theme", $_s_theme_path ) ) {
-			WP_CLI::error( "Invalid theme slug specified." );
+		if ( $error_msg = $this->check_target_directory( "theme", $_s_theme_path ) ) {
+			WP_CLI::error( "Invalid theme slug specified. {$error_msg}" );
 		}
 
 		$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
@@ -366,7 +362,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$theme_slug = $args[0];
 
 		if ( in_array( $theme_slug, array( '.', '..' ) ) ) {
-			WP_CLI::error( "Invalid theme slug specified." );
+			WP_CLI::error( "Invalid theme slug specified. The slug cannot be \".\" or \"..\"." );
 		}
 
 		$data = wp_parse_args( $assoc_args, array(
@@ -382,8 +378,8 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$theme_dir = WP_CONTENT_DIR . "/themes" . "/$theme_slug";
 
-		if ( ! $this->check_target_directory( "theme", $theme_dir ) ) {
-			WP_CLI::error( "Invalid theme slug specified." );
+		if ( $error_msg = $this->check_target_directory( "theme", $theme_dir ) ) {
+			WP_CLI::error( "Invalid theme slug specified. {$error_msg}" );
 		}
 
 		$theme_style_path     = "$theme_dir/style.css";
@@ -512,7 +508,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$plugin_package = str_replace( ' ', '_', $plugin_name );
 
 		if ( in_array( $plugin_slug, array( '.', '..' ) ) ) {
-			WP_CLI::error( "Invalid plugin slug specified." );
+			WP_CLI::error( "Invalid plugin slug specified. The slug cannot be \".\" or \"..\"." );
 		}
 
 		$data = wp_parse_args( $assoc_args, array(
@@ -537,8 +533,8 @@ class Scaffold_Command extends WP_CLI_Command {
 			$plugin_dir = WP_PLUGIN_DIR . "/$plugin_slug";
 			$this->maybe_create_plugins_dir();
 
-			if ( ! $this->check_target_directory( "plugin", $plugin_dir ) ) {
-				WP_CLI::error( "Invalid plugin slug specified." );
+			if ( $error_msg = $this->check_target_directory( "plugin", $plugin_dir ) ) {
+				WP_CLI::error( "Invalid plugin slug specified. {$error_msg}" );
 			}
 		}
 
@@ -684,30 +680,30 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( ! empty( $args[0] ) ) {
 			$slug = $args[0];
 			if ( in_array( $slug, array( '.', '..' ) ) ) {
-				WP_CLI::error( "Invalid {$type} slug specified." );
+				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be \".\" or \"..\"." );
 			}
 			if ( 'theme' === $type ) {
 				$theme = wp_get_theme( $slug );
 				if ( $theme->exists() ) {
 					$target_dir = $theme->get_stylesheet_directory();
 				} else {
-					WP_CLI::error( "Invalid {$type} slug specified." );
+					WP_CLI::error( "Invalid {$type} slug specified. The theme \"{$slug}\" does not exist." );
 				}
 			} else {
 				$target_dir = WP_PLUGIN_DIR . "/$slug";
 			}
 			if ( empty( $assoc_args['dir'] ) && ! is_dir( $target_dir ) ) {
-				WP_CLI::error( "Invalid {$type} slug specified." );
+				WP_CLI::error( "Invalid {$type} slug specified. No such target directory \"{$target_dir}\"." );
 			}
-			if ( ! $this->check_target_directory( $type, $target_dir ) ) {
-				WP_CLI::error( "Invalid {$type} slug specified." );
+			if ( $error_msg = $this->check_target_directory( $type, $target_dir ) ) {
+				WP_CLI::error( "Invalid {$type} slug specified. {$error_msg}" );
 			}
 		}
 
 		if ( ! empty( $assoc_args['dir'] ) ) {
 			$target_dir = $assoc_args['dir'];
 			if ( ! is_dir( $target_dir ) ) {
-				WP_CLI::error( "Invalid {$type} directory specified." );
+				WP_CLI::error( "Invalid {$type} directory specified. No such directory \"{$target_dir}\"." );
 			}
 			if ( empty( $slug ) ) {
 				$slug = Utils\basename( $target_dir );
@@ -788,22 +784,27 @@ class Scaffold_Command extends WP_CLI_Command {
 		);
 	}
 
+	/**
+	 * Checks that the `$target_dir` is a child directory of the themes or plugins directory, depending on `$type`.
+	 *
+	 * @param string $type       "theme" or "plugin"
+	 * @param string $target_dir The theme/plugin directory to check.
+	 *
+	 * @return null|string Returns null on success, error message on error.
+	 */
 	private function check_target_directory( $type, $target_dir ) {
-		if ( realpath( $target_dir ) ) {
-			$target_dir = realpath( $target_dir );
+		$parent_dir = dirname( Utils\canonicalize_path( str_replace( '\\', '/', $target_dir ) ) );
+
+		if ( 'theme' === $type && str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) !== $parent_dir ) {
+			return sprintf( 'The target directory "%1$s" is not in "%2$s".', $target_dir, WP_CONTENT_DIR . '/themes' );
 		}
 
-		$parent_dir = str_replace( '\\', '/', dirname( $target_dir ) );
-
-		if ( 'theme' === $type && str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) === $parent_dir ) {
-			return true;
+		if ( 'plugin' === $type && str_replace( '\\', '/', WP_PLUGIN_DIR ) !== $parent_dir ) {
+			return sprintf( 'The target directory "%1$s" is not in "%2$s".', $target_dir, WP_PLUGIN_DIR );
 		}
 
-		if ( 'plugin' === $type && str_replace( '\\', '/', WP_PLUGIN_DIR ) === $parent_dir ) {
-			return true;
-		}
-
-		return false;
+		// Success.
+		return null;
 	}
 
 	protected function create_files( $files_and_contents, $force ) {
