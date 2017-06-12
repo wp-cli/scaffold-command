@@ -119,9 +119,9 @@ Feature: Scaffold theme unit tests
       Error: Invalid theme directory specified. No such directory "non-existent-dir".
       """
 
-	# Temporarily move.
+    # Temporarily move.
     When I run `mv -f {THEME_DIR}/p2 {THEME_DIR}/hide-p2 && touch {THEME_DIR}/p2`
-	Then the return code should be 0
+    Then the return code should be 0
 
     When I try `wp scaffold theme-tests p2`
     Then STDERR should be:
@@ -129,14 +129,14 @@ Feature: Scaffold theme unit tests
       Error: Invalid theme slug specified. No such target directory "{THEME_DIR}/p2".
       """
 
-	# Restore.
+    # Restore.
     When I run `rm -f {THEME_DIR}/p2 && mv -f {THEME_DIR}/hide-p2 {THEME_DIR}/p2`
-	Then the return code should be 0
+    Then the return code should be 0
 
   Scenario: Scaffold theme tests with a symbolic link
-	# Temporarily move the whole theme dir and create a symbolic link to it.
-	When I run `mv -f {THEME_DIR} {RUN_DIR}/alt-themes && ln -s {RUN_DIR}/alt-themes {THEME_DIR}`
-	Then the return code should be 0
+    # Temporarily move the whole theme dir and create a symbolic link to it.
+    When I run `mv -f {THEME_DIR} {RUN_DIR}/alt-themes && ln -s {RUN_DIR}/alt-themes {THEME_DIR}`
+    Then the return code should be 0
 
     When I run `wp scaffold theme-tests p2`
     And STDOUT should not be empty
@@ -145,6 +145,6 @@ Feature: Scaffold theme unit tests
       bootstrap.php
       """
 
-	# Restore.
+    # Restore.
     When I run `unlink {THEME_DIR} && mv -f {RUN_DIR}/alt-themes {THEME_DIR}`
-	Then the return code should be 0
+    Then the return code should be 0

@@ -140,7 +140,7 @@ Feature: Scaffold plugin unit tests
 
   Scenario: Scaffold plugin tests with invalid slug
     Given a WP install
-	Then the {RUN_DIR}/wp-content/plugins/hello.php file should exist
+    Then the {RUN_DIR}/wp-content/plugins/hello.php file should exist
 
     When I try `wp scaffold plugin-tests hello`
     Then STDERR should be:
@@ -174,7 +174,7 @@ Feature: Scaffold plugin unit tests
       """
 
     When I run `rm -rf {PLUGIN_DIR} && touch {PLUGIN_DIR}`
-	Then the return code should be 0
+    Then the return code should be 0
     When I try `wp scaffold plugin-tests hello-world`
     Then STDERR should be:
       """
@@ -188,8 +188,8 @@ Feature: Scaffold plugin unit tests
     When I run `wp plugin path hello-world --dir`
     Then save STDOUT as {PLUGIN_DIR}
 
-	When I run `mv {PLUGIN_DIR} {RUN_DIR} && ln -s {RUN_DIR}/hello-world {PLUGIN_DIR}`
-	Then the return code should be 0
+    When I run `mv {PLUGIN_DIR} {RUN_DIR} && ln -s {RUN_DIR}/hello-world {PLUGIN_DIR}`
+    Then the return code should be 0
 
     When I run `wp scaffold plugin-tests hello-world`
     And STDOUT should not be empty
