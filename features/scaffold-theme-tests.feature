@@ -77,7 +77,7 @@ Feature: Scaffold theme unit tests
     When I try `wp scaffold theme-tests p3child`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified. The theme "p3child" does not exist.
+      Error: Invalid theme slug specified. The theme 'p3child' does not exist.
       """
 
   Scenario: Scaffold theme tests with Circle as the provider
@@ -103,20 +103,20 @@ Feature: Scaffold theme unit tests
     When I try `wp scaffold theme-tests .`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified. The slug cannot be "." or "..".
+      Error: Invalid theme slug specified. The slug cannot be '.' or '..'.
       """
 
     When I try `wp scaffold theme-tests ../`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified. The target directory "{RUN_DIR}/wp-content/themes/../" is not in "{RUN_DIR}/wp-content/themes".
+      Error: Invalid theme slug specified. The target directory '{RUN_DIR}/wp-content/themes/../' is not in '{RUN_DIR}/wp-content/themes'.
       """
 
   Scenario: Scaffold theme tests with invalid directory
     When I try `wp scaffold theme-tests p2 --dir=non-existent-dir`
     Then STDERR should be:
       """
-      Error: Invalid theme directory specified. No such directory "non-existent-dir".
+      Error: Invalid theme directory specified. No such directory 'non-existent-dir'.
       """
 
     # Temporarily move.
@@ -126,7 +126,7 @@ Feature: Scaffold theme unit tests
     When I try `wp scaffold theme-tests p2`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified. No such target directory "{THEME_DIR}/p2".
+      Error: Invalid theme slug specified. No such target directory '{THEME_DIR}/p2'.
       """
 
     # Restore.
@@ -139,7 +139,7 @@ Feature: Scaffold theme unit tests
     Then the return code should be 0
 
     When I run `wp scaffold theme-tests p2`
-    And STDOUT should not be empty
+    Then STDOUT should not be empty
     And the {THEME_DIR}/p2/tests directory should contain:
       """
       bootstrap.php

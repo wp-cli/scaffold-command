@@ -362,7 +362,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$theme_slug = $args[0];
 
 		if ( in_array( $theme_slug, array( '.', '..' ) ) ) {
-			WP_CLI::error( "Invalid theme slug specified. The slug cannot be \".\" or \"..\"." );
+			WP_CLI::error( "Invalid theme slug specified. The slug cannot be '.' or '..'." );
 		}
 
 		$data = wp_parse_args( $assoc_args, array(
@@ -508,7 +508,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$plugin_package = str_replace( ' ', '_', $plugin_name );
 
 		if ( in_array( $plugin_slug, array( '.', '..' ) ) ) {
-			WP_CLI::error( "Invalid plugin slug specified. The slug cannot be \".\" or \"..\"." );
+			WP_CLI::error( "Invalid plugin slug specified. The slug cannot be '.' or '..'." );
 		}
 
 		$data = wp_parse_args( $assoc_args, array(
@@ -680,20 +680,20 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( ! empty( $args[0] ) ) {
 			$slug = $args[0];
 			if ( in_array( $slug, array( '.', '..' ) ) ) {
-				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be \".\" or \"..\"." );
+				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
 			}
 			if ( 'theme' === $type ) {
 				$theme = wp_get_theme( $slug );
 				if ( $theme->exists() ) {
 					$target_dir = $theme->get_stylesheet_directory();
 				} else {
-					WP_CLI::error( "Invalid {$type} slug specified. The theme \"{$slug}\" does not exist." );
+					WP_CLI::error( "Invalid {$type} slug specified. The theme '{$slug}' does not exist." );
 				}
 			} else {
 				$target_dir = WP_PLUGIN_DIR . "/$slug";
 			}
 			if ( empty( $assoc_args['dir'] ) && ! is_dir( $target_dir ) ) {
-				WP_CLI::error( "Invalid {$type} slug specified. No such target directory \"{$target_dir}\"." );
+				WP_CLI::error( "Invalid {$type} slug specified. No such target directory '{$target_dir}'." );
 			}
 			if ( $error_msg = $this->check_target_directory( $type, $target_dir ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. {$error_msg}" );
@@ -703,7 +703,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( ! empty( $assoc_args['dir'] ) ) {
 			$target_dir = $assoc_args['dir'];
 			if ( ! is_dir( $target_dir ) ) {
-				WP_CLI::error( "Invalid {$type} directory specified. No such directory \"{$target_dir}\"." );
+				WP_CLI::error( "Invalid {$type} directory specified. No such directory '{$target_dir}'." );
 			}
 			if ( empty( $slug ) ) {
 				$slug = Utils\basename( $target_dir );
@@ -796,11 +796,11 @@ class Scaffold_Command extends WP_CLI_Command {
 		$parent_dir = dirname( self::canonicalize_path( str_replace( '\\', '/', $target_dir ) ) );
 
 		if ( 'theme' === $type && str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) !== $parent_dir ) {
-			return sprintf( 'The target directory "%1$s" is not in "%2$s".', $target_dir, WP_CONTENT_DIR . '/themes' );
+			return sprintf( 'The target directory \'%1$s\' is not in \'%2$s\'.', $target_dir, WP_CONTENT_DIR . '/themes' );
 		}
 
 		if ( 'plugin' === $type && str_replace( '\\', '/', WP_PLUGIN_DIR ) !== $parent_dir ) {
-			return sprintf( 'The target directory "%1$s" is not in "%2$s".', $target_dir, WP_PLUGIN_DIR );
+			return sprintf( 'The target directory \'%1$s\' is not in \'%2$s\'.', $target_dir, WP_PLUGIN_DIR );
 		}
 
 		// Success.
