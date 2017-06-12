@@ -793,7 +793,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * @return null|string Returns null on success, error message on error.
 	 */
 	private function check_target_directory( $type, $target_dir ) {
-		$parent_dir = dirname( Utils\canonicalize_path( str_replace( '\\', '/', $target_dir ) ) );
+		$parent_dir = dirname( self::canonicalize_path( str_replace( '\\', '/', $target_dir ) ) );
 
 		if ( 'theme' === $type && str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) !== $parent_dir ) {
 			return sprintf( 'The target directory "%1$s" is not in "%2$s".', $target_dir, WP_CONTENT_DIR . '/themes' );
@@ -1005,4 +1005,35 @@ class Scaffold_Command extends WP_CLI_Command {
 		return $template_path;
 	}
 
+	/*
+	 * Returns the canonicalized path, with dot and double dot segments resolved.
+	 *
+	 * Copied from Symfony\Component\DomCrawler\AbstractUriElement::canonicalizePath().
+	 * Implements RFC 3986, section 5.2.4.
+	 *
+	 * @param string $path The path to make canonical.
+	 *
+	 * @return string The canonicalized path.
+	 */
+	private static function canonicalize_path( $path ) {
+		if ( '' === $path || '/' === $path ) {
+			return $path;
+		}
+
+		if ( '.' === substr( $path, -1 ) ) {
+			$path .= '/';
+		}
+
+		$output = array();
+
+		foreach ( explode( '/', $path ) as $segment ) {
+			if ( '..' === $segment ) {
+				array_pop( $output );
+			} elseif ( '.' !== $segment ) {
+				$output[] = $segment;
+			}
+		}
+
+		return implode( '/', $output );
+	}
 }
