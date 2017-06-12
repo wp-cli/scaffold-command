@@ -785,7 +785,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Checks that the `$target_dir` is a child directory of the themes or plugins directory, depending on `$type`.
+	 * Checks that the `$target_dir` is a child directory of the WP themes or plugins directory, depending on `$type`.
 	 *
 	 * @param string $type       "theme" or "plugin"
 	 * @param string $target_dir The theme/plugin directory to check.
