@@ -77,7 +77,7 @@ Feature: Scaffold theme unit tests
     When I try `wp scaffold theme-tests p3child`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified.
+      Error: Invalid theme slug specified. The theme 'p3child' does not exist.
       """
 
   Scenario: Scaffold theme tests with Circle as the provider
@@ -101,14 +101,50 @@ Feature: Scaffold theme unit tests
   Scenario: Scaffold theme tests with invalid slug
 
     When I try `wp scaffold theme-tests .`
-    Then STDERR should contain:
+    Then STDERR should be:
       """
-      Error: Invalid theme slug specified.
+      Error: Invalid theme slug specified. The slug cannot be '.' or '..'.
       """
 
     When I try `wp scaffold theme-tests ../`
-    Then STDERR should contain:
+    Then STDERR should be:
       """
-      Error: Invalid theme slug specified.
+      Error: Invalid theme slug specified. The target directory '{RUN_DIR}/wp-content/themes/../' is not in '{RUN_DIR}/wp-content/themes'.
       """
 
+  Scenario: Scaffold theme tests with invalid directory
+    When I try `wp scaffold theme-tests p2 --dir=non-existent-dir`
+    Then STDERR should be:
+      """
+      Error: Invalid theme directory specified. No such directory 'non-existent-dir'.
+      """
+
+    # Temporarily move.
+    When I run `mv -f {THEME_DIR}/p2 {THEME_DIR}/hide-p2 && touch {THEME_DIR}/p2`
+    Then the return code should be 0
+
+    When I try `wp scaffold theme-tests p2`
+    Then STDERR should be:
+      """
+      Error: Invalid theme slug specified. No such target directory '{THEME_DIR}/p2'.
+      """
+
+    # Restore.
+    When I run `rm -f {THEME_DIR}/p2 && mv -f {THEME_DIR}/hide-p2 {THEME_DIR}/p2`
+    Then the return code should be 0
+
+  Scenario: Scaffold theme tests with a symbolic link
+    # Temporarily move the whole theme dir and create a symbolic link to it.
+    When I run `mv -f {THEME_DIR} {RUN_DIR}/alt-themes && ln -s {RUN_DIR}/alt-themes {THEME_DIR}`
+    Then the return code should be 0
+
+    When I run `wp scaffold theme-tests p2`
+    Then STDOUT should not be empty
+    And the {THEME_DIR}/p2/tests directory should contain:
+      """
+      bootstrap.php
+      """
+
+    # Restore.
+    When I run `unlink {THEME_DIR} && mv -f {RUN_DIR}/alt-themes {THEME_DIR}`
+    Then the return code should be 0
