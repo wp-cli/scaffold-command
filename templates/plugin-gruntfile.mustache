@@ -11,10 +11,11 @@ module.exports = function( grunt ) {
 			options: {
 				textdomain: '{{textdomain}}',
 			},
-			target: {
-				files: {
-					src: [ '*.php', '**/*.php', '!node_modules/**', '!php-tests/**', '!bin/**' ]
-				}
+			update_all_domains: {
+				options: {
+					updateDomains: true
+				},
+				src: [ '*.php', '**/*.php', '!node_modules/**', '!php-tests/**', '!bin/**' ]
 			}
 		},
 
