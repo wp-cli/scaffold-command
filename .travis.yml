@@ -30,6 +30,8 @@ matrix:
     - php: 5.6
       env: WP_VERSION=latest
     - php: 5.6
+      env: WP_VERSION=3.7.11
+    - php: 5.6
       env: WP_VERSION=trunk
     - php: 5.3
       env: WP_VERSION=latest
@@ -46,4 +48,4 @@ before_script:
   - composer validate
 
 script:
-  - behat --format progress --strict
+  - bash bin/test.sh
