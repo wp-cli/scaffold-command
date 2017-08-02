@@ -3,6 +3,7 @@
 let SKIP_DB_CREATE=0
 let SKIP_WP_CONFIG=0
 let FORCE_WP_CONFIG=0
+let have_specified_password=0
 
 _usage() {
     cat <<EOF
@@ -28,7 +29,8 @@ while :; do
 	   DB_USER="$2" && shift
 	   ;;
        -p|--pass)
-	   [[ -z "$2" ]] && echo >&2 "--pass requires a argument" && exit 1
+	   if (( $# < 2 )) || [[ $2 =~ -- ]]; then echo >&2 "--pass requires a argument even if empty" && exit 1; fi
+	   have_specified_password=1
 	   DB_PASSWORD="$2" && shift
 	   ;;
        -H|--db-hostname)
@@ -36,7 +38,7 @@ while :; do
 	   DB_HOST="$2" && shift
 	   ;;
        -P|--table-prefix)
-	   [[ -z "$2" ]] && echo >&2 "--table-prefix requires a argument" && exit 1
+	   if (( $# < 2 )) || [[ $2 =~ -- ]]; then echo >&2 "--table-prefix requires a argument even if empty" && exit 1; fi
 	   TABLE_PREFIX="$2" && shift
 	   ;;
        -v|--version)
@@ -73,9 +75,9 @@ while :; do
 done
 
 
-if [[ ! $DB_NAME || ! $DB_USER || ! $DB_PASSWORD ]]; then
-    _usage && exit 1
-fi
+[[ ! $DB_NAME ]] && echo >&2 "missing a -d|--db option" && _usage && exit 1
+[[ ! $DB_USER ]] && echo >&2 "missing a -u|--user" && _usage && exit 1
+(( ! $have_specified_password )) && echo >&2 "missing a -p|--pass option" && _usage && exit 1
 
 if ! type -P curl &>/dev/null && ! type -P wget &>/dev/null; then
     echo >&2 "$(basename $0) need curl|wget to fetch WP archive" && exit 1
@@ -90,6 +92,7 @@ DB_HOST=${DB_HOST:-localhost}
 WP_VERSION=${WP_VERSION:-latest}
 TABLE_PREFIX=${TABLE_PREFIX:-wptests_}
 WP_TESTS_DOMAIN=${WP_TESTS_DOMAIN:-example.org}
+WP_DEFAULT_THEME=${WP_DEFAULT_THEME:-default}
 
 # from environment
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
