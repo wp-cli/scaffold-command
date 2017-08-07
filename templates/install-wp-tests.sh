@@ -28,7 +28,7 @@ if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+$ ]]; then
 elif [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
 	if [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0] ]]; then
 		# version x.x.0 means the first release of the major version, so strip off the .0 and download version x.x
-		WP_TESTS_TAG="branches/${WP_VERSION%??}"
+		WP_TESTS_TAG="tags/${WP_VERSION%??}"
 	else
 		WP_TESTS_TAG="tags/$WP_VERSION"
 	fi
