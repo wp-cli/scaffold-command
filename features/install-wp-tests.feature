@@ -18,9 +18,14 @@ Feature: Scaffold install-wp-tests.sh tests
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
       data
+      """
+    And the /tmp/behat-wordpress-tests-lib directory should contain:
+      """
       includes
+      """
+    And the /tmp/behat-wordpress-tests-lib directory should contain:
+      """
       wp-tests-config.php
-      wp-tests-config.php.bak
       """
     And the /tmp/behat-wordpress directory should contain:
       """
@@ -62,9 +67,14 @@ Feature: Scaffold install-wp-tests.sh tests
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
       data
+      """
+    And the /tmp/behat-wordpress-tests-lib directory should contain:
+      """
       includes
+      """
+    And the /tmp/behat-wordpress-tests-lib directory should contain:
+      """
       wp-tests-config.php
-      wp-tests-config.php.bak
       """
     And the /tmp/behat-wordpress directory should contain:
       """
