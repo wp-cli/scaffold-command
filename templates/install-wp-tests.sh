@@ -69,7 +69,7 @@ install_wp() {
 			download https://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
 			if [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0] ]]; then
 				# version x.x.0 means the first release of the major version, so strip off the .0 and download version x.x
-				WP_VERSION=${WP_VERSION%??}
+				LATEST_VERSION=${WP_VERSION%??}
 			else
 				# otherwise, scan the releases and get the most up to date minor version of the major release
 				local VERSION_ESCAPED=`echo $WP_VERSION | sed 's/\./\\\\./g'`
