@@ -78,7 +78,7 @@ install_wp() {
 			if [[ -z "$LATEST_VERSION" ]]; then
 				local ARCHIVE_NAME="wordpress-$WP_VERSION"
 			else
-				ARCHIVE_NAME="wordpress-$LATEST_VERSION"
+				local ARCHIVE_NAME="wordpress-$LATEST_VERSION"
 			fi
 		else
 			local ARCHIVE_NAME="wordpress-$WP_VERSION"
