@@ -78,7 +78,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$this->_scaffold( $args[0], $assoc_args, $defaults, '/post-types/', array(
 			'post_type.mustache',
-			'post_type_extended.mustache'
+			'post_type_extended.mustache',
 		) );
 	}
 
@@ -124,7 +124,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	public function taxonomy( $args, $assoc_args ) {
 		$defaults = array(
 			'textdomain' => '',
-			'post_types' => "'post'"
+			'post_types' => "'post'",
 		);
 
 		if ( isset( $assoc_args['post_types'] ) ) {
@@ -170,7 +170,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( ! $control_args['raw'] ) {
 			$vars = array_merge( $vars, array(
 				'machine_name' => $machine_name,
-				'output'       => $raw_output
+				'output'       => $raw_output,
 			) );
 
 			$final_output = self::mustache_render( $extended_template, $vars );
@@ -281,7 +281,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'timeout'  => $timeout,
 			'body'     => $body,
 			'stream'   => true,
-			'filename' => $tmpfname
+			'filename' => $tmpfname,
 		) );
 
 		if ( is_wp_error( $response ) ) {
@@ -369,7 +369,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'theme_name' => ucfirst( $theme_slug ),
 			'author'     => "Me",
 			'author_uri' => "",
-			'theme_uri'  => ""
+			'theme_uri'  => "",
 		) );
 		$data['slug'] = $theme_slug;
 		$data['parent_theme_function_safe'] = str_replace( array( ' ', '-' ), '_', $data['parent_theme'] );
@@ -899,7 +899,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'/(octop|vir)us$/i'        => '1i',
 			'/(ax|test)is$/i'          => '\1es',
 			'/s$/i'                    => 's',
-			'/$/'                      => 's'
+			'/$/'                      => 's',
 		);
 
 		$uncountable = array( 'equipment', 'information', 'rice', 'money', 'species', 'series', 'fish', 'sheep' );
@@ -910,7 +910,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'woman'  => 'women',
 			'child'  => 'children',
 			'sex'    => 'sexes',
-			'move'   => 'moves'
+			'move'   => 'moves',
 		);
 
 		$lowercased_word = strtolower( $word );
