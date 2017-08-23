@@ -1,7 +1,12 @@
 Feature: Scaffold install-wp-tests.sh tests
 
   Scenario: Help should be displayed
-    When I try `/usr/bin/env bash templates/install-wp-tests.sh`
+    Given a WP install
+    And I run `wp plugin path`
+    And save STDOUT as {PLUGIN_DIR}
+    And I run `wp scaffold plugin hello-world`
+
+    When I try `/usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh`
     Then STDOUT should contain:
       """
       usage:
@@ -9,16 +14,15 @@ Feature: Scaffold install-wp-tests.sh tests
     And the return code should be 1
 
   Scenario: Install latest version of WordPress
-    Given I run `echo "DROP DATABASE IF EXISTS wordpress_behat_test" | mysql -u root`
-    And I try `rm -fr /tmp/behat-wordpress-tests-lib`
-    And I try `rm -fr /tmp/behat-wordpress`
-    And I run `pwd`
-    And save STDOUT as {WORK_DIR}
-    And a WP install
+    Given a WP install
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
+    And I run `wp scaffold plugin hello-world`
+    And I run `echo "DROP DATABASE IF EXISTS wordpress_behat_test" | mysql -u root`
+    And I try `rm -fr /tmp/behat-wordpress-tests-lib`
+    And I try `rm -fr /tmp/behat-wordpress`
 
-    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {WORK_DIR}/templates/install-wp-tests.sh wordpress_behat_test root '' localhost latest`
+    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wordpress_behat_test root '' localhost latest`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
@@ -54,6 +58,7 @@ Feature: Scaffold install-wp-tests.sh tests
       wp-trackback.php
       xmlrpc.php
       """
+    And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
 
     When I run `echo 'show databases' | mysql -u root`
     Then the return code should be 0
@@ -62,23 +67,19 @@ Feature: Scaffold install-wp-tests.sh tests
       wordpress_behat_test
       """
 
-    When I run `wp scaffold plugin hello-world`
-    Then the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
-
     When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
   Scenario: Install WordPress from trunk
-    Given I run `echo "DROP DATABASE IF EXISTS wordpress_behat_test" | mysql -u root`
-    And I try `rm -fr /tmp/behat-wordpress-tests-lib`
-    And I try `rm -fr /tmp/behat-wordpress`
-    And I run `pwd`
-    And save STDOUT as {WORK_DIR}
-    And a WP install
+    Given a WP install
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
+    And I run `wp scaffold plugin hello-world`
+    And I run `echo "DROP DATABASE IF EXISTS wordpress_behat_test" | mysql -u root`
+    And I try `rm -fr /tmp/behat-wordpress-tests-lib`
+    And I try `rm -fr /tmp/behat-wordpress`
 
-    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {WORK_DIR}/templates/install-wp-tests.sh wordpress_behat_test root '' localhost trunk`
+    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wordpress_behat_test root '' localhost trunk`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
@@ -118,6 +119,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
       -alpha-
       """
+    And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
 
     When I run `echo 'show databases' | mysql -u root`
     Then the return code should be 0
@@ -126,20 +128,19 @@ Feature: Scaffold install-wp-tests.sh tests
       wordpress_behat_test
       """
 
-    When I run `wp scaffold plugin hello-world`
-    Then the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
-
     When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
   Scenario: Install WordPress 3.7 and phpunit will not run
-    Given I run `echo "DROP DATABASE IF EXISTS wordpress_behat_test" | mysql -u root`
+    Given a WP install
+    And I run `wp plugin path`
+    And save STDOUT as {PLUGIN_DIR}
+    And I run `wp scaffold plugin hello-world`
+    And I run `echo "DROP DATABASE IF EXISTS wordpress_behat_test" | mysql -u root`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
-    And I run `pwd`
-    And save STDOUT as {WORK_DIR}
 
-    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {WORK_DIR}/templates/install-wp-tests.sh wordpress_behat_test root '' localhost 3.7`
+    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wordpress_behat_test root '' localhost 3.7`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
