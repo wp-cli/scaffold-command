@@ -887,7 +887,6 @@ class Scaffold_Command extends WP_CLI_Command {
 			'/([m|l])ouse$/i'          => '\1ice',
 			'/(matr|vert|ind)ix|ex$/i' => '\1ices',
 			'/(x|ch|ss|sh)$/i'         => '\1es',
-			'/([^aeiouy]|qu)ies$/i'    => '\1y',
 			'/([^aeiouy]|qu)y$/i'      => '\1ies',
 			'/(hive)$/i'               => '\1s',
 			'/(?:([^f])fe|([lr])f)$/i' => '\1\2ves',
