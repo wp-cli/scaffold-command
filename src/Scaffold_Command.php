@@ -902,16 +902,19 @@ class Scaffold_Command extends WP_CLI_Command {
 			'/$/'                      => 's'
 		);
 
-		$uncountable = array( 'equipment', 'information', 'rice', 'money', 'species', 'series', 'fish', 'sheep' );
-
+		$uncountable = array('sheep', 'fish','deer','series','species','money','rice','information','equipment');
+		
 		$irregular = array(
-			'person' => 'people',
-			'man'    => 'men',
-			'woman'  => 'women',
-			'child'  => 'children',
-			'sex'    => 'sexes',
-			'move'   => 'moves'
-		);
+			  'move'   => 'moves',
+			  'foot'   => 'feet',
+			  'goose'  => 'geese',
+			  'sex'    => 'sexes',
+			  'child'  => 'children',
+			  'man'    => 'men',
+			  'tooth'  => 'teeth',
+			  'person' => 'people',
+			  'valve'  => 'valves'
+		  );
 
 		$lowercased_word = strtolower( $word );
 
