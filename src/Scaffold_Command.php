@@ -882,7 +882,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 	private function pluralize( $word ) {
 		$plural = array(
-     '/(quiz)$/i'                     => '\1zes',
+			'/(quiz)$/i'                     => '\1zes',
 			'/^(ox)$/i'                      => '\1en',
 			'/([m|l])ouse$/i'                => '\1ice',
 			'/(matr|vert|ind)ix|ex$/i'       => '\1ices',
