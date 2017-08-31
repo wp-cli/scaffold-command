@@ -6,7 +6,7 @@ Feature: WordPress code scaffolding
     Given I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
-    When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --theme_name=Zombieland --author=Tallahassee --author_uri=http://www.wp-cli.org --theme_uri=http://www.zombieland.com`
+    When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --theme_name=Zombieland --author=Tallahassee --author_uri=https://wp-cli.org --theme_uri=http://www.zombieland.com`
     Then the {THEME_DIR}/zombieland/style.css file should exist
     And the {THEME_DIR}/zombieland/functions.php file should exist
     And STDOUT should be:
@@ -49,7 +49,7 @@ Feature: WordPress code scaffolding
   Scenario: Scaffold a child theme and network enable it
     Given a WP multisite install
 
-    When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --theme_name=Zombieland --author=Tallahassee --author_uri=http://www.wp-cli.org --theme_uri=http://www.zombieland.com --enable-network`
+    When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --theme_name=Zombieland --author=Tallahassee --author_uri=https://wp-cli.org --theme_uri=http://www.zombieland.com --enable-network`
     Then STDOUT should contain:
       """
       Success: Network enabled the 'Zombieland' theme.
@@ -240,8 +240,8 @@ Feature: WordPress code scaffolding
       Hello World
       An awesome introductory plugin for WordPress
       WP-CLI
-      http://wp-cli.org
-      http://wp-cli.org
+      https://wp-cli.org
+      https://wp-cli.org
       n
       travis
       Y
