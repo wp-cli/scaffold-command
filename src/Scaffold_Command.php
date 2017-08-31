@@ -198,7 +198,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Generate starter code for a theme based on _s.
 	 *
-	 * See the [Underscores website](http://underscores.me/) for more details.
+	 * See the [Underscores website](https://underscores.me/) for more details.
 	 *
 	 * ## OPTIONS
 	 *
@@ -236,7 +236,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$theme_slug = $args[0];
 		$theme_path = WP_CONTENT_DIR . "/themes";
-		$url        = "http://underscores.me";
+		$url        = "https://underscores.me";
 		$timeout    = 30;
 
 		if ( ! preg_match( '/^[a-z_]\w+$/i', str_replace( '-', '_', $theme_slug ) ) ) {
@@ -581,7 +581,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * * `tests/test-sample.php` is a sample file containing the actual tests.
 	 * * `phpcs.xml.dist` is a collection of PHP_CodeSniffer rules.
 	 *
-	 * Learn more from the [plugin unit tests documentation](http://wp-cli.org/docs/plugin-unit-tests/).
+	 * Learn more from the [plugin unit tests documentation](https://make.wordpress.org/cli/handbook/plugin-unit-tests/).
 	 *
 	 * ## ENVIRONMENT
 	 *
@@ -633,7 +633,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * * `tests/test-sample.php` is a sample file containing the actual tests.
 	 * * `phpcs.xml.dist` is a collection of PHP_CodeSniffer rules.
 	 *
-	 * Learn more from the [plugin unit tests documentation](http://wp-cli.org/docs/plugin-unit-tests/).
+	 * Learn more from the [plugin unit tests documentation](https://make.wordpress.org/cli/handbook/plugin-unit-tests/).
 	 *
 	 * ## ENVIRONMENT
 	 *
