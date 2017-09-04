@@ -1,7 +1,7 @@
 module.exports = function( grunt ) {
 
 	'use strict';
-	var banner = '/**\n * <%= pkg.homepage %>\n * Copyright (c) <%= grunt.template.today("yyyy") %>\n * This file is generated automatically. Do not edit.\n */\n';
+
 	// Project configuration
 	grunt.initConfig( {
 
@@ -15,7 +15,7 @@ module.exports = function( grunt ) {
 				options: {
 					updateDomains: true
 				},
-				src: [ '*.php', '**/*.php', '!node_modules/**', '!php-tests/**', '!bin/**' ]
+				src: [ '*.php', '**/*.php', '!\.git/**/*', '!bin/**/*', '!node_modules/**/*', '!tests/**/*' ]
 			}
 		},
 
@@ -31,6 +31,7 @@ module.exports = function( grunt ) {
 			target: {
 				options: {
 					domainPath: '/languages',
+					exclude: [ '\.git/*', 'bin/*', 'node_modules/*', 'tests/*' ],
 					mainFile: '{{plugin_slug}}.php',
 					potFilename: '{{plugin_slug}}.pot',
 					potHeaders: {
