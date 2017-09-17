@@ -580,13 +580,17 @@ function http_request( $method, $url, $data = null, $headers = array(), $options
 		$request = \Requests::request( $url, $headers, $data, $method, $options );
 		return $request;
 	} catch( \Requests_Exception $ex ) {
+		// CURLE_SSL_CACERT_BADFILE only defined for PHP >= 7.
+		if ( 'curlerror' !== $ex->getType() || ! in_array( curl_errno( $ex->getData() ), array( CURLE_SSL_CONNECT_ERROR, CURLE_SSL_CERTPROBLEM, 77 /*CURLE_SSL_CACERT_BADFILE*/ ), true ) ) {
+			\WP_CLI::error( sprintf( "Failed to get url '%s': %s.", $url, $ex->getMessage() ) );
+		}
 		// Handle SSL certificate issues gracefully
-		\WP_CLI::warning( $ex->getMessage() );
+		\WP_CLI::warning( sprintf( "Re-trying without verify after failing to get verified url '%s' %s.", $url, $ex->getMessage() ) );
 		$options['verify'] = false;
 		try {
 			return \Requests::request( $url, $headers, $data, $method, $options );
 		} catch( \Requests_Exception $ex ) {
-			\WP_CLI::error( $ex->getMessage() );
+			\WP_CLI::error( sprintf( "Failed to get non-verified url '%s' %s.", $url, $ex->getMessage() ) );
 		}
 	}
 }
@@ -774,7 +778,7 @@ function get_temp_dir() {
  * @return mixed
  */
 function parse_ssh_url( $url, $component = -1 ) {
-	preg_match( '#^((docker|docker\-compose|ssh):)?(([^@:]+)@)?([^:/~]+)(:([\d]*))?((/|~)(.+))?$#', $url, $matches );
+	preg_match( '#^((docker|docker\-compose|ssh|vagrant):)?(([^@:]+)@)?([^:/~]+)(:([\d]*))?((/|~)(.+))?$#', $url, $matches );
 	$bits = array();
 	foreach( array(
 		2 => 'scheme',
@@ -817,11 +821,7 @@ function parse_ssh_url( $url, $component = -1 ) {
  */
 function report_batch_operation_results( $noun, $verb, $total, $successes, $failures ) {
 	$plural_noun = $noun . 's';
-	if ( in_array( $verb, array( 'reset' ), true ) ) {
-		$past_tense_verb = $verb;
-	} else {
-		$past_tense_verb = 'e' === substr( $verb, -1 ) ? $verb . 'd' : $verb . 'ed';
-	}
+	$past_tense_verb = past_tense_verb( $verb );
 	$past_tense_verb_upper = ucfirst( $past_tense_verb );
 	if ( $failures ) {
 		if ( $successes ) {
@@ -1066,4 +1066,28 @@ function check_proc_available( $context = null, $return = false ) {
 		}
 	}
 	return true;
+}
+
+/**
+ * Returns past tense of verb, with limited accuracy. Only regular verbs catered for, apart from "reset".
+ *
+ * @param string $verb Verb to return past tense of.
+ *
+ * @return string
+ */
+function past_tense_verb( $verb ) {
+	static $irregular = array( 'reset' => 'reset' );
+	if ( isset( $irregular[ $verb ] ) ) {
+		return $irregular[ $verb ];
+	}
+	$last = substr( $verb, -1 );
+	if ( 'e' === $last ) {
+		$verb = substr( $verb, 0, -1 );
+	} elseif ( 'y' === $last && ! preg_match( '/[aeiou]y$/', $verb ) ) {
+		$verb = substr( $verb, 0, -1 ) . 'i';
+	} elseif ( preg_match( '/^[^aeiou]*[aeiou][^aeiouhwxy]$/', $verb ) ) {
+		// Rule of thumb that most (all?) one-voweled regular verbs ending in vowel + consonant (excluding "h", "w", "x", "y") double their final consonant - misses many cases (eg "submit").
+		$verb .= $last;
+	}
+	return $verb . 'ed';
 }

@@ -39,7 +39,13 @@ matrix:
       env: WP_VERSION=latest
 
 before_install:
-  - phpenv config-rm xdebug.ini
+  - |
+    # Remove Xdebug for a huge performance increase:
+    if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
+      phpenv config-rm xdebug.ini
+    else
+      echo "xdebug.ini does not exist"
+    fi
 
 install:
   - composer require wp-cli/wp-cli:dev-master
