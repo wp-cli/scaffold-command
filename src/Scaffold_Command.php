@@ -881,6 +881,13 @@ class Scaffold_Command extends WP_CLI_Command {
 		return 'YOUR-TEXTDOMAIN';
 	}
 
+	/**
+	 * Pluralize noun
+	 *
+	 * @see    Inflector::pluralize()
+	 * @param  string $word Word to be pluralized.
+	 * @return string
+	 */
 	private function pluralize( $word ) {
 		return Inflector::pluralize( $word );
 	}
