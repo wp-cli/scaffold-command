@@ -17,7 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace WP_CLI\Inflector;
+namespace WP_CLI;
+use WP_CLI;
 
 /**
  * Doctrine inflector has static methods for inflecting text.
