@@ -17,7 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Inflector;
+namespace WP_CLI;
+use WP_CLI;
 
 /**
  * Doctrine inflector has static methods for inflecting text.
@@ -404,7 +405,7 @@ class Inflector
 
         if (preg_match('/(.*)\\b(' . self::$plural['cacheIrregular'] . ')$/i', $word, $regs)) {
             self::$cache['pluralize'][$word] = $regs[1] . substr($word, 0, 1) . substr(self::$plural['merged']['irregular'][strtolower($regs[2])], 1);
-            
+
             return self::$cache['pluralize'][$word];
         }
 
@@ -457,7 +458,7 @@ class Inflector
 
         if (preg_match('/(.*)\\b(' . self::$singular['cacheIrregular'] . ')$/i', $word, $regs)) {
             self::$cache['singularize'][$word] = $regs[1] . substr($word, 0, 1) . substr(self::$singular['merged']['irregular'][strtolower($regs[2])], 1);
-            
+
             return self::$cache['singularize'][$word];
         }
 

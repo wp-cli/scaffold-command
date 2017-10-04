@@ -2,7 +2,7 @@
 
 use WP_CLI\Utils;
 use WP_CLI\Process;
-use Doctrine\Common\Inflector\Inflector;
+use WP_CLI\Inflector;
 
 /**
  * Generate code for post types, taxonomies, plugins, child themes, etc.
