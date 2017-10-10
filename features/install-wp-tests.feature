@@ -117,7 +117,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And the /tmp/behat-wordpress/wp-includes/version.php file should contain:
       """
-      -alpha-
+      -
       """
     And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
 
