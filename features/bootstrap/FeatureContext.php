@@ -55,6 +55,11 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	private static $cache_dir;
 
 	/**
+	 * The directory that holds the install cache, and which is copied to RUN_DIR during a "Given a WP install" step. Recreated on each suite run.
+	 */
+	private static $install_cache_dir;
+
+	/**
 	 * The directory that the WP-CLI cache (WP_CLI_CACHE_DIR, normally "$HOME/.wp-cli/cache") is set to on a "Given an empty cache" step.
 	 * Variable SUITE_CACHE_DIR. Lives until the end of the scenario (or until another "Given an empty cache" step within the scenario).
 	 */
@@ -93,6 +98,19 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	private static $temp_dir_infix;
 
 	/**
+	 * Settings and variables for WP_CLI_TEST_LOG_RUN_TIMES run time logging.
+	 */
+	private static $log_run_times; // Whether to log run times - WP_CLI_TEST_LOG_RUN_TIMES env var. Set on `@BeforeScenario'.
+	private static $suite_start_time; // When the suite started, set on `@BeforeScenario'.
+	private static $output_to; // Where to output log - stdout|error_log. Set on `@BeforeSuite`.
+	private static $num_top_processes; // Number of processes/methods to output by longest run times. Set on `@BeforeSuite`.
+	private static $num_top_scenarios; // Number of scenarios to output by longest run times. Set on `@BeforeSuite`.
+
+	private static $scenario_run_times = array(); // Scenario run times (top `self::$num_top_scenarios` only).
+	private static $scenario_count = 0; // Scenario count, incremented on `@AfterScenario`.
+	private static $proc_method_run_times = array(); // Array of run time info for proc methods, keyed by method name and arg, each a 2-element array containing run time and run count.
+
+	/**
 	 * Get the environment variables required for launched `wp` processes
 	 */
 	private static function get_process_env_variables() {
@@ -102,7 +120,7 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		$env = array(
 			'PATH' =>  $bin_dir . ':' . $vendor_dir . ':' . getenv( 'PATH' ),
 			'BEHAT_RUN' => 1,
-			'HOME' => '/tmp/wp-cli-home',
+			'HOME' => sys_get_temp_dir() . '/wp-cli-home',
 		);
 		if ( $config_path = getenv( 'WP_CLI_CONFIG_PATH' ) ) {
 			$env['WP_CLI_CONFIG_PATH'] = $config_path;
@@ -116,6 +134,9 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		if ( $travis_build_dir = getenv( 'TRAVIS_BUILD_DIR' ) ) {
 			$env['TRAVIS_BUILD_DIR'] = $travis_build_dir;
 		}
+		if ( $github_token = getenv( 'GITHUB_TOKEN' ) ) {
+			$env['GITHUB_TOKEN'] = $github_token;
+		}
 		return $env;
 	}
 
@@ -124,14 +145,15 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	 * Ideally, we'd cache at the HTTP layer for more reliable tests.
 	 */
 	private static function cache_wp_files() {
-		self::$cache_dir = sys_get_temp_dir() . '/wp-cli-test-core-download-cache';
+		$wp_version_suffix = ( $wp_version = getenv( 'WP_VERSION' ) ) ? "-$wp_version" : '';
+		self::$cache_dir = sys_get_temp_dir() . '/wp-cli-test-core-download-cache' . $wp_version_suffix;
 
 		if ( is_readable( self::$cache_dir . '/wp-config-sample.php' ) )
 			return;
 
 		$cmd = Utils\esc_cmd( 'wp core download --force --path=%s', self::$cache_dir );
-		if ( getenv( 'WP_VERSION' ) ) {
-			$cmd .= Utils\esc_cmd( ' --version=%s', getenv( 'WP_VERSION' ) );
+		if ( $wp_version ) {
+			$cmd .= Utils\esc_cmd( ' --version=%s', $wp_version );
 		}
 		Process::create( $cmd, null, self::get_process_env_variables() )->run_check();
 	}
@@ -140,6 +162,11 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	 * @BeforeSuite
 	 */
 	public static function prepare( SuiteEvent $event ) {
+		// Test performance statistics - useful for detecting slow tests.
+		if ( self::$log_run_times = getenv( 'WP_CLI_TEST_LOG_RUN_TIMES' ) ) {
+			self::log_run_times_before_suite( $event );
+		}
+
 		$result = Process::create( 'wp cli info', null, self::get_process_env_variables() )->run_check();
 		echo PHP_EOL;
 		echo $result->stdout;
@@ -148,6 +175,13 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		$result = Process::create( Utils\esc_cmd( 'wp core version --path=%s', self::$cache_dir ) , null, self::get_process_env_variables() )->run_check();
 		echo 'WordPress ' . $result->stdout;
 		echo PHP_EOL;
+
+		// Remove install cache if any (not setting the static var).
+		$wp_version_suffix = ( $wp_version = getenv( 'WP_VERSION' ) ) ? "-$wp_version" : '';
+		$install_cache_dir = sys_get_temp_dir() . '/wp-cli-test-core-install-cache' . $wp_version_suffix;
+		if ( file_exists( $install_cache_dir ) ) {
+			self::remove_dir( $install_cache_dir );
+		}
 	}
 
 	/**
@@ -158,12 +192,20 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 			self::remove_dir( self::$composer_local_repository );
 			self::$composer_local_repository = null;
 		}
+
+		if ( self::$log_run_times ) {
+			self::log_run_times_after_suite( $event );
+		}
 	}
 
 	/**
 	 * @BeforeScenario
 	 */
 	public function beforeScenario( $event ) {
+		if ( self::$log_run_times ) {
+			self::log_run_times_before_scenario( $event );
+		}
+
 		$this->variables['SRC_DIR'] = realpath( __DIR__ . '/../..' );
 
 		// Used in the names of the RUN_DIR and SUITE_CACHE_DIR directories.
@@ -201,6 +243,10 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		foreach ( $this->running_procs as $proc ) {
 			$status = proc_get_status( $proc );
 			self::terminate_proc( $status['pid'] );
+		}
+
+		if ( self::$log_run_times ) {
+			self::log_run_times_after_scenario( $event );
 		}
 	}
 
@@ -338,6 +384,8 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 			$scenario_feature = $event->getScenario();
 		} elseif ( method_exists( $event, 'getFeature' ) ) {
 			$scenario_feature = $event->getFeature();
+		} elseif ( method_exists( $event, 'getOutline' ) ) {
+			$scenario_feature = $event->getOutline();
 		} else {
 			return null;
 		}
@@ -410,23 +458,37 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		$this->variables['CACHE_DIR'] = $path;
 	}
 
-	private static function run_sql( $sql ) {
-		Utils\run_mysql_command( '/usr/bin/env mysql --no-defaults', array(
-			'execute' => $sql,
+	/**
+	 * Run a MySQL command with `$db_settings`.
+	 *
+	 * @param string $sql_cmd Command to run.
+	 * @param array $assoc_args Optional. Associative array of options. Default empty.
+	 * @param bool $add_database Optional. Whether to add dbname to the $sql_cmd. Default false.
+	 */
+	private static function run_sql( $sql_cmd, $assoc_args = array(), $add_database = false ) {
+		$default_assoc_args = array(
 			'host' => self::$db_settings['dbhost'],
 			'user' => self::$db_settings['dbuser'],
 			'pass' => self::$db_settings['dbpass'],
-		) );
+		);
+		if ( $add_database ) {
+			$sql_cmd .= ' ' . escapeshellarg( self::$db_settings['dbname'] );
+		}
+		$start_time = microtime( true );
+		Utils\run_mysql_command( $sql_cmd, array_merge( $assoc_args, $default_assoc_args ) );
+		if ( self::$log_run_times ) {
+			self::log_proc_method_run_time( 'run_sql ' . $sql_cmd, $start_time );
+		}
 	}
 
 	public function create_db() {
 		$dbname = self::$db_settings['dbname'];
-		self::run_sql( "CREATE DATABASE IF NOT EXISTS $dbname" );
+		self::run_sql( 'mysql --no-defaults', array( 'execute' => "CREATE DATABASE IF NOT EXISTS $dbname" ) );
 	}
 
 	public function drop_db() {
 		$dbname = self::$db_settings['dbname'];
-		self::run_sql( "DROP DATABASE IF EXISTS $dbname" );
+		self::run_sql( 'mysql --no-defaults', array( 'execute' => "DROP DATABASE IF EXISTS $dbname" ) );
 	}
 
 	public function proc( $command, $assoc_args = array(), $path = '' ) {
@@ -520,10 +582,29 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 			$params['extra-php'] = $extra_php;
 		}
 
-		$this->proc( 'wp core config', $params, $subdir )->run_check();
+		$config_cache_path = '';
+		if ( self::$install_cache_dir ) {
+			$config_cache_path = self::$install_cache_dir . '/config_' . md5( implode( ':', $params ) . ':subdir=' . $subdir );
+			$run_dir = '' !== $subdir ? ( $this->variables['RUN_DIR'] . "/$subdir" ) : $this->variables['RUN_DIR'];
+		}
+
+		if ( $config_cache_path && file_exists( $config_cache_path ) ) {
+			copy( $config_cache_path, $run_dir . '/wp-config.php' );
+		} else {
+			$this->proc( 'wp config create', $params, $subdir )->run_check();
+			if ( $config_cache_path && file_exists( $run_dir . '/wp-config.php' ) ) {
+				copy( $run_dir . '/wp-config.php', $config_cache_path );
+			}
+		}
 	}
 
 	public function install_wp( $subdir = '' ) {
+		$wp_version_suffix = ( $wp_version = getenv( 'WP_VERSION' ) ) ? "-$wp_version" : '';
+		self::$install_cache_dir = sys_get_temp_dir() . '/wp-cli-test-core-install-cache' . $wp_version_suffix;
+		if ( ! file_exists( self::$install_cache_dir ) ) {
+			mkdir( self::$install_cache_dir );
+		}
+
 		$subdir = $this->replace_variables( $subdir );
 
 		$this->create_db();
@@ -539,7 +620,23 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 			'admin_password' => 'password1'
 		);
 
-		$this->proc( 'wp core install', $install_args, $subdir )->run_check();
+		$install_cache_path = '';
+		if ( self::$install_cache_dir ) {
+			$install_cache_path = self::$install_cache_dir . '/install_' . md5( implode( ':', $install_args ) . ':subdir=' . $subdir );
+			$run_dir = '' !== $subdir ? ( $this->variables['RUN_DIR'] . "/$subdir" ) : $this->variables['RUN_DIR'];
+		}
+
+		if ( $install_cache_path && file_exists( $install_cache_path ) ) {
+			self::copy_dir( $install_cache_path, $run_dir );
+			self::run_sql( 'mysql --no-defaults', array( 'execute' => "source {$install_cache_path}.sql" ), true /*add_database*/ );
+		} else {
+			$this->proc( 'wp core install', $install_args, $subdir )->run_check();
+			if ( $install_cache_path ) {
+				mkdir( $install_cache_path );
+				self::dir_diff_copy( $run_dir, self::$cache_dir, $install_cache_path );
+				self::run_sql( 'mysqldump --no-defaults', array( 'result-file' => "{$install_cache_path}.sql" ), true /*add_database*/ );
+			}
+		}
 	}
 
 	public function install_wp_with_composer( $vendor_directory = 'vendor' ) {
@@ -602,11 +699,15 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		return 'php';
 	}
 
-	public function start_php_server() {
+	public function start_php_server( $subdir = '' ) {
+		$dir = $this->variables['RUN_DIR'] . '/';
+		if ( $subdir ) {
+			$dir .= trim( $subdir, '/' ) . '/';
+		}
 		$cmd = Utils\esc_cmd( '%s -S %s -t %s -c %s %s',
 			$this->get_php_binary(),
 			'localhost:8080',
-			$this->variables['RUN_DIR'] . '/wordpress/',
+			$dir,
 			get_cfg_var( 'cfg_file_path' ),
 			$this->variables['RUN_DIR'] . '/vendor/wp-cli/server-command/router.php'
 		);
@@ -618,6 +719,189 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 			$this->variables['COMPOSER_PATH'] = exec('which composer');
 		}
 		$this->proc( $this->variables['COMPOSER_PATH'] . ' ' . $cmd )->run_check();
+	}
+
+	/**
+	 * Initialize run time logging.
+	 */
+	private static function log_run_times_before_suite( $event ) {
+		self::$suite_start_time = microtime( true );
+
+		Process::$log_run_times = true;
+
+		$travis = getenv( 'TRAVIS' );
+
+		// Default output settings.
+		self::$output_to = 'stdout';
+		self::$num_top_processes = $travis ? 10 : 40;
+		self::$num_top_scenarios = $travis ? 10 : 20;
+
+		// Allow setting of above with "WP_CLI_TEST_LOG_RUN_TIMES=<output_to>[,<num_top_processes>][,<num_top_scenarios>]" formatted env var.
+		if ( preg_match( '/^(stdout|error_log)?(,[0-9]+)?(,[0-9]+)?$/i', self::$log_run_times, $matches ) ) {
+			if ( isset( $matches[1] ) ) {
+				self::$output_to = strtolower( $matches[1] );
+			}
+			if ( isset( $matches[2] ) ) {
+				self::$num_top_processes = max( (int) substr( $matches[2], 1 ), 1 );
+			}
+			if ( isset( $matches[3] ) ) {
+				self::$num_top_scenarios = max( (int) substr( $matches[3], 1 ), 1 );
+			}
+		}
+	}
+
+	/**
+	 * Record the start time of the scenario into the `$scenario_run_times` array.
+	 */
+	private static function log_run_times_before_scenario( $event ) {
+		if ( $scenario_key = self::get_scenario_key( $event ) ) {
+			self::$scenario_run_times[ $scenario_key ] = -microtime( true );
+		}
+	}
+
+	/**
+	 * Save the run time of the scenario into the `$scenario_run_times` array. Only the top `self::$num_top_scenarios` are kept.
+	 */
+	private static function log_run_times_after_scenario( $event ) {
+		if ( $scenario_key = self::get_scenario_key( $event ) ) {
+			self::$scenario_run_times[ $scenario_key ] += microtime( true );
+			self::$scenario_count++;
+			if ( count( self::$scenario_run_times ) > self::$num_top_scenarios ) {
+				arsort( self::$scenario_run_times );
+				array_pop( self::$scenario_run_times );
+			}
+		}
+	}
+
+	/**
+	 * Copy files in updated directory that are not in source directory to copy directory. ("Incremental backup".)
+	 * Note: does not deal with changed files (ie does not compare file contents for changes), for speed reasons.
+	 *
+	 * @param string $upd_dir The directory to search looking for files/directories not in `$src_dir`.
+	 * @param string $src_dir The directory to be compared to `$upd_dir`.
+	 * @param string $cop_dir Where to copy any files/directories in `$upd_dir` but not in `$src_dir` to.
+	 */
+	private static function dir_diff_copy( $upd_dir, $src_dir, $cop_dir ) {
+		if ( false === ( $files = scandir( $upd_dir ) ) ) {
+			$error = error_get_last();
+			throw new \RuntimeException( sprintf( "Failed to open updated directory '%s': %s. " . __FILE__ . ':' . __LINE__, $upd_dir, $error['message'] ) );
+		}
+		foreach ( array_diff( $files, array( '.', '..' ) ) as $file ) {
+			$upd_file = $upd_dir . '/' . $file;
+			$src_file = $src_dir . '/' . $file;
+			$cop_file = $cop_dir . '/' . $file;
+			if ( ! file_exists( $src_file ) ) {
+				if ( is_dir( $upd_file ) ) {
+					if ( ! file_exists( $cop_file ) && ! mkdir( $cop_file, 0777, true /*recursive*/ ) ) {
+						$error = error_get_last();
+						throw new \RuntimeException( sprintf( "Failed to create copy directory '%s': %s. " . __FILE__ . ':' . __LINE__, $cop_file, $error['message'] ) );
+					}
+					self::copy_dir( $upd_file, $cop_file );
+				} else {
+					if ( ! copy( $upd_file, $cop_file ) ) {
+						$error = error_get_last();
+						throw new \RuntimeException( sprintf( "Failed to copy '%s' to '%s': %s. " . __FILE__ . ':' . __LINE__, $upd_file, $cop_file, $error['message'] ) );
+					}
+				}
+			} elseif ( is_dir( $upd_file ) ) {
+				self::dir_diff_copy( $upd_file, $src_file, $cop_file );
+			}
+		}
+	}
+
+	/**
+	 * Get the scenario key used for `$scenario_run_times` array.
+	 * Format "<grandparent-dir> <feature-file>:<line-number>", eg "core-command core-update.feature:221".
+	 */
+	private static function get_scenario_key( $event ) {
+		$scenario_key = '';
+		if ( $file = self::get_event_file( $event, $line ) ) {
+			$scenario_grandparent = Utils\basename( dirname( dirname( $file ) ) );
+			$scenario_key = $scenario_grandparent . ' ' . Utils\basename( $file ) . ':' . $line;
+		}
+		return $scenario_key;
+	}
+
+	/**
+	 * Print out stats on the run times of processes and scenarios.
+	 */
+	private static function log_run_times_after_suite( $event ) {
+
+		$suite = '';
+		if ( self::$scenario_run_times ) {
+			// Grandparent directory is first part of key.
+			$keys = array_keys( self::$scenario_run_times );
+			$suite = substr( $keys[0], 0, strpos( $keys[0], ' ' ) );
+		}
+
+		$run_from = Utils\basename( dirname( dirname( __DIR__ ) ) );
+
+		// Format same as Behat, if have minutes.
+		$fmt = function ( $time ) {
+			$mins = floor( $time / 60 );
+			return round( $time, 3 ) . ( $mins ? ( ' (' . $mins . 'm' . round( $time - ( $mins * 60 ), 3 ) . 's)' ) : '' );
+		};
+
+		$time = microtime( true ) - self::$suite_start_time;
+
+		$log = PHP_EOL . str_repeat( '(', 80 ) . PHP_EOL;
+
+		// Process and proc method run times.
+		$run_times = array_merge( Process::$run_times, self::$proc_method_run_times );
+
+		list( $ptime, $calls ) = array_reduce( $run_times, function ( $carry, $item ) {
+			return array( $carry[0] + $item[0], $carry[1] + $item[1] );
+		}, array( 0, 0 ) );
+
+		$overhead = $time - $ptime;
+		$pct = round( ( $overhead / $time ) * 100 );
+		$unique = count( $run_times );
+
+		$log .= sprintf(
+			PHP_EOL . "Total process run time %s (tests %s, overhead %.3f %d%%), calls %d (%d unique) for '%s' run from '%s'" . PHP_EOL,
+			$fmt( $ptime ), $fmt( $time ), $overhead, $pct, $calls, $unique, $suite, $run_from
+		);
+
+		uasort( $run_times, function ( $a, $b ) {
+			return $a[0] === $b[0] ? 0 : ( $a[0] < $b[0] ? 1 : -1 ); // Reverse sort.
+		} );
+
+		$tops = array_slice( $run_times, 0, self::$num_top_processes, true );
+
+		$log .= PHP_EOL . "Top " . self::$num_top_processes . " process run times for '$suite'";
+		$log .= PHP_EOL . implode( PHP_EOL, array_map( function ( $k, $v, $i ) {
+			return sprintf( ' %3d. %7.3f %3d %s', $i + 1, round( $v[0], 3 ), $v[1], $k );
+		}, array_keys( $tops ), $tops, array_keys( array_keys( $tops ) ) ) ) . PHP_EOL;
+
+		// Scenario run times.
+		arsort( self::$scenario_run_times );
+
+		$tops = array_slice( self::$scenario_run_times, 0, self::$num_top_scenarios, true );
+
+		$log .= PHP_EOL . "Top " . self::$num_top_scenarios . " (of " . self::$scenario_count . ") scenario run times for '$suite'";
+		$log .= PHP_EOL . implode( PHP_EOL, array_map( function ( $k, $v, $i ) {
+			return sprintf( ' %3d. %7.3f %s', $i + 1, round( $v, 3 ), substr( $k, strpos( $k, ' ' ) + 1 ) );
+		}, array_keys( $tops ), $tops, array_keys( array_keys( $tops ) ) ) ) . PHP_EOL;
+
+		$log .= PHP_EOL . str_repeat( ')', 80 );
+
+		if ( 'error_log' === self::$output_to ) {
+			error_log( $log );
+		} else {
+			echo PHP_EOL . $log;
+		}
+	}
+
+	/**
+	 * Log the run time of a proc method (one that doesn't use Process but does (use a function that does) a `proc_open()`).
+	 */
+	private static function log_proc_method_run_time( $key, $start_time ) {
+		$run_time = microtime( true ) - $start_time;
+		if ( ! isset( self::$proc_method_run_times[ $key ] ) ) {
+			self::$proc_method_run_times[ $key ] = array( 0, 0 );
+		}
+		self::$proc_method_run_times[ $key ][0] += $run_time;
+		self::$proc_method_run_times[ $key ][1]++;
 	}
 
 }
