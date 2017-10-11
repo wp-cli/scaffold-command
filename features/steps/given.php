@@ -211,9 +211,3 @@ $steps->Given( '/^a PHP built-in web server$/',
 		$world->start_php_server();
 	}
 );
-
-$steps->Given( "/^a PHP built-in web server to serve '([^\s]+)'$/",
-	function ( $world, $subdir ) {
-		$world->start_php_server( $subdir );
-	}
-);

@@ -22,25 +22,6 @@ class Process {
 	private $env;
 
 	/**
-	 * @var array Descriptor spec for `proc_open()`.
-	 */
-	private static $descriptors = array(
-		0 => STDIN,
-		1 => array( 'pipe', 'w' ),
-		2 => array( 'pipe', 'w' ),
-	);
-
-	/**
-	 * @var bool Whether to log run time info or not.
-	 */
-	public static $log_run_times = false;
-
-	/**
-	 * @var array Array of process run time info, keyed by process command, each a 2-element array containing run time and run count.
-	 */
-	public static $run_times = array();
-
-	/**
 	 * @param string $command Command to execute.
 	 * @param string $cwd Directory to execute the command in.
 	 * @param array $env Environment variables to set when running the command.
@@ -65,9 +46,15 @@ class Process {
 	 * @return ProcessRun
 	 */
 	public function run() {
-		$start_time = microtime( true );
+		$cwd = $this->cwd;
 
-		$proc = proc_open( $this->command, self::$descriptors, $pipes, $this->cwd, $this->env );
+		$descriptors = array(
+			0 => STDIN,
+			1 => array( 'pipe', 'w' ),
+			2 => array( 'pipe', 'w' ),
+		);
+
+		$proc = proc_open( $this->command, $descriptors, $pipes, $cwd, $this->env );
 
 		$stdout = stream_get_contents( $pipes[1] );
 		fclose( $pipes[1] );
@@ -75,29 +62,14 @@ class Process {
 		$stderr = stream_get_contents( $pipes[2] );
 		fclose( $pipes[2] );
 
-		$return_code = proc_close( $proc );
-
-		$run_time = microtime( true ) - $start_time;
-
-		if ( self::$log_run_times ) {
-			if ( ! isset( self::$run_times[ $this->command ] ) ) {
-				self::$run_times[ $this->command ] = array( 0, 0 );
-			}
-			self::$run_times[ $this->command ][0] += $run_time;
-			self::$run_times[ $this->command ][1]++;
-		}
-
-		return new ProcessRun(
-			array(
-				'stdout' => $stdout,
-				'stderr' => $stderr,
-				'return_code' => $return_code,
-				'command' => $this->command,
-				'cwd' => $this->cwd,
-				'env' => $this->env,
-				'run_time' => $run_time,
-			)
-		);
+		return new ProcessRun( array(
+			'stdout' => $stdout,
+			'stderr' => $stderr,
+			'return_code' => proc_close( $proc ),
+			'command' => $this->command,
+			'cwd' => $cwd,
+			'env' => $this->env,
+		) );
 	}
 
 	/**
@@ -109,7 +81,7 @@ class Process {
 		$r = $this->run();
 
 		// $r->STDERR is incorrect, but kept incorrect for backwards-compat
-		if ( $r->return_code || ! empty( $r->STDERR ) ) {
+		if ( $r->return_code || !empty( $r->STDERR ) ) {
 			throw new \RuntimeException( $r );
 		}
 
