@@ -30,7 +30,9 @@ function extract_from_phar( $path ) {
 
 	register_shutdown_function(
 		function() use ( $tmp_path ) {
-			@unlink( $tmp_path );
+			if ( file_exists( $tmp_path ) ) {
+				unlink( $tmp_path );
+			}
 		}
 	);
 
@@ -58,7 +60,7 @@ function load_dependencies() {
 	}
 
 	if ( ! $has_autoload ) {
-		fputs( STDERR, "Internal error: Can't find Composer autoloader.\nTry running: composer install\n" );
+		fwrite( STDERR, "Internal error: Can't find Composer autoloader.\nTry running: composer install\n" );
 		exit( 3 );
 	}
 }
@@ -138,7 +140,7 @@ function find_file_upward( $files, $dir = null, $stop_check = null ) {
 	if ( is_null( $dir ) ) {
 		$dir = getcwd();
 	}
-	while ( @is_readable( $dir ) ) {
+	while ( is_readable( $dir ) ) {
 		// Stop walking up when the supplied callable returns true being passed the $dir
 		if ( is_callable( $stop_check ) && call_user_func( $stop_check, $dir ) ) {
 			return null;
@@ -166,7 +168,7 @@ function is_path_absolute( $path ) {
 		return true;
 	}
 
-	return $path[0] === '/';
+	return '/' === $path[0];
 }
 
 /**
@@ -227,12 +229,12 @@ function locate_wp_config() {
 	static $path;
 
 	if ( null === $path ) {
+		$path = false;
+
 		if ( file_exists( ABSPATH . 'wp-config.php' ) ) {
 			$path = ABSPATH . 'wp-config.php';
 		} elseif ( file_exists( ABSPATH . '../wp-config.php' ) && ! file_exists( ABSPATH . '/../wp-settings.php' ) ) {
 			$path = ABSPATH . '../wp-config.php';
-		} else {
-			$path = false;
 		}
 
 		if ( $path ) {
@@ -244,7 +246,9 @@ function locate_wp_config() {
 }
 
 function wp_version_compare( $since, $operator ) {
-	return version_compare( str_replace( array( '-src' ), '', $GLOBALS['wp_version'] ), $since, $operator );
+	$wp_version = str_replace( '-src', '', $GLOBALS['wp_version'] );
+	$since = str_replace( '-src', '', $since );
+	return version_compare( $wp_version, $since, $operator );
 }
 
 /**
@@ -358,9 +362,9 @@ function launch_editor_for_input( $input, $filename = 'WP-CLI' ) {
 	do {
 		$tmpfile = basename( $filename );
 		$tmpfile = preg_replace( '|\.[^.]*$|', '', $tmpfile );
-		$tmpfile .= '-' . substr( md5( rand() ), 0, 6 );
+		$tmpfile .= '-' . substr( md5( mt_rand() ), 0, 6 );
 		$tmpfile = $tmpdir . $tmpfile . '.tmp';
-		$fp = @fopen( $tmpfile, 'x' );
+		$fp = fopen( $tmpfile, 'xb' );
 		if ( ! $fp && is_writable( $tmpdir ) && file_exists( $tmpfile ) ) {
 			$tmpfile = '';
 			continue;
@@ -379,10 +383,10 @@ function launch_editor_for_input( $input, $filename = 'WP-CLI' ) {
 
 	$editor = getenv( 'EDITOR' );
 	if ( ! $editor ) {
+		$editor = 'vi';
+
 		if ( isset( $_SERVER['OS'] ) && false !== strpos( $_SERVER['OS'], 'indows' ) ) {
 			$editor = 'notepad';
-		} else {
-			$editor = 'vi';
 		}
 	}
 
@@ -416,9 +420,9 @@ function mysql_host_to_cli_args( $raw_host ) {
 		list( $assoc_args['host'], $extra ) = $host_parts;
 		$extra = trim( $extra );
 		if ( is_numeric( $extra ) ) {
-			$assoc_args['port'] = intval( $extra );
+			$assoc_args['port'] = (int) $extra;
 			$assoc_args['protocol'] = 'tcp';
-		} elseif ( $extra !== '' ) {
+		} elseif ( '' !== $extra ) {
 			$assoc_args['socket'] = $extra;
 		}
 	} else {
@@ -436,7 +440,9 @@ function run_mysql_command( $cmd, $assoc_args, $descriptors = null ) {
 	}
 
 	if ( isset( $assoc_args['host'] ) ) {
+		//@codingStandardsIgnoreStart
 		$assoc_args = array_merge( $assoc_args, mysql_host_to_cli_args( $assoc_args['host'] ) );
+		//@codingStandardsIgnoreEnd
 	}
 
 	$pass = $assoc_args['pass'];
@@ -581,6 +587,7 @@ function replace_path_consts( $source, $path ) {
 function http_request( $method, $url, $data = null, $headers = array(), $options = array() ) {
 
 	$cert_path = '/rmccue/requests/library/Requests/Transport/cacert.pem';
+	$halt_on_error = ! isset( $options['halt_on_error'] ) || (bool) $options['halt_on_error'];
 	if ( inside_phar() ) {
 		// cURL can't read Phar archives
 		$options['verify'] = extract_from_phar(
@@ -594,17 +601,24 @@ function http_request( $method, $url, $data = null, $headers = array(), $options
 			}
 		}
 		if ( empty( $options['verify'] ) ) {
-			WP_CLI::error( 'Cannot find SSL certificate.' );
+			$error_msg = 'Cannot find SSL certificate.';
+			if ( $halt_on_error ) {
+				WP_CLI::error( $error_msg );
+			}
+			throw new \RuntimeException( $error_msg );
 		}
 	}
 
 	try {
-		$request = \Requests::request( $url, $headers, $data, $method, $options );
-		return $request;
+		return \Requests::request( $url, $headers, $data, $method, $options );
 	} catch ( \Requests_Exception $ex ) {
 		// CURLE_SSL_CACERT_BADFILE only defined for PHP >= 7.
 		if ( 'curlerror' !== $ex->getType() || ! in_array( curl_errno( $ex->getData() ), array( CURLE_SSL_CONNECT_ERROR, CURLE_SSL_CERTPROBLEM, 77 /*CURLE_SSL_CACERT_BADFILE*/ ), true ) ) {
-			\WP_CLI::error( sprintf( "Failed to get url '%s': %s.", $url, $ex->getMessage() ) );
+			$error_msg = sprintf( "Failed to get url '%s': %s.", $url, $ex->getMessage() );
+			if ( $halt_on_error ) {
+				WP_CLI::error( $error_msg );
+			}
+			throw new \RuntimeException( $error_msg, null, $ex );
 		}
 		// Handle SSL certificate issues gracefully
 		\WP_CLI::warning( sprintf( "Re-trying without verify after failing to get verified url '%s' %s.", $url, $ex->getMessage() ) );
@@ -612,7 +626,11 @@ function http_request( $method, $url, $data = null, $headers = array(), $options
 		try {
 			return \Requests::request( $url, $headers, $data, $method, $options );
 		} catch ( \Requests_Exception $ex ) {
-			\WP_CLI::error( sprintf( "Failed to get non-verified url '%s' %s.", $url, $ex->getMessage() ) );
+			$error_msg = sprintf( "Failed to get non-verified url '%s' %s.", $url, $ex->getMessage() );
+			if ( $halt_on_error ) {
+				WP_CLI::error( $error_msg );
+			}
+			throw new \RuntimeException( $error_msg, null, $ex );
 		}
 	}
 }
@@ -698,11 +716,13 @@ function get_named_sem_ver( $new_version, $original_version ) {
 
 	if ( ! is_null( $minor ) && Semver::satisfies( $new_version, "{$major}.{$minor}.x" ) ) {
 		return 'patch';
-	} elseif ( Semver::satisfies( $new_version, "{$major}.x.x" ) ) {
-		return 'minor';
-	} else {
-		return 'major';
 	}
+
+	if ( Semver::satisfies( $new_version, "{$major}.x.x" ) ) {
+		return 'minor';
+	}
+
+	return 'major';
 }
 
 /**
@@ -770,16 +790,16 @@ function get_temp_dir() {
 		return $temp;
 	}
 
+	$temp = '/tmp/';
+
 	// `sys_get_temp_dir()` introduced PHP 5.2.1.
 	if ( $try = sys_get_temp_dir() ) {
 		$temp = trailingslashit( $try );
 	} elseif ( $try = ini_get( 'upload_tmp_dir' ) ) {
 		$temp = trailingslashit( $try );
-	} else {
-		$temp = '/tmp/';
 	}
 
-	if ( ! @is_writable( $temp ) ) {
+	if ( ! is_writable( $temp ) ) {
 		\WP_CLI::warning( "Temp directory isn't writable: {$temp}" );
 	}
 
@@ -835,25 +855,28 @@ function parse_ssh_url( $url, $component = -1 ) {
  * @access public
  * @category Input
  *
- * @param string  $noun      Resource being affected (e.g. plugin)
- * @param string  $verb      Type of action happening to the noun (e.g. activate)
- * @param integer $total     Total number of resource being affected.
- * @param integer $successes Number of successful operations.
- * @param integer $failures  Number of failures.
+ * @param string       $noun      Resource being affected (e.g. plugin)
+ * @param string       $verb      Type of action happening to the noun (e.g. activate)
+ * @param integer      $total     Total number of resource being affected.
+ * @param integer      $successes Number of successful operations.
+ * @param integer      $failures  Number of failures.
+ * @param null|integer $skips     Optional. Number of skipped operations. Default null (don't show skips).
  */
-function report_batch_operation_results( $noun, $verb, $total, $successes, $failures ) {
+function report_batch_operation_results( $noun, $verb, $total, $successes, $failures, $skips = null ) {
 	$plural_noun = $noun . 's';
 	$past_tense_verb = past_tense_verb( $verb );
 	$past_tense_verb_upper = ucfirst( $past_tense_verb );
 	if ( $failures ) {
+		$failed_skipped_message = null === $skips ? '' : " ({$failures} failed" . ( $skips ? ", {$skips} skipped" : '' ) . ')';
 		if ( $successes ) {
-			WP_CLI::error( "Only {$past_tense_verb} {$successes} of {$total} {$plural_noun}." );
+			WP_CLI::error( "Only {$past_tense_verb} {$successes} of {$total} {$plural_noun}{$failed_skipped_message}." );
 		} else {
-			WP_CLI::error( "No {$plural_noun} {$past_tense_verb}." );
+			WP_CLI::error( "No {$plural_noun} {$past_tense_verb}{$failed_skipped_message}." );
 		}
 	} else {
-		if ( $successes ) {
-			WP_CLI::success( "{$past_tense_verb_upper} {$successes} of {$total} {$plural_noun}." );
+		$skipped_message = $skips ? " ({$skips} skipped)" : '';
+		if ( $successes || $skips ) {
+			WP_CLI::success( "{$past_tense_verb_upper} {$successes} of {$total} {$plural_noun}{$skipped_message}." );
 		} else {
 			$message = $total > 1 ? ucfirst( $plural_noun ) : ucfirst( $noun );
 			WP_CLI::success( "{$message} already {$past_tense_verb}." );
@@ -876,7 +899,7 @@ function parse_str_to_argv( $arguments ) {
 	$argv = array_map(
 		function( $arg ) {
 			foreach ( array( '"', "'" ) as $char ) {
-				if ( $char === substr( $arg, 0, 1 ) && $char === substr( $arg, -1 ) ) {
+				if ( substr( $arg, 0, 1 ) === $char && substr( $arg, -1 ) === $char ) {
 					$arg = substr( $arg, 1, -1 );
 					break;
 				}
@@ -916,14 +939,15 @@ function basename( $path, $suffix = '' ) {
  *
  * @return bool
  */
+// @codingStandardsIgnoreLine
 function isPiped() {
 	$shellPipe = getenv( 'SHELL_PIPE' );
 
-	if ( $shellPipe !== false ) {
+	if ( false !== $shellPipe ) {
 		return filter_var( $shellPipe, FILTER_VALIDATE_BOOLEAN );
-	} else {
-		return (function_exists( 'posix_isatty' ) && ! posix_isatty( STDOUT ));
 	}
+
+	return (function_exists( 'posix_isatty' ) && ! posix_isatty( STDOUT ));
 }
 
 /**
@@ -992,9 +1016,11 @@ function glob_brace( $pattern, $dummy_flags = null ) {
 					}
 					$current++;
 				} else {
-					if ( ( '}' === $pattern[ $current ] && $depth-- === 0 ) || ( ',' === $pattern[ $current ] && 0 === $depth ) ) {
+					if ( ( '}' === $pattern[ $current ] && 0 === $depth-- ) || ( ',' === $pattern[ $current ] && 0 === $depth ) ) {
 						break;
-					} elseif ( '{' === $pattern[ $current++ ] ) {
+					}
+
+					if ( '{' === $pattern[ $current++ ] ) {
 						$depth++;
 					}
 				}
@@ -1038,7 +1064,7 @@ function glob_brace( $pattern, $dummy_flags = null ) {
 					. substr( $pattern, $p, $next - $p )
 					. substr( $pattern, $rest + 1 );
 
-		if ( ( $result = glob_brace( $subpattern ) ) ) {
+		if ( $result = glob_brace( $subpattern ) ) {
 			$paths = array_merge( $paths, $result );
 		}
 
@@ -1070,6 +1096,31 @@ function glob_brace( $pattern, $dummy_flags = null ) {
  * @return string
  */
 function get_suggestion( $target, array $options, $threshold = 2 ) {
+
+	$suggestion_map = array(
+		'check' => 'check-update',
+		'clear' => 'flush',
+		'decrement' => 'decr',
+		'del' => 'delete',
+		'directory' => 'dir',
+		'exec' => 'eval',
+		'exec-file' => 'eval-file',
+		'increment' => 'incr',
+		'language' => 'locale',
+		'lang' => 'locale',
+		'new' => 'create',
+		'number' => 'count',
+		'remove' => 'delete',
+		'regen' => 'regenerate',
+		'rep' => 'replace',
+		'repl' => 'replace',
+		'v' => 'version',
+	);
+
+	if ( array_key_exists( $target, $suggestion_map ) ) {
+		return $suggestion_map[ $target ];
+	}
+
 	if ( empty( $options ) ) {
 		return '';
 	}
