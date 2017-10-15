@@ -39,3 +39,19 @@ PHPunit:PHP5.6:MySQL:
   script:
   - phpcs
   - phpunit
+  
+PHPunit:PHP7.0:MySQL:
+  image: tetraweb/php:7.0
+  services:
+    - mysql:5.6
+  script:
+  - phpcs
+  - phpunit
+
+PHPunit:PHP7.1:MySQL:
+  image: tetraweb/php:7.1
+  services:
+    - mysql:5.6
+  script:
+  - phpcs
+  - phpunit
