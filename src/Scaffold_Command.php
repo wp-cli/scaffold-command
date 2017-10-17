@@ -77,6 +77,10 @@ class Scaffold_Command extends WP_CLI_Command {
 			'dashicon'   => 'admin-post',
 		);
 
+		if ( $assoc_args['dashicon'] ) {
+			$assoc_args['dashicon'] = preg_replace( '/dashicon(-|s-)/', '', $assoc_args['dashicon'] );
+		}
+
 		$this->_scaffold( $args[0], $assoc_args, $defaults, '/post-types/', array(
 			'post_type.mustache',
 			'post_type_extended.mustache',
