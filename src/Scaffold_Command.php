@@ -150,6 +150,11 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$vars = $this->extract_args( $assoc_args, $defaults );
 
+		$dashicon = \WP_CLI\Utils\get_flag_value( $assoc_args, 'dashicon' );
+		if ( $dashicon ) {
+			$vars['dashicon'] = preg_replace( '/dashicon(-|s-)/', '', $dashicon );
+		}
+
 		$vars['slug'] = $slug;
 
 		$vars['textdomain'] = $this->get_textdomain( $vars['textdomain'], $control_args );
