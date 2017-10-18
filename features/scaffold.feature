@@ -173,6 +173,22 @@ Feature: WordPress code scaffolding
       'menu_icon'         => 'dashicons-art',
       """
 
+  Scenario: Scaffold a Custom Post Type with dashicon in the case of passing "dashicon-info"
+    Given a WP install
+    When I run `wp scaffold post-type zombie --dashicon="dashicon-info"`
+    Then STDOUT should contain:
+      """
+      'menu_icon'         => 'dashicons-info',
+      """
+
+  Scenario: Scaffold a Custom Post Type with dashicon in the case of passing "dashicons-info"
+    Given a WP install
+    When I run `wp scaffold post-type zombie --dashicon="dashicons-info"`
+    Then STDOUT should contain:
+      """
+      'menu_icon'         => 'dashicons-info',
+      """
+
   Scenario: Scaffold a plugin
     Given a WP install
     Given I run `wp plugin path`
