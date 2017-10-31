@@ -116,7 +116,7 @@ Feature: Scaffold install-wp-tests.sh tests
       wp-trackback.php
       xmlrpc.php
       """
-    And the contents of the /tmp/behat-wordpress/wp-includes/version.php file should match /\-(alpha|beta[0-9]+)\-/
+    And the contents of the /tmp/behat-wordpress/wp-includes/version.php file should match /\-(alpha|beta[0-9]+|RC[0-9]+)\-/
     And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
 
     When I run `echo 'show databases' | mysql -u wp_cli_test -ppassword1`
