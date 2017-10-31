@@ -4,3 +4,19 @@ function {{machine_name}}_init() {
 {{output}}
 }
 add_action( 'init', '{{machine_name}}_init' );
+
+function {{machine_name}}_updated_messages( $messages ) {
+
+	$messages['{{slug}}'] = array(
+		0 => '', // Unused. Messages start at index 1.
+		1 => __( '{{label_ucfirst}} added.', '{{textdomain}}' ),
+		2 => __( '{{label_ucfirst}} deleted.', '{{textdomain}}' ),
+		3 => __( '{{label_ucfirst}} updated.', '{{textdomain}}' ),
+		4 => __( '{{label_ucfirst}} not added.', '{{textdomain}}' ),
+		5 => __( '{{label_ucfirst}} not updated.', '{{textdomain}}' ),
+		6 => __( '{{label_plural_ucfirst}} deleted.', '{{textdomain}}' ),
+	);
+
+	return $messages;
+}
+add_filter( 'term_updated_messages', '{{machine_name}}_updated_messages' );
