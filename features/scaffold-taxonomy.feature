@@ -6,7 +6,7 @@ Feature: Scaffold a custom taxonomy
     When I run `wp scaffold taxonomy fungus --raw`
     Then STDOUT should contain:
       """
-      __( 'Popular fungi'
+      __( 'Popular Fungi'
       """
 
   Scenario: Extended scaffolded taxonomy includes term_updated_messages
