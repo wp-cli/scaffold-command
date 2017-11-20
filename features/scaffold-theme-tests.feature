@@ -79,6 +79,7 @@ Feature: Scaffold theme unit tests
       """
       Error: Invalid theme slug specified. The theme 'p3child' does not exist.
       """
+    And the return code should be 1
 
   Scenario: Scaffold theme tests with Circle as the provider
     When I run `wp scaffold theme-tests p2child --ci=circle`
@@ -105,12 +106,14 @@ Feature: Scaffold theme unit tests
       """
       Error: Invalid theme slug specified. The slug cannot be '.' or '..'.
       """
+    And the return code should be 1
 
     When I try `wp scaffold theme-tests ../`
     Then STDERR should be:
       """
       Error: Invalid theme slug specified. The target directory '{RUN_DIR}/wp-content/themes/../' is not in '{RUN_DIR}/wp-content/themes'.
       """
+    And the return code should be 1
 
   Scenario: Scaffold theme tests with invalid directory
     When I try `wp scaffold theme-tests p2 --dir=non-existent-dir`
@@ -118,6 +121,7 @@ Feature: Scaffold theme unit tests
       """
       Error: Invalid theme directory specified. No such directory 'non-existent-dir'.
       """
+    And the return code should be 1
 
     # Temporarily move.
     When I run `mv -f {THEME_DIR}/p2 {THEME_DIR}/hide-p2 && touch {THEME_DIR}/p2`
@@ -128,6 +132,7 @@ Feature: Scaffold theme unit tests
       """
       Error: Invalid theme slug specified. No such target directory '{THEME_DIR}/p2'.
       """
+    And the return code should be 1
 
     # Restore.
     When I run `rm -f {THEME_DIR}/p2 && mv -f {THEME_DIR}/hide-p2 {THEME_DIR}/p2`

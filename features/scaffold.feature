@@ -36,6 +36,7 @@ Feature: WordPress code scaffolding
       """
       Error: The parent theme is missing. Please install the "just-test" parent theme.
       """
+    And the return code should be 1
 
   Scenario: Scaffold a child theme with non existing parent theme and also network activate parameter
     Given a WP install
@@ -45,6 +46,7 @@ Feature: WordPress code scaffolding
       """
       Error: This is not a multisite install.
       """
+    And the return code should be 1
 
   Scenario: Scaffold a child theme and network enable it
     Given a WP multisite install
@@ -62,11 +64,14 @@ Feature: WordPress code scaffolding
       """
       Error: Invalid theme slug specified.
       """
+    And the return code should be 1
+
     When I try `wp scaffold child-theme ../ --parent_theme=simple-life`
     Then STDERR should contain:
       """
       Error: Invalid theme slug specified.
       """
+    And the return code should be 1
 
   @tax @cpt
   Scenario: Scaffold a Custom Taxonomy and Custom Post Type and write it to active theme
@@ -155,6 +160,7 @@ Feature: WordPress code scaffolding
       """
       Error: Post type slugs cannot exceed 20 characters in length.
       """
+    And the return code should be 1
 
   @cpt
   Scenario: Scaffold a Custom Post Type with label
@@ -310,11 +316,14 @@ Feature: WordPress code scaffolding
       """
       Error: Invalid plugin slug specified.
       """
+    And the return code should be 1
+
     When I try `wp scaffold plugin ../`
     Then STDERR should contain:
       """
       Error: Invalid plugin slug specified.
       """
+    And the return code should be 1
 
   Scenario: Scaffold starter code for a theme
     Given a WP install
@@ -356,16 +365,21 @@ Feature: WordPress code scaffolding
       """
       Error: Invalid theme slug specified.
       """
+    And the return code should be 1
+
     When I try `wp scaffold _s ../`
     Then STDERR should contain:
       """
       Error: Invalid theme slug specified.
       """
+    And the return code should be 1
+
     When I try `wp scaffold _s 1themestartingwithnumber`
     Then STDERR should contain:
       """
       Error: Invalid theme slug specified. Theme slugs can only contain letters, numbers, underscores and hyphens, and can only start with a letter or underscore.
       """
+    And the return code should be 1
 
   Scenario: Scaffold plugin and tests for non-standard plugin directory
     Given a WP install
@@ -380,6 +394,7 @@ Feature: WordPress code scaffolding
       """
       Error: Invalid plugin directory specified.
       """
+    And the return code should be 1
 
     When I run `wp scaffold plugin-tests --dir=wp-content/mu-plugins/custom-plugin`
     Then STDOUT should contain:
@@ -464,11 +479,12 @@ Feature: WordPress code scaffolding
     """
     Error: Could not decompress your theme files
     """
+    And the return code should be 1
 
   Scenario: Overwrite existing files
     Given a WP install
     When I run `wp scaffold plugin test`
-    And I run `wp scaffold plugin test --force`
+    And I try `wp scaffold plugin test --force`
     Then STDERR should contain:
     """
     already exists
@@ -477,6 +493,8 @@ Feature: WordPress code scaffolding
     """
     Replacing
     """
+    And the return code should be 0
+
   Scenario: Scaffold tests for invalid plugin directory
     Given a WP install
 
@@ -485,3 +503,4 @@ Feature: WordPress code scaffolding
       """
       Error: Invalid plugin slug specified.
       """
+    And the return code should be 1
