@@ -150,9 +150,9 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$vars = $this->extract_args( $assoc_args, $defaults );
 
-		$dashicon = \WP_CLI\Utils\get_flag_value( $assoc_args, 'dashicon' );
+		$dashicon = $this->maybe_extract_dashicon( $assoc_args );
 		if ( $dashicon ) {
-			$vars['dashicon'] = preg_replace( '/dashicon(-|s-)/', '', $dashicon );
+			$vars['dashicon'] = $dashicon;
 		}
 
 		$vars['slug'] = $slug;
@@ -165,8 +165,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$vars['label_plural']         = $this->pluralize( $vars['label'] );
 		$vars['label_plural_ucfirst'] = ucfirst( $vars['label_plural'] );
 
-		// We use the machine name for function declarations
-		$machine_name        = preg_replace( '/-/', '_', $slug );
+		$machine_name        = $this->generate_machine_name( $slug );
 		$machine_name_plural = $this->pluralize( $slug );
 
 		list( $raw_template, $extended_template ) = $templates;
@@ -199,6 +198,106 @@ class Scaffold_Command extends WP_CLI_Command {
 			// STDOUT
 			echo $final_output;
 		}
+	}
+
+	/**
+	 * Generate PHP, JS and CSS code for registering a custom block.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <slug>
+	 * : The internal name of the block.
+	 *
+	 * [--title=<title>]
+	 * : The display title for your block.
+	 *
+	 * [--dashicon=<dashicon>]
+	 * : The dashicon to make it easier to identify your block.
+	 *
+	 * [--category=<category>]
+	 * : The category name to help users browse and discover your block.
+	 *
+	 * [--textdomain=<textdomain>]
+	 * : The textdomain to use for the labels.
+	 *
+	 * [--theme]
+	 * : Create files in the active theme directory. Specify a theme
+	 * with `--theme=<theme>` to have the file placed in that theme.
+	 *
+	 * [--plugin=<plugin>]
+	 * : Create files in the given plugin's directory.
+	 *
+	 * [--force]
+	 * : Overwrite files that already exist.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Generate a 'movie' block for the 'simple-life' theme
+	 *     $ wp scaffold block movie --title="Movie block" --theme=simple-life
+	 *      Success: Created block 'Movie block'.
+	 *
+	 * @subcommand block
+	 */
+	public function block( $args, $assoc_args ) {
+
+		$registered_categories = array(
+			'common',
+			'formatting',
+			'layout',
+			'widgets',
+			'embed',
+			'reusable-blocks',
+		);
+
+		$slug = $args[0];
+		if ( ! preg_match( '/^[a-z][a-z0-9\-]*$/', $slug ) ) {
+			WP_CLI::error( "Invalid block slug specified. Block slugs can contain only lowercase alphanumeric characters or dashes, and start with a letter." );
+		}
+
+		$defaults = array(
+			'title'      => str_replace( '-', ' ', $slug ),
+			'category'   => 'widgets',
+			'textdomain' => '',
+		);
+		$data     = $this->extract_args( $assoc_args, $defaults );
+
+		if ( ! in_array( $data['category'], $registered_categories ) ) {
+			WP_CLI::error( "Invalid block category specified. Block categories need to match one of the registered values." );
+		}
+
+		$data['slug']          = $slug;
+		$data['title_ucfirst'] = ucfirst( $data['title'] );
+
+		$dashicon = $this->maybe_extract_dashicon( $assoc_args );
+		if ( $dashicon ) {
+			$data['dashicon'] = $dashicon;
+		}
+
+		$control_args = $this->extract_args( $assoc_args, array(
+			'force'  => false,
+			'plugin' => false,
+			'theme'  => false,
+		) );
+
+		$data['namespace'] = $control_args['plugin'] ? $control_args['plugin'] : $this->get_theme_name( $control_args['theme'] );
+		$data['textdomain'] = $this->get_textdomain( $data['textdomain'], $control_args );
+		$data['machine_name'] = $this->generate_machine_name( $slug );
+
+		$block_dir = $this->get_output_path( $control_args, "/blocks" );
+		if ( ! $block_dir ) {
+			WP_CLI::error( "No plugin or theme selected." );
+		}
+
+		$files_written = $this->create_files( array(
+			"$block_dir/$slug.php" => self::mustache_render( 'block-php.mustache', $data ),
+			"$block_dir/$slug/block.js" => self::mustache_render( 'block-js.mustache', $data ),
+			"$block_dir/$slug/editor.css" => self::mustache_render( 'block-editor-css.mustache', $data ),
+		), $control_args['force'] );
+		$this->log_whether_files_written(
+			$files_written,
+			$skip_message = 'All block files were skipped.',
+			$success_message = "Created block '{$data['title_ucfirst']}'."
+		);
 	}
 
 	/**
@@ -418,6 +517,9 @@ class Scaffold_Command extends WP_CLI_Command {
 				$path = get_theme_root( $theme ) . '/' . $theme;
 			} else {
 				$path = get_stylesheet_directory();
+			}
+			if ( ! is_dir( $path ) ) {
+				WP_CLI::error( "Can't find '$theme' theme." );
 			}
 		} elseif ( $assoc_args['plugin'] ) {
 			$plugin = $assoc_args['plugin'];
@@ -867,6 +969,20 @@ class Scaffold_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Extract dashicon name when provided or return null otherwise.
+	 *
+	 * @param array $assoc_args
+	 * @return string|null
+	 */
+	private function maybe_extract_dashicon( $assoc_args ) {
+		$dashicon = \WP_CLI\Utils\get_flag_value( $assoc_args, 'dashicon' );
+		if ( ! $dashicon ) {
+			return null;
+		}
+		return preg_replace( '/dashicon(-|s-)/', '', $dashicon );
+	}
+
+	/**
 	 * If you're writing your files to your theme directory your textdomain also needs to be the same as your theme.
 	 * Same goes for when plugin is being used.
 	 */
@@ -876,7 +992,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		}
 
 		if ( $args['theme'] ) {
-			return strtolower( wp_get_theme()->template );
+			return $this->get_theme_name( $args['theme'] );
 		}
 
 		if ( $args['plugin'] && true !== $args['plugin'] ) {
@@ -884,6 +1000,16 @@ class Scaffold_Command extends WP_CLI_Command {
 		}
 
 		return 'YOUR-TEXTDOMAIN';
+	}
+
+	/**
+	 * Generate the machine name for function declarations.
+	 *
+	 * @param string $slug Slug name to .
+	 * @return string
+	 */
+	private function generate_machine_name( $slug ) {
+		return preg_replace( '/-/', '_', $slug );
 	}
 
 	/**
@@ -995,5 +1121,19 @@ class Scaffold_Command extends WP_CLI_Command {
 		}
 
 		return implode( '/', $output );
+	}
+
+	/**
+	 * Get an active theme's name when true provided
+	 * or the same name otherwise.
+	 *
+	 * @param string|bool $theme Theme name or true.
+	 * @return string
+	 */
+	private function get_theme_name( $theme ) {
+		if ( true === $theme ) {
+			$theme = wp_get_theme()->template;
+		}
+		return strtolower( $theme );
 	}
 }
