@@ -89,7 +89,8 @@ wp scaffold block <slug> [--title=<title>] [--dashicon=<dashicon>] [--category=<
 ~~~
 
 Blocks are the fundamental element of the Gutenberg editor. They are the primary way in which plugins and themes can register their own functionality and extend the capabilities of the editor.
-Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Block API.
+
+Visit the [Gutenberg handbook](https://wordpress.org/gutenberg/handbook/block-api/) to learn more about Block API.
 
 **OPTIONS**
 
