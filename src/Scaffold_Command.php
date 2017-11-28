@@ -220,6 +220,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * [--category=<category>]
 	 * : The category name to help users browse and discover your block.
 	 * ---
+	 * default: widgets
 	 * options:
 	 *   - common
 	 *   - embed
