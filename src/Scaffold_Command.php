@@ -288,7 +288,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$files_written = $this->create_files( array(
 			"$block_dir/$slug.php" => self::mustache_render( 'block-php.mustache', $data ),
-			"$block_dir/$slug/block.js" => self::mustache_render( 'block-js.mustache', $data ),
+			"$block_dir/$slug/block.js" => self::mustache_render( 'block-block-js.mustache', $data ),
 			"$block_dir/$slug/editor.css" => self::mustache_render( 'block-editor-css.mustache', $data ),
 		), $control_args['force'] );
 		$this->log_whether_files_written(
