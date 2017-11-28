@@ -150,7 +150,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$vars = $this->extract_args( $assoc_args, $defaults );
 
-		$dashicon = $this->maybe_extract_dashicon( $assoc_args );
+		$dashicon = $this->extract_dashicon( $assoc_args );
 		if ( $dashicon ) {
 			$vars['dashicon'] = $dashicon;
 		}
@@ -203,6 +203,9 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Generate PHP, JS and CSS code for registering a custom block.
 	 *
+	 * Blocks are the fundamental element of the Gutenberg editor. They are the primary way in which plugins and themes can register their own functionality and extend the capabilities of the editor.
+	 * Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Block API.
+	 *
 	 * ## OPTIONS
 	 *
 	 * <slug>
@@ -216,13 +219,20 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *
 	 * [--category=<category>]
 	 * : The category name to help users browse and discover your block.
+	 * ---
+	 * options:
+	 *   - common
+	 *   - embed
+	 *   - formatting
+	 *   - layout
+	 *   - reusable-blocks
+	 *   - widgets
 	 *
 	 * [--textdomain=<textdomain>]
 	 * : The textdomain to use for the labels.
 	 *
 	 * [--theme]
-	 * : Create files in the active theme directory. Specify a theme
-	 * with `--theme=<theme>` to have the file placed in that theme.
+	 * : Create files in the active theme directory. Specify a theme with `--theme=<theme>` to have the file placed in that theme.
 	 *
 	 * [--plugin=<plugin>]
 	 * : Create files in the given plugin's directory.
@@ -240,15 +250,6 @@ class Scaffold_Command extends WP_CLI_Command {
 	 */
 	public function block( $args, $assoc_args ) {
 
-		$registered_categories = array(
-			'common',
-			'formatting',
-			'layout',
-			'widgets',
-			'embed',
-			'reusable-blocks',
-		);
-
 		$slug = $args[0];
 		if ( ! preg_match( '/^[a-z][a-z0-9\-]*$/', $slug ) ) {
 			WP_CLI::error( "Invalid block slug specified. Block slugs can contain only lowercase alphanumeric characters or dashes, and start with a letter." );
@@ -261,14 +262,10 @@ class Scaffold_Command extends WP_CLI_Command {
 		);
 		$data     = $this->extract_args( $assoc_args, $defaults );
 
-		if ( ! in_array( $data['category'], $registered_categories ) ) {
-			WP_CLI::error( "Invalid block category specified. Block categories need to match one of the registered values." );
-		}
-
 		$data['slug']          = $slug;
 		$data['title_ucfirst'] = ucfirst( $data['title'] );
 
-		$dashicon = $this->maybe_extract_dashicon( $assoc_args );
+		$dashicon = $this->extract_dashicon( $assoc_args );
 		if ( $dashicon ) {
 			$data['dashicon'] = $dashicon;
 		}
@@ -974,7 +971,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * @param array $assoc_args
 	 * @return string|null
 	 */
-	private function maybe_extract_dashicon( $assoc_args ) {
+	private function extract_dashicon( $assoc_args ) {
 		$dashicon = \WP_CLI\Utils\get_flag_value( $assoc_args, 'dashicon' );
 		if ( ! $dashicon ) {
 			return null;
@@ -1005,11 +1002,11 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Generate the machine name for function declarations.
 	 *
-	 * @param string $slug Slug name to .
+	 * @param string $slug Slug name to convert.
 	 * @return string
 	 */
 	private function generate_machine_name( $slug ) {
-		return preg_replace( '/-/', '_', $slug );
+		return str_replace( '-', '_', $slug );
 	}
 
 	/**
