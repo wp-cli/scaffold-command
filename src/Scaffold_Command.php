@@ -228,6 +228,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - layout
 	 *   - reusable-blocks
 	 *   - widgets
+	 * ---
 	 *
 	 * [--textdomain=<textdomain>]
 	 * : The textdomain to use for the labels.
