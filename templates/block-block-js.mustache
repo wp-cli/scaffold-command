@@ -1,0 +1,36 @@
+( function( wp ) {
+	var el = wp.element.createElement;
+	var __ = wp.i18n.__;
+
+	// Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn about Block API
+	wp.blocks.registerBlockType( '{{namespace}}/{{slug}}', {
+		title: __( '{{title_ucfirst}}', '{{textdomain}}' ),
+
+		{{#dashicon}}
+		icon: '{{dashicon}}',
+
+		{{/dashicon}}
+		category: '{{category}}',
+
+		// Remove to make block editable in HTML mode.
+		supportHTML: false,
+
+		edit: function( props ) {
+			return el(
+				'p',
+				{ className: props.className },
+				__( 'Replace with your content!', '{{textdomain}}' )
+			);
+		},
+
+		save: function() {
+			return el(
+				'p',
+				{},
+				__( 'Replace with your content!', '{{textdomain}}' )
+			);
+		}
+	} );
+} )(
+	window.wp
+);
