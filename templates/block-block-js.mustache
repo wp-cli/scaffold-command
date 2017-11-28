@@ -4,7 +4,7 @@
 
 	// Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn about Block API
 	wp.blocks.registerBlockType( '{{namespace}}/{{slug}}', {
-		title: __( '{{title_ucfirst}}' ),
+		title: __( '{{title_ucfirst}}', '{{textdomain}}' ),
 
 		{{#dashicon}}
 		icon: '{{dashicon}}',
