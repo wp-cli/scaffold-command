@@ -57,7 +57,7 @@ Feature: WordPress block code scaffolding
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
       """
-      title: __( 'The green mile' ),
+      title: __( 'The green mile', 'movies' ),
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
       """
@@ -81,7 +81,7 @@ Feature: WordPress block code scaffolding
     When I run `wp scaffold block shawshank-redemption --plugin=movies --title="The Shawshank Redemption"`
     Then the {PLUGIN_DIR}/blocks/shawshank-redemption/block.js file should contain:
       """
-      title: __( 'The Shawshank Redemption' ),
+      title: __( 'The Shawshank Redemption', 'movies' ),
       """
     And STDOUT should be:
       """
