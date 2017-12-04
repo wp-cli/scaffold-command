@@ -36,6 +36,7 @@
         "commands": [
             "scaffold",
             "scaffold _s",
+            "scaffold block",
             "scaffold child-theme",
             "scaffold plugin",
             "scaffold plugin-tests",

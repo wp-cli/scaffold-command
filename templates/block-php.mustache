@@ -1,0 +1,16 @@
+<?php
+
+function {{machine_name}}_enqueue_block_editor_assets() {
+	$dir = dirname( __FILE__ );
+	$block_js = '{{slug}}/block.js';
+	$editor_css = '{{slug}}/editor.css';
+	wp_enqueue_script( '{{slug}}-block', plugins_url( $block_js, __FILE__ ), array(
+		'wp-blocks',
+		'wp-i18n',
+		'wp-element',
+	), filemtime( "$dir/$block_js" ) );
+	wp_enqueue_style( '{{slug}}-block', plugins_url( $editor_css, __FILE__ ), array(
+		'wp-blocks',
+	), filemtime( "$dir/$editor_css" ) );
+}
+add_action( 'enqueue_block_editor_assets', '{{machine_name}}_enqueue_block_editor_assets' );

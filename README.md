@@ -80,6 +80,60 @@ See the [Underscores website](https://underscores.me/) for more details.
 
 
 
+### wp scaffold block
+
+Generate starter PHP, JS and CSS code for registering a Gutenberg block.
+
+~~~
+wp scaffold block <slug> [--title=<title>] [--dashicon=<dashicon>] [--category=<category>] [--textdomain=<textdomain>] [--theme] [--plugin=<plugin>] [--force]
+~~~
+
+Blocks are the fundamental element of the Gutenberg editor. They are the primary way in which plugins and themes can register their own functionality and extend the capabilities of the editor.
+Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Block API.
+
+**OPTIONS**
+
+	<slug>
+		The internal name of the block.
+
+	[--title=<title>]
+		The display title for your block.
+
+	[--dashicon=<dashicon>]
+		The dashicon to make it easier to identify your block.
+
+	[--category=<category>]
+		The category name to help users browse and discover your block.
+		---
+		default: widgets
+		options:
+		  - common
+		  - embed
+		  - formatting
+		  - layout
+		  - reusable-blocks
+		  - widgets
+
+	[--textdomain=<textdomain>]
+		The textdomain to use for the labels.
+
+	[--theme]
+		Create files in the active theme directory. Specify a theme with `--theme=<theme>` to have the file placed in that theme.
+
+	[--plugin=<plugin>]
+		Create files in the given plugin's directory.
+
+	[--force]
+		Overwrite files that already exist.
+
+**EXAMPLES**
+
+    # Generate a 'movie' block for the 'simple-life' theme
+    $ wp scaffold block movie --title="Movie block" --theme=simple-life
+     Success: Created block 'Movie block'.
+
+
+
 ### wp scaffold child-theme
 
 Generate child theme based on an existing theme.
