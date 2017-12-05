@@ -21,7 +21,7 @@
             "": "src/"
         },
         "files": [
-            "scaffold-command.php"
+            "includes/register-command.php"
         ]
     },
     "require": {},
