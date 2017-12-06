@@ -1,6 +1,6 @@
 {
     "name": "wp-cli/scaffold-command",
-    "description": "Generate code for post types, taxonomies, plugins, child themes, etc.",
+    "description": "Generates code for post types, taxonomies, blocks, plugins, child themes, etc.",
     "type": "wp-cli-package",
     "homepage": "https://github.com/wp-cli/scaffold-command",
     "support": {
