@@ -1,7 +1,7 @@
 wp-cli/scaffold-command
 =======================
 
-Generate code for post types, taxonomies, plugins, child themes, etc.
+Generates code for post types, taxonomies, blocks, plugins, child themes, etc.
 
 [![Build Status](https://travis-ci.org/wp-cli/scaffold-command.svg?branch=master)](https://travis-ci.org/wp-cli/scaffold-command)
 
