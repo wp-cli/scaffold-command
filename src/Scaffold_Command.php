@@ -5,7 +5,7 @@ use WP_CLI\Process;
 use WP_CLI\Inflector;
 
 /**
- * Generate code for post types, taxonomies, plugins, child themes, etc.
+ * Generates code for post types, taxonomies, plugins, child themes, etc.
  *
  * ## EXAMPLES
  *
