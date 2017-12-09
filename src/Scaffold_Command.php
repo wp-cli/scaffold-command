@@ -201,7 +201,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Generates PHP, JS and CSS code for registering a custom block.
+	 * Generates PHP, JS and CSS code for registering a Gutenberg block.
 	 *
 	 * Blocks are the fundamental element of the Gutenberg editor. They are the primary way in which plugins and themes can register their own functionality and extend the capabilities of the editor.
 	 * Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Block API.
