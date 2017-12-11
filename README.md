@@ -13,7 +13,7 @@ This package implements the following commands:
 
 ### wp scaffold
 
-Generate code for post types, taxonomies, plugins, child themes, etc.
+Generates code for post types, taxonomies, plugins, child themes, etc.
 
 ~~~
 wp scaffold
@@ -38,7 +38,7 @@ wp scaffold
 
 ### wp scaffold _s
 
-Generate starter code for a theme based on _s.
+Generates starter code for a theme based on _s.
 
 ~~~
 wp scaffold _s <slug> [--activate] [--enable-network] [--theme_name=<title>] [--author=<full-name>] [--author_uri=<uri>] [--sassify] [--force]
@@ -82,7 +82,7 @@ See the [Underscores website](https://underscores.me/) for more details.
 
 ### wp scaffold block
 
-Generate starter PHP, JS and CSS code for registering a Gutenberg block.
+Generates PHP, JS and CSS code for registering a Gutenberg block.
 
 ~~~
 wp scaffold block <slug> [--title=<title>] [--dashicon=<dashicon>] [--category=<category>] [--textdomain=<textdomain>] [--theme] [--plugin=<plugin>] [--force]
@@ -136,7 +136,7 @@ Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Bl
 
 ### wp scaffold child-theme
 
-Generate child theme based on an existing theme.
+Generates child theme based on an existing theme.
 
 ~~~
 wp scaffold child-theme <slug> --parent_theme=<slug> [--theme_name=<title>] [--author=<full-name>] [--author_uri=<uri>] [--theme_uri=<uri>] [--activate] [--enable-network] [--force]
@@ -183,7 +183,7 @@ Creates a child theme folder with `functions.php` and `style.css` files.
 
 ### wp scaffold plugin
 
-Generate starter code for a plugin.
+Generates starter code for a plugin.
 
 ~~~
 wp scaffold plugin <slug> [--dir=<dirname>] [--plugin_name=<title>] [--plugin_description=<description>] [--plugin_author=<author>] [--plugin_author_uri=<url>] [--plugin_uri=<url>] [--skip-tests] [--ci=<provider>] [--activate] [--activate-network] [--force]
@@ -263,7 +263,7 @@ The following files are also included unless the `--skip-tests` is used:
 
 ### wp scaffold plugin-tests
 
-Generate files needed for running PHPUnit tests in a plugin.
+Generates files needed for running PHPUnit tests in a plugin.
 
 ~~~
 wp scaffold plugin-tests [<plugin>] [--dir=<dirname>] [--ci=<provider>] [--force]
@@ -316,7 +316,7 @@ variable.
 
 ### wp scaffold post-type
 
-Generate PHP code for registering a custom post type.
+Generates PHP code for registering a custom post type.
 
 ~~~
 wp scaffold post-type <slug> [--label=<label>] [--textdomain=<textdomain>] [--dashicon=<dashicon>] [--theme] [--plugin=<plugin>] [--raw] [--force]
@@ -359,7 +359,7 @@ wp scaffold post-type <slug> [--label=<label>] [--textdomain=<textdomain>] [--da
 
 ### wp scaffold taxonomy
 
-Generate PHP code for registering a custom taxonomy.
+Generates PHP code for registering a custom taxonomy.
 
 ~~~
 wp scaffold taxonomy <slug> [--post_types=<post-types>] [--label=<label>] [--textdomain=<textdomain>] [--theme] [--plugin=<plugin>] [--raw] [--force]
@@ -401,7 +401,7 @@ wp scaffold taxonomy <slug> [--post_types=<post-types>] [--label=<label>] [--tex
 
 ### wp scaffold theme-tests
 
-Generate files needed for running PHPUnit tests in a theme.
+Generates files needed for running PHPUnit tests in a theme.
 
 ~~~
 wp scaffold theme-tests [<theme>] [--dir=<dirname>] [--ci=<provider>] [--force]
