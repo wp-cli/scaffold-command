@@ -82,7 +82,7 @@ See the [Underscores website](https://underscores.me/) for more details.
 
 ### wp scaffold block
 
-Generates PHP, JS and CSS code for registering a Gutenberg block.
+Generates PHP, JS and CSS code for registering a Gutenberg block for a plugin or theme.
 
 ~~~
 wp scaffold block <slug> [--title=<title>] [--dashicon=<dashicon>] [--category=<category>] [--textdomain=<textdomain>] [--theme] [--plugin=<plugin>] [--force]
@@ -90,6 +90,8 @@ wp scaffold block <slug> [--title=<title>] [--dashicon=<dashicon>] [--category=<
 
 Blocks are the fundamental element of the Gutenberg editor. They are the primary way in which plugins and themes can register their own functionality and extend the capabilities of the editor.
 Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Block API.
+
+When you scaffold a block you must use either the theme or plugin option.
 
 **OPTIONS**
 
@@ -131,8 +133,15 @@ Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Bl
     # Generate a 'movie' block for the 'simple-life' theme
     $ wp scaffold block movie --title="Movie block" --theme=simple-life
      Success: Created block 'Movie block'.
-
-
+     
+    # Generate a 'movie' block for the 'movies' plugin
+    $ wp scaffold block movie --title="Movie block" --plugin=movies
+    Success: Created block 'Movie block'.
+     
+    # Create a bew plugin and add two blocks
+    $ wp scaffold plugin books
+    $ wp scaffold book books --title="Book" --plugin=books
+    $ wp scaffold books books --title="Book List" --plugin=books
 
 ### wp scaffold child-theme
 
