@@ -138,7 +138,7 @@ When you scaffold a block you must use either the theme or plugin option.
     $ wp scaffold block movie --title="Movie block" --plugin=movies
     Success: Created block 'Movie block'.
      
-    # Create a bew plugin and add two blocks
+    # Create a new plugin and add two blocks
     $ wp scaffold plugin books
     $ wp scaffold book books --title="Book" --plugin=books
     $ wp scaffold books books --title="Book List" --plugin=books
