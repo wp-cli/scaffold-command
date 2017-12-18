@@ -201,10 +201,12 @@ class Scaffold_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Generates PHP, JS and CSS code for registering a Gutenberg block.
+	 * Generates PHP, JS and CSS code for registering a Gutenberg block for a plugin or theme.
 	 *
 	 * Blocks are the fundamental element of the Gutenberg editor. They are the primary way in which plugins and themes can register their own functionality and extend the capabilities of the editor.
 	 * Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Block API.
+	 *
+	 * When you scaffold a block you must use either the theme or plugin option.
 	 *
 	 * ## OPTIONS
 	 *
@@ -246,6 +248,18 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *     # Generate a 'movie' block for the 'simple-life' theme
 	 *     $ wp scaffold block movie --title="Movie block" --theme=simple-life
 	 *      Success: Created block 'Movie block'.
+	 *
+	 *     # Generate a 'movie' block for the 'movies' plugin
+	 *     $ wp scaffold block movie --title="Movie block" --plugin=movies
+	 *     Success: Created block 'Movie block'.
+	 *
+	 *     # Create a new plugin and add two blocks
+	 *     # Create plugin called books
+	 *     $ wp scaffold plugin books
+	 *     # Add a block called book to plugin books
+	 *     $ wp scaffold block book --title="Book" --plugin=books
+	 *     # Add a second block to plugin called books.
+	 *     $ wp scaffold block books --title="Book List" --plugin=books
 	 *
 	 * @subcommand block
 	 */
