@@ -204,9 +204,10 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * Generates PHP, JS and CSS code for registering a Gutenberg block for a plugin or theme.
 	 *
 	 * Blocks are the fundamental element of the Gutenberg editor. They are the primary way in which plugins and themes can register their own functionality and extend the capabilities of the editor.
-	 * Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Block API.
 	 *
-	 * When you scaffold a block you must use either the theme or plugin option.
+	 * Visit the [Gutenberg handbook](https://wordpress.org/gutenberg/handbook/block-api/) to learn more about Block API.
+	 *
+	 * When you scaffold a block you must use either the theme or plugin option. The latter is recommended.
 	 *
 	 * ## OPTIONS
 	 *
@@ -228,11 +229,8 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - embed
 	 *   - formatting
 	 *   - layout
-	 *   - reusable-blocks
 	 *   - widgets
-	 *
-	 * [--textdomain=<textdomain>]
-	 * : The textdomain to use for the labels.
+	 * ---
 	 *
 	 * [--theme]
 	 * : Create files in the active theme directory. Specify a theme with `--theme=<theme>` to have the file placed in that theme.
@@ -245,13 +243,13 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     # Generate a 'movie' block for the 'simple-life' theme
-	 *     $ wp scaffold block movie --title="Movie block" --theme=simple-life
-	 *      Success: Created block 'Movie block'.
-	 *
 	 *     # Generate a 'movie' block for the 'movies' plugin
 	 *     $ wp scaffold block movie --title="Movie block" --plugin=movies
 	 *     Success: Created block 'Movie block'.
+	 *
+	 *     # Generate a 'movie' block for the 'simple-life' theme
+	 *     $ wp scaffold block movie --title="Movie block" --theme=simple-life
+	 *      Success: Created block 'Movie block'.
 	 *
 	 *     # Create a new plugin and add two blocks
 	 *     # Create plugin called books
@@ -273,7 +271,6 @@ class Scaffold_Command extends WP_CLI_Command {
 		$defaults = array(
 			'title'      => str_replace( '-', ' ', $slug ),
 			'category'   => 'widgets',
-			'textdomain' => '',
 		);
 		$data     = $this->extract_args( $assoc_args, $defaults );
 
@@ -292,7 +289,6 @@ class Scaffold_Command extends WP_CLI_Command {
 		) );
 
 		$data['namespace'] = $control_args['plugin'] ? $control_args['plugin'] : $this->get_theme_name( $control_args['theme'] );
-		$data['textdomain'] = $this->get_textdomain( $data['textdomain'], $control_args );
 		$data['machine_name'] = $this->generate_machine_name( $slug );
 
 		$block_dir = $this->get_output_path( $control_args, "/blocks" );
@@ -304,6 +300,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			"$block_dir/$slug.php" => self::mustache_render( 'block-php.mustache', $data ),
 			"$block_dir/$slug/block.js" => self::mustache_render( 'block-block-js.mustache', $data ),
 			"$block_dir/$slug/editor.css" => self::mustache_render( 'block-editor-css.mustache', $data ),
+			"$block_dir/$slug/style.css" => self::mustache_render( 'block-style-css.mustache', $data ),
 		), $control_args['force'] );
 		$this->log_whether_files_written(
 			$files_written,
