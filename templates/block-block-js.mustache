@@ -1,11 +1,22 @@
 ( function( wp ) {
+	/**
+	 * Registers a new block provided a unique name and an object defining its behavior.
+	 * @see https://github.com/WordPress/gutenberg/tree/master/blocks#api
+	 */
 	var registerBlockType = wp.blocks.registerBlockType;
+	/**
+	 * Returns a new element of given type. Element is an abstraction layer atop React.
+	 * @see https://github.com/WordPress/gutenberg/tree/master/element#element
+	 */
 	var el = wp.element.createElement;
+	/**
+	 * Retrieves the translation of text.
+	 * @see https://github.com/WordPress/gutenberg/tree/master/i18n#api
+	 */
 	var __ = wp.i18n.__;
 
 	/**
 	 * Every block starts by registering a new block type definition.
-	 * The function takes two arguments, a block name and a block configuration object.
 	 * @see https://wordpress.org/gutenberg/handbook/block-api/
 	 */
 	registerBlockType( '{{namespace}}/{{slug}}', {
@@ -25,7 +36,7 @@
 		{{/dashicon}}
 		/**
 		 * Blocks are grouped into categories to help users browse and discover them.
-		 * The core provided categories are `common`, `embed`, `formatting`, `layout` and `widgets`.
+		 * The categories provided by core are `common`, `embed`, `formatting`, `layout` and `widgets`.
 		 */
 		category: '{{category}}',
 
