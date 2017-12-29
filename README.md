@@ -85,13 +85,14 @@ See the [Underscores website](https://underscores.me/) for more details.
 Generates PHP, JS and CSS code for registering a Gutenberg block for a plugin or theme.
 
 ~~~
-wp scaffold block <slug> [--title=<title>] [--dashicon=<dashicon>] [--category=<category>] [--textdomain=<textdomain>] [--theme] [--plugin=<plugin>] [--force]
+wp scaffold block <slug> [--title=<title>] [--dashicon=<dashicon>] [--category=<category>] [--theme] [--plugin=<plugin>] [--force]
 ~~~
 
 Blocks are the fundamental element of the Gutenberg editor. They are the primary way in which plugins and themes can register their own functionality and extend the capabilities of the editor.
-Visit https://wordpress.org/gutenberg/handbook/block-api/ to learn more about Block API.
 
-When you scaffold a block you must use either the theme or plugin option.
+Visit the [Gutenberg handbook](https://wordpress.org/gutenberg/handbook/block-api/) to learn more about Block API.
+
+When you scaffold a block you must use either the theme or plugin option. The latter is recommended.
 
 **OPTIONS**
 
@@ -113,11 +114,8 @@ When you scaffold a block you must use either the theme or plugin option.
 		  - embed
 		  - formatting
 		  - layout
-		  - reusable-blocks
 		  - widgets
-
-	[--textdomain=<textdomain>]
-		The textdomain to use for the labels.
+		---
 
 	[--theme]
 		Create files in the active theme directory. Specify a theme with `--theme=<theme>` to have the file placed in that theme.
@@ -130,14 +128,14 @@ When you scaffold a block you must use either the theme or plugin option.
 
 **EXAMPLES**
 
-    # Generate a 'movie' block for the 'simple-life' theme
-    $ wp scaffold block movie --title="Movie block" --theme=simple-life
-     Success: Created block 'Movie block'.
-     
     # Generate a 'movie' block for the 'movies' plugin
     $ wp scaffold block movie --title="Movie block" --plugin=movies
     Success: Created block 'Movie block'.
-     
+
+    # Generate a 'movie' block for the 'simple-life' theme
+    $ wp scaffold block movie --title="Movie block" --theme=simple-life
+     Success: Created block 'Movie block'.
+
     # Create a new plugin and add two blocks
     # Create plugin called books
     $ wp scaffold plugin books
@@ -145,6 +143,8 @@ When you scaffold a block you must use either the theme or plugin option.
     $ wp scaffold block book --title="Book" --plugin=books
     # Add a second block to plugin called books.
     $ wp scaffold block books --title="Book List" --plugin=books
+
+
 
 ### wp scaffold child-theme
 
