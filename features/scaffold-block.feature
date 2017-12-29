@@ -50,14 +50,22 @@ Feature: WordPress block code scaffolding
       """
 	    add_action( 'enqueue_block_editor_assets', 'the_green_mile_enqueue_block_editor_assets' );
       """
+    And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
+      """
+	    $style_css = 'the-green-mile/style.css';
+      """
+    And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
+      """
+	    add_action( 'enqueue_block_assets', 'the_green_mile_enqueue_block_assets' );
+      """
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should exist
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
       """
-      wp.blocks.registerBlockType( 'movies/the-green-mile', {
+      registerBlockType( 'movies/the-green-mile', {
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
       """
-      title: __( 'The green mile', 'movies' ),
+      title: __( 'The green mile' ),
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
       """
@@ -65,10 +73,19 @@ Feature: WordPress block code scaffolding
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
       """
-      __( 'Replace with your content!', 'movies' )
+      __( 'Hello from the editor!' )
+      """
+    And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
+      """
+      __( 'Hello from the saved content!' )
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/editor.css file should exist
     And the {PLUGIN_DIR}/blocks/the-green-mile/editor.css file should contain:
+      """
+      .wp-block-movies-the-green-mile {
+      """
+    And the {PLUGIN_DIR}/blocks/the-green-mile/style.css file should exist
+    And the {PLUGIN_DIR}/blocks/the-green-mile/style.css file should contain:
       """
       .wp-block-movies-the-green-mile {
       """
@@ -81,7 +98,7 @@ Feature: WordPress block code scaffolding
     When I run `wp scaffold block shawshank-redemption --plugin=movies --title="The Shawshank Redemption"`
     Then the {PLUGIN_DIR}/blocks/shawshank-redemption/block.js file should contain:
       """
-      title: __( 'The Shawshank Redemption', 'movies' ),
+      title: __( 'The Shawshank Redemption' ),
       """
     And STDOUT should be:
       """
@@ -110,22 +127,12 @@ Feature: WordPress block code scaffolding
       Success: Created block 'Pulp fiction'.
       """
 
-  Scenario: Scaffold a block with a specific textdomain provided
-    When I run `wp scaffold block inception --plugin=movies --textdomain=MY-MOVIES`
-    Then the {PLUGIN_DIR}/blocks/inception/block.js file should contain:
-      """
-      __( 'Replace with your content!', 'MY-MOVIES' )
-      """
-    And STDOUT should be:
-      """
-      Success: Created block 'Inception'.
-      """
-
   Scenario: Scaffold a block for an active theme
     When I run `wp scaffold block fight-club --theme`
     Then the {THEME_DIR}/blocks/fight-club.php file should exist
     And the {THEME_DIR}/blocks/fight-club/block.js file should exist
     And the {THEME_DIR}/blocks/fight-club/editor.css file should exist
+    And the {THEME_DIR}/blocks/fight-club/style.css file should exist
     And STDOUT should be:
       """
       Success: Created block 'Fight club'.
@@ -143,6 +150,7 @@ Feature: WordPress block code scaffolding
     Then the {THEME_DIR}/blocks/intouchables.php file should exist
     And the {THEME_DIR}/blocks/intouchables/block.js file should exist
     And the {THEME_DIR}/blocks/intouchables/editor.css file should exist
+    And the {THEME_DIR}/blocks/intouchables/style.css file should exist
     And STDOUT should be:
       """
       Success: Created block 'Intouchables'.
