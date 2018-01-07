@@ -1,10 +1,18 @@
 <?php
 
+/**
+ * Registration of {{machine_name}} CPT.
+ */
 function {{machine_name}}_init() {
 {{output}}
 }
 add_action( 'init', '{{machine_name}}_init' );
 
+/** Function to update CPT
+ *
+ *  @param  array $messages Post updated messages.
+ *  @return array filtered messages for {{machine_name}}.
+ */
 function {{machine_name}}_updated_messages( $messages ) {
 	global $post;
 
@@ -12,19 +20,27 @@ function {{machine_name}}_updated_messages( $messages ) {
 
 	$messages['{{slug}}'] = array(
 		0 => '', // Unused. Messages start at index 1.
-		1 => sprintf( __('{{label_ucfirst}} updated. <a target="_blank" href="%s">View {{label}}</a>', '{{textdomain}}'), esc_url( $permalink ) ),
-		2 => __('Custom field updated.', '{{textdomain}}'),
-		3 => __('Custom field deleted.', '{{textdomain}}'),
-		4 => __('{{label_ucfirst}} updated.', '{{textdomain}}'),
+		/* translators: %s: permalink of {{label}}*/
+		1 => sprintf( __( '{{label_ucfirst}} updated. <a target="_blank" href="%s">View {{label}}</a>', '{{textdomain}}' ), esc_url( $permalink ) ),
+		2 => __( 'Custom field updated.', '{{textdomain}}' ),
+		3 => __( 'Custom field deleted.', '{{textdomain}}' ),
+		4 => __( '{{label_ucfirst}} updated.', '{{textdomain}}' ),
 		/* translators: %s: date and time of the revision */
-		5 => isset($_GET['revision']) ? sprintf( __('{{label_ucfirst}} restored to revision from %s', '{{textdomain}}'), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-		6 => sprintf( __('{{label_ucfirst}} published. <a href="%s">View {{label}}</a>', '{{textdomain}}'), esc_url( $permalink ) ),
-		7 => __('{{label_ucfirst}} saved.', '{{textdomain}}'),
-		8 => sprintf( __('{{label_ucfirst}} submitted. <a target="_blank" href="%s">Preview {{label}}</a>', '{{textdomain}}'), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
-		9 => sprintf( __('{{label_ucfirst}} scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview {{label}}</a>', '{{textdomain}}'),
-		// translators: Publish box date format, see https://secure.php.net/manual/en/function.date.php
+		5 => isset( $_GET['revision'] ) ? sprintf( __( '{{label_ucfirst}} restored to revision from %s', '{{textdomain}}' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+		/* translators: %s: permalink of {{label}}*/
+		6 => sprintf( __( '{{label_ucfirst}} published. <a href="%s">View {{label}}</a>', '{{textdomain}}' ), esc_url( $permalink ) ),
+		7 => __( '{{label_ucfirst}} saved.', '{{textdomain}}' ),
+		/* translators: %s: permalink of {{label}}*/
+		8 => sprintf( __( '{{label_ucfirst}} submitted. <a target="_blank" href="%s">Preview {{label}}</a>', '{{textdomain}}' ), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
+
+		/*
+		* translators: %1$s :Publish box date format, see https://secure.php.net/manual/en/function.date.php.
+		* translators: %2$s: permalink of {{label}}
+		*/
+		9 => sprintf( __( '{{label_ucfirst}} scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview {{label}}</a>', '{{textdomain}}' ),
 		date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( $permalink ) ),
-		10 => sprintf( __('{{label_ucfirst}} draft updated. <a target="_blank" href="%s">Preview {{label}}</a>', '{{textdomain}}'), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
+		/* translators: %s: permalink of {{label}}*/
+		10 => sprintf( __( '{{label_ucfirst}} draft updated. <a target="_blank" href="%s">Preview {{label}}</a>', '{{textdomain}}' ), esc_url( add_query_arg( 'preview', 'true', $permalink ) ) ),
 	);
 
 	return $messages;
