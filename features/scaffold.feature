@@ -150,7 +150,7 @@ Feature: WordPress code scaffolding
       """
     And STDOUT should contain:
       """
-      'menu_icon'         => 'dashicons-admin-post',
+      'menu_icon'             => 'dashicons-admin-post',
       """
 
   Scenario: CPT slug is too long
@@ -176,7 +176,7 @@ Feature: WordPress code scaffolding
     When I run `wp scaffold post-type zombie --dashicon="art"`
     Then STDOUT should contain:
       """
-      'menu_icon'         => 'dashicons-art',
+      'menu_icon'             => 'dashicons-art',
       """
 
   Scenario: Scaffold a Custom Post Type with dashicon in the case of passing "dashicon-info"
@@ -184,7 +184,7 @@ Feature: WordPress code scaffolding
     When I run `wp scaffold post-type zombie --dashicon="dashicon-info"`
     Then STDOUT should contain:
       """
-      'menu_icon'         => 'dashicons-info',
+      'menu_icon'             => 'dashicons-info',
       """
 
   Scenario: Scaffold a Custom Post Type with dashicon in the case of passing "dashicons-info"
@@ -192,7 +192,7 @@ Feature: WordPress code scaffolding
     When I run `wp scaffold post-type zombie --dashicon="dashicons-info"`
     Then STDOUT should contain:
       """
-      'menu_icon'         => 'dashicons-info',
+      'menu_icon'             => 'dashicons-info',
       """
 
   Scenario: Scaffold a plugin
