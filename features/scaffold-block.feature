@@ -36,7 +36,7 @@ Feature: WordPress block code scaffolding
     Then the {PLUGIN_DIR}/blocks/the-green-mile.php file should exist
     And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
       """
-      function the_green_mile_enqueue_block_editor_assets() {
+      function the_green_mile_block_init() {
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
       """
@@ -48,15 +48,15 @@ Feature: WordPress block code scaffolding
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
       """
-	    add_action( 'enqueue_block_editor_assets', 'the_green_mile_enqueue_block_editor_assets' );
-      """
-    And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
-      """
 	    $style_css = 'the-green-mile/style.css';
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
       """
-	    add_action( 'enqueue_block_assets', 'the_green_mile_enqueue_block_assets' );
+	    register_block_type( 'movies/the-green-mile', array(
+      """
+    And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
+      """
+	    add_action( 'init', 'the_green_mile_block_init' );
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should exist
     And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
