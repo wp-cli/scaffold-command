@@ -1,18 +1,22 @@
 <?php
 /**
- * Functions to register client-side assets (scripts and stylesheets) for the Gutenberg block.
+ * Functions to register client-side assets (scripts and stylesheets) for the
+ * Gutenberg block.
  *
  * @package {{namespace}}
  */
 
 /**
- * Enqueues block assets to apply inside the editor only.
+ * Registers all block assets so that they can be enqueued through Gutenberg in
+ * the corresponding context.
+ *
+ * @see https://wordpress.org/gutenberg/handbook/blocks/writing-your-first-block-type/#enqueuing-block-scripts
  */
-function {{machine_name}}_enqueue_block_editor_assets() {
+function {{machine_name}}_block_init() {
 	$dir = dirname( __FILE__ );
 
 	$block_js = '{{slug}}/block.js';
-	wp_enqueue_script(
+	wp_register_script(
 		'{{slug}}-block-editor',
 		plugins_url( $block_js, __FILE__ ),
 		array(
@@ -24,7 +28,7 @@ function {{machine_name}}_enqueue_block_editor_assets() {
 	);
 
 	$editor_css = '{{slug}}/editor.css';
-	wp_enqueue_style(
+	wp_register_style(
 		'{{slug}}-block-editor',
 		plugins_url( $editor_css, __FILE__ ),
 		array(
@@ -32,23 +36,21 @@ function {{machine_name}}_enqueue_block_editor_assets() {
 		),
 		filemtime( "$dir/$editor_css" )
 	);
-}
-add_action( 'enqueue_block_editor_assets', '{{machine_name}}_enqueue_block_editor_assets' );
-
-/**
- * Enqueues block assets to apply both on the front of your site and in the editor.
- */
-function {{machine_name}}_enqueue_block_assets() {
-	$dir = dirname( __FILE__ );
 
 	$style_css = '{{slug}}/style.css';
-	wp_enqueue_style(
-        '{{slug}}-block',
+	wp_register_style(
+		'{{slug}}-block',
 		plugins_url( $style_css, __FILE__ ),
 		array(
-            'wp-blocks',
+			'wp-blocks',
 		),
 		filemtime( "$dir/$style_css" )
 	);
+
+	register_block_type( '{{namespace}}/{{slug}}', array(
+		'editor_script' => '{{slug}}-block-editor',
+		'editor_style'  => '{{slug}}-block-editor',
+		'style'         => '{{slug}}-block',
+	) );
 }
-add_action( 'enqueue_block_assets', '{{machine_name}}_enqueue_block_assets' );
+add_action( 'init', '{{machine_name}}_block_init' );
