@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * Registers the `{{machine_name}}` taxonomy,
+ * for use with {{post_types}}.
+ */
 function {{machine_name}}_init() {
 {{output}}
 }
 add_action( 'init', '{{machine_name}}_init' );
 
+/**
+ * Sets the post updated messages for the `{{machine_name}}` taxonomy.
+ *
+ * @param  array $messages Post updated messages.
+ * @return array Messages for the `{{machine_name}}` taxonomy.
+ */
 function {{machine_name}}_updated_messages( $messages ) {
 
 	$messages['{{slug}}'] = array(
