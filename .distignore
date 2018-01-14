@@ -5,7 +5,7 @@
 .editorconfig
 .travis.yml
 behat.yml
-circle.yml
+.circleci/config.yml
 bin/
 features/
 utils/
