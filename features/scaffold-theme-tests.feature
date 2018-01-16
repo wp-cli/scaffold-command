@@ -18,7 +18,7 @@ Feature: Scaffold theme unit tests
       """
     And the {THEME_DIR}/p2child/tests/bootstrap.php file should contain:
       """
-      register_theme_directory( dirname( $theme_dir ) );
+      register_theme_directory( $theme_root );
       """
     And the {THEME_DIR}/p2child/tests/bootstrap.php file should contain:
       """
@@ -71,6 +71,45 @@ Feature: Scaffold theme unit tests
     Then STDOUT should be:
       """
       executable
+      """
+
+    # Warning: overwriting generated functions.php file, so functions.php file loaded only tests beyond here...
+    Given a wp-content/themes/p2child/functions.php file:
+      """
+      <?php echo __FILE__ . " loaded.\n";
+      """
+    And I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    And I try `rm -fr /tmp/behat-wordpress-tests-lib`
+    And I try `rm -fr /tmp/behat-wordpress`
+	And I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress {THEME_DIR}/p2child/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest`
+    Then the return code should be 0
+
+    When I run `cd {THEME_DIR}/p2child; WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit`
+    Then STDOUT should contain:
+      """
+      p2child/functions.php loaded.
+      """
+    And STDOUT should contain:
+      """
+      Running as single site
+      """
+    And STDOUT should contain:
+      """
+      OK (1 test, 1 assertion)
+      """
+
+    When I run `cd {THEME_DIR}/p2child; WP_MULTISITE=1 WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit`
+    Then STDOUT should contain:
+      """
+      p2child/functions.php loaded.
+      """
+    And STDOUT should contain:
+      """
+      Running as multisite
+      """
+    And STDOUT should contain:
+      """
+      OK (1 test, 1 assertion)
       """
 
   Scenario: Scaffold theme tests invalid theme
