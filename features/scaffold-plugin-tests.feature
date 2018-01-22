@@ -38,6 +38,7 @@ Feature: Scaffold plugin unit tests
     And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/phpcs.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/circle.yml file should not exist
+    And the {PLUGIN_DIR}/hello-world/bitbucket-pipelines.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.gitlab-ci.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
       """
@@ -136,6 +137,31 @@ Feature: Scaffold plugin unit tests
     And the {PLUGIN_DIR}/.gitlab-ci.yml file should contain:
       """
       MYSQL_DATABASE
+      """
+
+  Scenario: Scaffold plugin tests with Bitbucket Pipelines as the provider
+    Given a WP install
+    And I run `wp scaffold plugin hello-world --skip-tests`
+
+    When I run `wp plugin path hello-world --dir`
+    Then save STDOUT as {PLUGIN_DIR}
+
+    When I run `wp scaffold plugin-tests hello-world --ci=bitbucket`
+    Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/.travis.yml file should not exist
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
+      """
+      pipelines:
+        default:
+          - step:
+              image: tfirdaus/wp-docklines:php5.6-fpm-alpine
+              name: "PHP 5.6"
+              script:
+                - phpcs
+                - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+                - phpunit
+              services:
+                - database
       """
 
   Scenario: Scaffold plugin tests with invalid slug
