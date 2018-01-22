@@ -35,6 +35,7 @@ Feature: Scaffold theme unit tests
     And the {THEME_DIR}/p2child/phpunit.xml.dist file should exist
     And the {THEME_DIR}/p2child/phpcs.xml.dist file should exist
     And the {THEME_DIR}/p2child/circle.yml file should not exist
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should not exist
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should not exist
     And the {THEME_DIR}/p2child/.travis.yml file should contain:
       """
@@ -97,6 +98,25 @@ Feature: Scaffold theme unit tests
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should contain:
       """
       MYSQL_DATABASE
+      """
+
+  Scenario: Scaffold theme tests with Bitbucket Pipelines as the provider
+    When I run `wp scaffold theme-tests p2child --ci=bitbucket`
+    Then STDOUT should not be empty
+    And the {THEME_DIR}/p2child/.travis.yml file should not exist
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+      pipelines:
+        default:
+          - step:
+              image: tfirdaus/wp-docklines:php5.6-fpm-alpine
+              name: "PHP 5.6"
+              script:
+                - phpcs
+                - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+                - phpunit
+              services:
+                - database
       """
 
   Scenario: Scaffold theme tests with invalid slug
