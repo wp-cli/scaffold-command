@@ -20,19 +20,18 @@
         "psr-4": {
             "": "src/"
         },
-        "files": [
-            "scaffold-command.php"
-        ]
+        "files": [ "scaffold-command.php" ]
     },
     "require": {},
     "require-dev": {
         "behat/behat": "~2.5",
-        "wp-cli/wp-cli": "*"
+        "wp-cli/wp-cli": "^1.5"
     },
     "extra": {
         "branch-alias": {
             "dev-master": "1.x-dev"
         },
+        "bundled": true,
         "commands": [
             "scaffold",
             "scaffold _s",
@@ -43,7 +42,6 @@
             "scaffold post-type",
             "scaffold taxonomy",
             "scaffold theme-tests"
-        ],
-        "bundled": true
+        ]
     }
 }
