@@ -149,12 +149,12 @@ Feature: Scaffold plugin unit tests
     When I run `wp scaffold plugin-tests hello-world --ci=bitbucket`
     Then STDOUT should not be empty
     And the {PLUGIN_DIR}/.travis.yml file should not exist
-    And the {PLUGIN_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
       pipelines:
         default:
       """
-    And the {PLUGIN_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
           - step:
               image: php:5.6
@@ -164,7 +164,7 @@ Feature: Scaffold plugin unit tests
                 - docker-php-ext-install mysqli
                 - apt-get update && apt-get install -y subversion --no-install-recommends
       """
-    And the {PLUGIN_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
           - step:
               image: php:7.0
@@ -174,7 +174,7 @@ Feature: Scaffold plugin unit tests
                 - docker-php-ext-install mysqli
                 - apt-get update && apt-get install -y subversion --no-install-recommends
       """
-    And the {PLUGIN_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
           - step:
               image: php:7.1
@@ -184,7 +184,7 @@ Feature: Scaffold plugin unit tests
                 - docker-php-ext-install mysqli
                 - apt-get update && apt-get install -y subversion --no-install-recommends
       """
-    And the {PLUGIN_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
       definitions:
         services:
