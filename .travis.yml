@@ -55,6 +55,7 @@ install:
 
 before_script:
   - composer validate
+  - curl -sSfL -o $TRAVIS_BUILD_DIR/vendor/bin/phpunit https://phar.phpunit.de/phpunit-6.5.6.phar && chmod +x $TRAVIS_BUILD_DIR/vendor/bin/phpunit
 
 script:
   - bash bin/test.sh
