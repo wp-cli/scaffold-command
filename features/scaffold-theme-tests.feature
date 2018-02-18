@@ -139,61 +139,61 @@ Feature: Scaffold theme unit tests
       MYSQL_DATABASE
       """
 
-      Scenario: Scaffold plugin tests with Bitbucket Pipelines as the provider
-        Given a WP install
-        And I run `wp scaffold plugin hello-world --skip-tests`
+  Scenario: Scaffold plugin tests with Bitbucket Pipelines as the provider
+    Given a WP install
+    And I run `wp scaffold plugin hello-world --skip-tests`
 
-        When I run `wp plugin path hello-world --dir`
-        Then save STDOUT as {PLUGIN_DIR}
+    When I run `wp plugin path hello-world --dir`
+    Then save STDOUT as {PLUGIN_DIR}
 
-        When I run `wp scaffold plugin-tests hello-world --ci=bitbucket`
-        Then STDOUT should not be empty
-        And the {PLUGIN_DIR}/.travis.yml file should not exist
-        And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-          """
-          pipelines:
-            default:
-          """
-        And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-          """
-              - step:
-                  image: php:5.6
-                  name: "PHP 5.6"
-                  script:
-                    # Install Dependencies
-                    - docker-php-ext-install mysqli
-                    - apt-get update && apt-get install -y subversion --no-install-recommends
-          """
-        And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-          """
-              - step:
-                  image: php:7.0
-                  name: "PHP 7.0"
-                  script:
-                    # Install Dependencies
-                    - docker-php-ext-install mysqli
-                    - apt-get update && apt-get install -y subversion --no-install-recommends
-          """
-        And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-          """
-              - step:
-                  image: php:7.1
-                  name: "PHP 7.1"
-                  script:
-                    # Install Dependencies
-                    - docker-php-ext-install mysqli
-                    - apt-get update && apt-get install -y subversion --no-install-recommends
-          """
-        And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-          """
-          definitions:
-            services:
-              database:
-                image: mysql:latest
-                environment:
-                  MYSQL_DATABASE: 'wordpress_tests'
-                  MYSQL_ROOT_PASSWORD: 'root'
-          """
+    When I run `wp scaffold plugin-tests hello-world --ci=bitbucket`
+    Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/.travis.yml file should not exist
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
+      """
+      pipelines:
+        default:
+      """
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:5.6
+              name: "PHP 5.6"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:7.0
+              name: "PHP 7.0"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:7.1
+              name: "PHP 7.1"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
+      """
+      definitions:
+        services:
+          database:
+            image: mysql:latest
+            environment:
+              MYSQL_DATABASE: 'wordpress_tests'
+              MYSQL_ROOT_PASSWORD: 'root'
+      """
 
   Scenario: Scaffold theme tests with invalid slug
 
