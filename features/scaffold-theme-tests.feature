@@ -18,7 +18,7 @@ Feature: Scaffold theme unit tests
       """
     And the {THEME_DIR}/p2child/tests/bootstrap.php file should contain:
       """
-      register_theme_directory( $theme_root );
+      register_theme_directory( dirname( $theme_dir ) );
       """
     And the {THEME_DIR}/p2child/tests/bootstrap.php file should contain:
       """
@@ -74,40 +74,6 @@ Feature: Scaffold theme unit tests
       executable
       """
 
-    # Warning: overwriting generated functions.php file, so functions.php file loaded only tests beyond here...
-    Given a wp-content/themes/p2child/functions.php file:
-      """
-      <?php echo __FILE__ . " loaded.\n";
-      """
-
-    When I run `cd {THEME_DIR}/p2child; phpunit`
-    Then STDOUT should contain:
-      """
-      p2child/functions.php loaded.
-      """
-    And STDOUT should contain:
-      """
-      Running as single site
-      """
-    And STDOUT should contain:
-      """
-      OK (1 test, 1 assertion)
-      """
-
-    When I run `cd {THEME_DIR}/p2child; WP_MULTISITE=1 phpunit`
-    Then STDOUT should contain:
-      """
-      p2child/functions.php loaded.
-      """
-    And STDOUT should contain:
-      """
-      Running as multisite
-      """
-    And STDOUT should contain:
-      """
-      OK (1 test, 1 assertion)
-      """
-
   Scenario: Scaffold theme tests invalid theme
     When I try `wp scaffold theme-tests p3child`
     Then STDERR should be:
@@ -134,60 +100,23 @@ Feature: Scaffold theme unit tests
       MYSQL_DATABASE
       """
 
-  Scenario: Scaffold plugin tests with Bitbucket Pipelines as the provider
-    Given a WP install
-    And I run `wp scaffold plugin hello-world --skip-tests`
-
-    When I run `wp plugin path hello-world --dir`
-    Then save STDOUT as {PLUGIN_DIR}
-
-    When I run `wp scaffold plugin-tests hello-world --ci=bitbucket`
+  Scenario: Scaffold theme tests with Bitbucket Pipelines as the provider
+    When I run `wp scaffold theme-tests p2child --ci=bitbucket`
     Then STDOUT should not be empty
-    And the {PLUGIN_DIR}/.travis.yml file should not exist
-    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
+    And the {THEME_DIR}/p2child/.travis.yml file should not exist
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
       """
       pipelines:
         default:
-      """
-    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-      """
           - step:
-              image: php:5.6
+              image: tfirdaus/wp-docklines:php5.6-fpm-alpine
               name: "PHP 5.6"
               script:
-                # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
-      """
-    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-      """
-          - step:
-              image: php:7.0
-              name: "PHP 7.0"
-              script:
-                # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
-      """
-    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-      """
-          - step:
-              image: php:7.1
-              name: "PHP 7.1"
-              script:
-                # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
-      """
-    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-      """
-      definitions:
-        services:
-          database:
-            image: mysql:latest
-            environment:
-              MYSQL_DATABASE: 'wordpress_tests'
-              MYSQL_ROOT_PASSWORD: 'root'
+                - phpcs
+                - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+                - phpunit
+              services:
+                - database
       """
 
   Scenario: Scaffold theme tests with invalid slug
