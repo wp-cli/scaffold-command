@@ -2,8 +2,6 @@
 
 namespace WP_CLI;
 
-use WP_CLI\Utils;
-
 /**
  * Run a system process, and learn what happened.
  */
@@ -69,7 +67,7 @@ class Process {
 	public function run() {
 		$start_time = microtime( true );
 
-		$proc = Utils\proc_open_compat( $this->command, self::$descriptors, $pipes, $this->cwd, $this->env );
+		$proc = proc_open( $this->command, self::$descriptors, $pipes, $this->cwd, $this->env );
 
 		$stdout = stream_get_contents( $pipes[1] );
 		fclose( $pipes[1] );
