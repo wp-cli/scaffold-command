@@ -149,19 +149,50 @@ Feature: Scaffold plugin unit tests
     When I run `wp scaffold plugin-tests hello-world --ci=bitbucket`
     Then STDOUT should not be empty
     And the {PLUGIN_DIR}/.travis.yml file should not exist
-    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
       """
       pipelines:
         default:
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
           - step:
-              image: tfirdaus/wp-docklines:php5.6-fpm-alpine
+              image: php:5.6
               name: "PHP 5.6"
               script:
-                - phpcs
-                - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
-                - phpunit
-              services:
-                - database
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:7.0
+              name: "PHP 7.0"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:7.1
+              name: "PHP 7.1"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+      definitions:
+        services:
+          database:
+            image: mysql:latest
+            environment:
+              MYSQL_DATABASE: 'wordpress_tests'
+              MYSQL_ROOT_PASSWORD: 'root'
       """
 
   Scenario: Scaffold plugin tests with invalid slug
