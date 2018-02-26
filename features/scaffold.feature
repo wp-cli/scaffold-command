@@ -452,7 +452,7 @@ Feature: WordPress code scaffolding
           - php: 7.0
             env: WP_VERSION=latest
           - php: 5.6
-            env: WP_VERSION=4.4
+            env: WP_VERSION=4.5
           - php: 5.6
             env: WP_VERSION=latest
           - php: 5.6
