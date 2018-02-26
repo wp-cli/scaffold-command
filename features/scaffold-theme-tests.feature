@@ -35,6 +35,7 @@ Feature: Scaffold theme unit tests
     And the {THEME_DIR}/p2child/phpunit.xml.dist file should exist
     And the {THEME_DIR}/p2child/phpcs.xml.dist file should exist
     And the {THEME_DIR}/p2child/circle.yml file should not exist
+    And the {THEME_DIR}/p2child/.circleci directory should not exist
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should not exist
     And the {THEME_DIR}/p2child/.travis.yml file should contain:
       """
@@ -124,9 +125,22 @@ Feature: Scaffold theme unit tests
     When I run `wp scaffold theme-tests p2child --ci=circle`
     Then STDOUT should not be empty
     And the {THEME_DIR}/p2child/.travis.yml file should not exist
-    And the {THEME_DIR}/p2child/circle.yml file should contain:
+    And the {THEME_DIR}/p2child/circle.yml file should not exist
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
       """
-      version: 5.6.22
+      version: 2
+      """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php56-build
+      """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php70-build
+      """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php71-build
       """
 
   Scenario: Scaffold theme tests with Gitlab as the provider

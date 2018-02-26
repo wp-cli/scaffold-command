@@ -38,6 +38,7 @@ Feature: Scaffold plugin unit tests
     And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/phpcs.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/circle.yml file should not exist
+    And the {PLUGIN_DIR}/hello-world/.circleci directory should not exist
     And the {PLUGIN_DIR}/hello-world/.gitlab-ci.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
       """
@@ -61,7 +62,7 @@ Feature: Scaffold plugin unit tests
           - php: 7.0
             env: WP_VERSION=latest
           - php: 5.6
-            env: WP_VERSION=4.4
+            env: WP_VERSION=4.5
           - php: 5.6
             env: WP_VERSION=latest
           - php: 5.6
@@ -85,9 +86,22 @@ Feature: Scaffold plugin unit tests
     When I run `wp plugin path hello-world --dir`
     Then save STDOUT as {PLUGIN_DIR}
     And the {PLUGIN_DIR}/.travis.yml file should not exist
-    And the {PLUGIN_DIR}/circle.yml file should contain:
+    And the {PLUGIN_DIR}/circle.yml file should not exist
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
       """
-      version: 5.6.22
+      version: 2
+      """
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
+      """
+      php56-build
+      """
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
+      """
+      php70-build
+      """
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
+      """
+      php71-build
       """
 
   Scenario: Scaffold plugin tests with Circle as the provider, part two
@@ -100,27 +114,28 @@ Feature: Scaffold plugin unit tests
     When I run `wp scaffold plugin-tests hello-world --ci=circle`
     Then STDOUT should not be empty
     And the {PLUGIN_DIR}/.travis.yml file should not exist
-    And the {PLUGIN_DIR}/circle.yml file should contain:
+    And the {PLUGIN_DIR}/circle.yml file should not exist
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
       """
-      version: 5.6.22
+      version: 2
       """
-    And the {PLUGIN_DIR}/circle.yml file should contain:
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
       """
-          - |
-            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test ubuntu '' 127.0.0.1 4.4
-            phpunit
-            WP_MULTISITE=1 phpunit
-          - |
-            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test ubuntu '' 127.0.0.1 latest
-            phpunit
-            WP_MULTISITE=1 phpunit
-          - |
-            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test ubuntu '' 127.0.0.1 trunk
-            phpunit
-            WP_MULTISITE=1 phpunit
+                  rm -rf $WP_TESTS_DIR $WP_CORE_DIR
+                  bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 4.5 $SKIP_DB_CREATE
+                  phpunit
+                  WP_MULTISITE=1 phpunit
+                  SKIP_DB_CREATE=true
+                  rm -rf $WP_TESTS_DIR $WP_CORE_DIR
+                  bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest $SKIP_DB_CREATE
+                  phpunit
+                  WP_MULTISITE=1 phpunit
+                  SKIP_DB_CREATE=true
+                  rm -rf $WP_TESTS_DIR $WP_CORE_DIR
+                  bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 trunk $SKIP_DB_CREATE
+                  phpunit
+                  WP_MULTISITE=1 phpunit
+                  SKIP_DB_CREATE=true
       """
 
   Scenario: Scaffold plugin tests with Gitlab as the provider
