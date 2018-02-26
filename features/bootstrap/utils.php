@@ -383,15 +383,11 @@ function launch_editor_for_input( $input, $filename = 'WP-CLI' ) {
 
 	$editor = getenv( 'EDITOR' );
 	if ( ! $editor ) {
-		$editor = 'vi';
-
-		if ( isset( $_SERVER['OS'] ) && false !== strpos( $_SERVER['OS'], 'indows' ) ) {
-			$editor = 'notepad';
-		}
+		$editor = is_windows() ? 'notepad' : 'vi';
 	}
 
 	$descriptorspec = array( STDIN, STDOUT, STDERR );
-	$process = proc_open( "$editor " . escapeshellarg( $tmpfile ), $descriptorspec, $pipes );
+	$process = proc_open_compat( "$editor " . escapeshellarg( $tmpfile ), $descriptorspec, $pipes );
 	$r = proc_close( $process );
 	if ( $r ) {
 		exit( $r );
@@ -453,7 +449,7 @@ function run_mysql_command( $cmd, $assoc_args, $descriptors = null ) {
 
 	$final_cmd = force_env_on_nix_systems( $cmd ) . assoc_args_to_str( $assoc_args );
 
-	$proc = proc_open( $final_cmd, $descriptors, $pipes );
+	$proc = proc_open_compat( $final_cmd, $descriptors, $pipes );
 	if ( ! $proc ) {
 		exit( 1 );
 	}
@@ -515,14 +511,15 @@ function mustache_render( $template_name, $data = array() ) {
  *
  * @param string  $message  Text to display before the progress bar.
  * @param integer $count    Total number of ticks to be performed.
+ * @param int     $interval Optional. The interval in milliseconds between updates. Default 100.
  * @return cli\progress\Bar|WP_CLI\NoOp
  */
-function make_progress_bar( $message, $count ) {
+function make_progress_bar( $message, $count, $interval = 100 ) {
 	if ( \cli\Shell::isPiped() ) {
 		return new \WP_CLI\NoOp;
 	}
 
-	return new \cli\progress\Bar( $message, $count );
+	return new \cli\progress\Bar( $message, $count, $interval );
 }
 
 function parse_url( $url ) {
@@ -776,6 +773,16 @@ function trailingslashit( $string ) {
 }
 
 /**
+ * Convert Windows EOLs to *nix.
+ *
+ * @param string $str String to convert.
+ * @return string String with carriage return / newline pairs reduced to newlines.
+ */
+function normalize_eols( $str ) {
+	return str_replace( "\r\n", "\n", $str );
+}
+
+/**
  * Get the system's temp directory. Warns user if it isn't writable.
  *
  * @access public
@@ -790,14 +797,8 @@ function get_temp_dir() {
 		return $temp;
 	}
 
-	$temp = '/tmp/';
-
-	// `sys_get_temp_dir()` introduced PHP 5.2.1.
-	if ( $try = sys_get_temp_dir() ) {
-		$temp = trailingslashit( $try );
-	} elseif ( $try = ini_get( 'upload_tmp_dir' ) ) {
-		$temp = trailingslashit( $try );
-	}
+	// `sys_get_temp_dir()` introduced PHP 5.2.1. Will always return something.
+	$temp = trailingslashit( sys_get_temp_dir() );
 
 	if ( ! is_writable( $temp ) ) {
 		\WP_CLI::warning( "Temp directory isn't writable: {$temp}" );
@@ -1110,7 +1111,9 @@ function glob_brace( $pattern, $dummy_flags = null ) {
 function get_suggestion( $target, array $options, $threshold = 2 ) {
 
 	$suggestion_map = array(
+		'add' => 'create',
 		'check' => 'check-update',
+		'capability' => 'cap',
 		'clear' => 'flush',
 		'decrement' => 'decr',
 		'del' => 'delete',
@@ -1126,10 +1129,11 @@ function get_suggestion( $target, array $options, $threshold = 2 ) {
 		'regen' => 'regenerate',
 		'rep' => 'replace',
 		'repl' => 'replace',
+		'trash' => 'delete',
 		'v' => 'version',
 	);
 
-	if ( array_key_exists( $target, $suggestion_map ) ) {
+	if ( array_key_exists( $target, $suggestion_map ) && in_array( $suggestion_map[ $target ], $options, true ) ) {
 		return $suggestion_map[ $target ];
 	}
 
@@ -1317,4 +1321,133 @@ function get_php_binary() {
 	}
 
 	return 'php';
+}
+
+/**
+ * Windows compatible `proc_open()`.
+ * Works around bug in PHP, and also deals with *nix-like `ENV_VAR=blah cmd` environment variable prefixes.
+ *
+ * @access public
+ *
+ * @param string $command Command to execute.
+ * @param array $descriptorspec Indexed array of descriptor numbers and their values.
+ * @param array &$pipes Indexed array of file pointers that correspond to PHP's end of any pipes that are created.
+ * @param string $cwd Initial working directory for the command.
+ * @param array $env Array of environment variables.
+ * @param array $other_options Array of additional options (Windows only).
+ *
+ * @return string Command stripped of any environment variable settings.
+ */
+function proc_open_compat( $cmd, $descriptorspec, &$pipes, $cwd = null, $env = null, $other_options = null ) {
+	if ( is_windows() ) {
+		// Need to encompass the whole command in double quotes - PHP bug https://bugs.php.net/bug.php?id=49139
+		$cmd = '"' . _proc_open_compat_win_env( $cmd, $env ) . '"';
+	}
+	return proc_open( $cmd, $descriptorspec, $pipes, $cwd, $env, $other_options );
+}
+
+/**
+ * For use by `proc_open_compat()` only. Separated out for ease of testing. Windows only.
+ * Turns *nix-like `ENV_VAR=blah command` environment variable prefixes into stripped `cmd` with prefixed environment variables added to passed in environment array.
+ *
+ * @access private
+ *
+ * @param string $command Command to execute.
+ * @param array &$env Array of existing environment variables. Will be modified if any settings in command.
+ *
+ * @return string Command stripped of any environment variable settings.
+ */
+function _proc_open_compat_win_env( $cmd, &$env ) {
+	if ( false !== strpos( $cmd, '=' ) ) {
+		while ( preg_match( '/^([A-Za-z_][A-Za-z0-9_]*)=("[^"]*"|[^ ]*) /', $cmd, $matches ) ) {
+			$cmd = substr( $cmd, strlen( $matches[0] ) );
+			if ( null === $env ) {
+				$env = array();
+			}
+			$env[ $matches[1] ] = isset( $matches[2][0] ) && '"' === $matches[2][0] ? substr( $matches[2], 1, -1 ) : $matches[2];
+		}
+	}
+	return $cmd;
+}
+
+/**
+ * First half of escaping for LIKE special characters % and _ before preparing for MySQL.
+ *
+ * Use this only before wpdb::prepare() or esc_sql().  Reversing the order is very bad for security.
+ *
+ * Copied from core "wp-includes/wp-db.php". Avoids dependency on WP 4.4 wpdb.
+ *
+ * @access public
+ *
+ * @param string $text The raw text to be escaped. The input typed by the user should have no
+ *                     extra or deleted slashes.
+ * @return string Text in the form of a LIKE phrase. The output is not SQL safe. Call $wpdb::prepare()
+ *                or real_escape next.
+ */
+function esc_like( $text ) {
+	return addcslashes( $text, '_%\\' );
+}
+
+/**
+ * Escapes (backticks) MySQL identifiers (aka schema object names) - i.e. column names, table names, and database/index/alias/view etc names.
+ * See https://dev.mysql.com/doc/refman/5.5/en/identifiers.html
+ *
+ * @param string|array $idents A single identifier or an array of identifiers.
+ * @return string|array An escaped string if given a string, or an array of escaped strings if given an array of strings.
+ */
+function esc_sql_ident( $idents ) {
+	$backtick = function ( $v ) {
+		// Escape any backticks in the identifier by doubling.
+		return '`' . str_replace( '`', '``', $v ) . '`';
+	};
+	if ( is_string( $idents ) ) {
+		return $backtick( $idents );
+	}
+	return array_map( $backtick, $idents );
+}
+
+/**
+ * Check whether a given string is a valid JSON representation.
+ *
+ * @param string $argument       String to evaluate.
+ * @param bool   $ignore_scalars Optional. Whether to ignore scalar values.
+ *                               Defaults to true.
+ *
+ * @return bool Whether the provided string is a valid JSON representation.
+ */
+function is_json( $argument, $ignore_scalars = true ) {
+	if ( ! is_string( $argument ) || '' === $argument ) {
+		return false;
+	}
+
+	if ( $ignore_scalars && ! in_array( $argument[0], array( '{', '[' ), true ) ) {
+		return false;
+	}
+
+	json_decode( $argument, $assoc = true );
+
+	return json_last_error() === JSON_ERROR_NONE;
+}
+
+/**
+ * Parse known shell arrays included in the $assoc_args array.
+ *
+ * @param array $assoc_args      Associative array of arguments.
+ * @param array $array_arguments Array of argument keys that should receive an
+ *                               array through the shell.
+ *
+ * @return array
+ */
+function parse_shell_arrays( $assoc_args, $array_arguments ) {
+	if ( empty( $assoc_args ) || empty( $array_arguments ) ) {
+		return $assoc_args;
+	}
+
+	foreach ( $array_arguments as $key ) {
+		if ( array_key_exists( $key, $assoc_args ) && is_json( $assoc_args[ $key ] ) ) {
+			$assoc_args[ $key ] = json_decode( $assoc_args[ $key ], $assoc = true );
+		}
+	}
+
+	return $assoc_args;
 }
