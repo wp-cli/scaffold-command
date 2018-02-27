@@ -6,6 +6,7 @@
 .travis.yml
 behat.yml
 circle.yml
+bitbucket-pipelines.yml
 bin/
 features/
 utils/
