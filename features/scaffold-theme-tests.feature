@@ -36,6 +36,7 @@ Feature: Scaffold theme unit tests
     And the {THEME_DIR}/p2child/phpcs.xml.dist file should exist
     And the {THEME_DIR}/p2child/circle.yml file should not exist
     And the {THEME_DIR}/p2child/.circleci directory should not exist
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should not exist
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should not exist
     And the {THEME_DIR}/p2child/.travis.yml file should contain:
       """
@@ -150,6 +151,56 @@ Feature: Scaffold theme unit tests
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should contain:
       """
       MYSQL_DATABASE
+      """
+
+  Scenario: Scaffold theme tests with Bitbucket Pipelines as the provider
+    When I run `wp scaffold theme-tests p2child --ci=bitbucket`
+    Then STDOUT should not be empty
+    And the {THEME_DIR}/p2child/.travis.yml file should not exist
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+      pipelines:
+        default:
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:5.6
+              name: "PHP 5.6"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:7.0
+              name: "PHP 7.0"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:7.1
+              name: "PHP 7.1"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+      definitions:
+        services:
+          database:
+            image: mysql:latest
+            environment:
+              MYSQL_DATABASE: 'wordpress_tests'
+              MYSQL_ROOT_PASSWORD: 'root'
       """
 
   Scenario: Scaffold theme tests with invalid slug
