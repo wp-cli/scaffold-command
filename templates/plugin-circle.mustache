@@ -1,39 +1,112 @@
-machine:
-  php:
-    version: 5.6.22
-  environment:
-    WP_TESTS_DIR: /tmp/wordpress-tests-lib
-    WP_CORE_DIR: /tmp/wordpress/
-    PATH: $HOME/.composer/vendor/bin:$PATH
+workflows:
+  version: 2
+  main:
+    jobs:
+      - php56-build
+      - php70-build
+      - php71-build
 
-dependencies:
-  pre:
-    - sudo apt-get update; sudo apt-get install subversion
+version: 2
+jobs:
+  php56-build:
+    docker:
+      - image: circleci/php:5.6
+      - image: circleci/mysql:5.7
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/tmp/wordpress/"
+    steps:
+      - checkout
+      - run:
+          name: "Setup Environment Variables"
+          command: |
+            echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $BASH_ENV
+            source /home/circleci/.bashrc
+      - run:
+          name: "Install Dependencies"
+          command: |
+            sudo apt-get update && sudo apt-get install subversion
+            sudo docker-php-ext-install mysqli
+            sudo sh -c "printf '\ndeb http://ftp.us.debian.org/debian sid main\n' >> /etc/apt/sources.list"
+            sudo apt-get update && sudo apt-get install mysql-client-5.7
+      - run:
+          name: "Run Tests"
+          command: |
+            composer global require "phpunit/phpunit=5.7.*"
+            composer global require wp-coding-standards/wpcs
+            phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+            phpcs
+            SKIP_DB_CREATE=false
+            {{#wp_versions_to_test}}
+            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
+            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 {{.}} $SKIP_DB_CREATE
+            phpunit
+            WP_MULTISITE=1 phpunit
+            SKIP_DB_CREATE=true
+            {{/wp_versions_to_test}}
 
-test:
-  pre:
-    - composer global require "phpunit/phpunit=5.7.*"
-    - |
-      composer global require wp-coding-standards/wpcs
-      phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-  override:
-    - phpcs
-    {{#wp_versions_to_test}}
-    - |
-      rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-      bash bin/install-wp-tests.sh wordpress_test ubuntu '' 127.0.0.1 {{.}}
-      phpunit
-      WP_MULTISITE=1 phpunit
-    {{/wp_versions_to_test}}
-    - |
-      phpenv global 7.0.17
-      rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-      bash bin/install-wp-tests.sh wordpress_test ubuntu '' 127.0.0.1 latest
-      phpunit
-      WP_MULTISITE=1 phpunit
-    - |
-      phpenv global 7.1.3
-      rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-      bash bin/install-wp-tests.sh wordpress_test ubuntu '' 127.0.0.1 latest
-      phpunit
-      WP_MULTISITE=1 phpunit
+  php70-build:
+    docker:
+      - image: circleci/php:7.0
+      - image: circleci/mysql:5.7
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/tmp/wordpress/"
+    steps:
+      - checkout
+      - run:
+          name: "Setup Environment Variables"
+          command: |
+            echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $BASH_ENV
+            source /home/circleci/.bashrc
+      - run:
+          name: "Install Dependencies"
+          command: |
+            sudo apt-get update && sudo apt-get install subversion
+            sudo docker-php-ext-install mysqli
+            sudo sh -c "printf '\ndeb http://ftp.us.debian.org/debian sid main\n' >> /etc/apt/sources.list"
+            sudo apt-get update && sudo apt-get install mysql-client-5.7
+      - run:
+          name: "Run Tests"
+          command: |
+            composer global require "phpunit/phpunit=5.7.*"
+            composer global require wp-coding-standards/wpcs
+            phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+            phpcs
+            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
+            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
+            phpunit
+            WP_MULTISITE=1 phpunit
+
+  php71-build:
+    docker:
+      - image: circleci/php:7.1
+      - image: circleci/mysql:5.7
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/tmp/wordpress/"
+    steps:
+      - checkout
+      - run:
+          name: "Setup Environment Variables"
+          command: |
+            echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $BASH_ENV
+            source /home/circleci/.bashrc
+      - run:
+          name: "Install Dependencies"
+          command: |
+            sudo apt-get update && sudo apt-get install subversion
+            sudo docker-php-ext-install mysqli
+            sudo sh -c "printf '\ndeb http://ftp.us.debian.org/debian sid main\n' >> /etc/apt/sources.list"
+            sudo apt-get update && sudo apt-get install mysql-client-5.7
+      - run:
+          name: "Run Tests"
+          command: |
+            composer global require "phpunit/phpunit=5.7.*"
+            composer global require wp-coding-standards/wpcs
+            phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+            phpcs
+            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
+            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
+            phpunit
+            WP_MULTISITE=1 phpunit

@@ -5,7 +5,7 @@
 .editorconfig
 .travis.yml
 behat.yml
-circle.yml
+.circleci/config.yml
 bitbucket-pipelines.yml
 bin/
 features/

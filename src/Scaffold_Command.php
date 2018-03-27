@@ -867,7 +867,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( 'travis' === $assoc_args['ci'] ) {
 			$files_to_create["{$target_dir}/.travis.yml"] = self::mustache_render( 'plugin-travis.mustache', compact( 'wp_versions_to_test' ) );
 		} else if ( 'circle' === $assoc_args['ci'] ) {
-			$files_to_create["{$target_dir}/circle.yml"] = self::mustache_render( 'plugin-circle.mustache', compact( 'wp_versions_to_test' ) );
+			$files_to_create["{$target_dir}/.circleci/config.yml"] = self::mustache_render( 'plugin-circle.mustache', compact( 'wp_versions_to_test' ) );
 		} else if ( 'gitlab' === $assoc_args['ci'] ) {
 			$files_to_create["{$target_dir}/.gitlab-ci.yml"] = self::mustache_render( 'plugin-gitlab.mustache' );
 		} else if ( 'bitbucket' === $assoc_args['ci'] ) {
