@@ -83,12 +83,6 @@ Feature: Scaffold plugin unit tests
       executable
       """
 
-    When I run `cd {PLUGIN_DIR}/hello-world; WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit`
-    Then STDOUT should contain:
-      """
-      No tests executed!
-      """
-
   Scenario: Scaffold plugin tests with Circle as the provider, part one
     Given a WP install
     And I run `wp scaffold plugin hello-world --ci=circle`
