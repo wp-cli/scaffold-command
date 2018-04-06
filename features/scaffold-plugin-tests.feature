@@ -35,7 +35,10 @@ Feature: Scaffold plugin unit tests
       """
       install-wp-tests.sh
       """
-    And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
+    And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should contain:
+      """
+      <exclude>./tests/test-sample.php</exclude>
+      """
     And the {PLUGIN_DIR}/hello-world/phpcs.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/circle.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.circleci directory should not exist
@@ -78,6 +81,12 @@ Feature: Scaffold plugin unit tests
     Then STDOUT should be:
       """
       executable
+      """
+
+    When I run `cd {PLUGIN_DIR}/hello-world; WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit`
+    Then STDOUT should contain:
+      """
+      No tests executed!
       """
 
   Scenario: Scaffold plugin tests with Circle as the provider, part one
