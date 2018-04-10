@@ -58,6 +58,8 @@ Feature: Scaffold theme unit tests
       """
       matrix:
         include:
+          - php: 7.2
+            env: WP_VERSION=latest
           - php: 7.1
             env: WP_VERSION=latest
           - php: 7.0
@@ -190,6 +192,16 @@ Feature: Scaffold theme unit tests
           - step:
               image: php:7.1
               name: "PHP 7.1"
+              script:
+                # Install Dependencies
+                - docker-php-ext-install mysqli
+                - apt-get update && apt-get install -y subversion --no-install-recommends
+      """
+    And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
+      """
+          - step:
+              image: php:7.2
+              name: "PHP 7.2"
               script:
                 # Install Dependencies
                 - docker-php-ext-install mysqli
