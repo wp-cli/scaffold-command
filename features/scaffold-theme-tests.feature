@@ -32,7 +32,10 @@ Feature: Scaffold theme unit tests
       """
       install-wp-tests.sh
       """
-    And the {THEME_DIR}/p2child/phpunit.xml.dist file should exist
+    And the {THEME_DIR}/p2child/phpunit.xml.dist file should contain:
+      """
+      <exclude>./tests/test-sample.php</exclude>
+      """
     And the {THEME_DIR}/p2child/phpcs.xml.dist file should exist
     And the {THEME_DIR}/p2child/circle.yml file should not exist
     And the {THEME_DIR}/p2child/.circleci directory should not exist
@@ -97,7 +100,7 @@ Feature: Scaffold theme unit tests
       """
     And STDOUT should contain:
       """
-      OK (1 test, 1 assertion)
+      No tests executed!
       """
 
     When I run `cd {THEME_DIR}/p2child; WP_MULTISITE=1 WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit`
@@ -111,7 +114,7 @@ Feature: Scaffold theme unit tests
       """
     And STDOUT should contain:
       """
-      OK (1 test, 1 assertion)
+      No tests executed!
       """
 
   Scenario: Scaffold theme tests invalid theme
