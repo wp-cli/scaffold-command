@@ -13,12 +13,22 @@
  * @see https://wordpress.org/gutenberg/handbook/blocks/writing-your-first-block-type/#enqueuing-block-scripts
  */
 function {{machine_name}}_block_init() {
+	{{#plugin}}
 	$dir = dirname( __FILE__ );
+	{{/plugin}}
+	{{#theme}}
+	$dir = get_template_directory() . '/blocks';
+	{{/theme}}
 
 	$block_js = '{{slug}}/block.js';
 	wp_register_script(
 		'{{slug}}-block-editor',
+		{{#plugin}}
 		plugins_url( $block_js, __FILE__ ),
+		{{/plugin}}
+		{{#theme}}
+		get_template_directory_uri() . "/blocks/$block_js",
+		{{/theme}}
 		array(
 			'wp-blocks',
 			'wp-i18n',
@@ -30,7 +40,12 @@ function {{machine_name}}_block_init() {
 	$editor_css = '{{slug}}/editor.css';
 	wp_register_style(
 		'{{slug}}-block-editor',
+		{{#plugin}}
 		plugins_url( $editor_css, __FILE__ ),
+		{{/plugin}}
+		{{#theme}}
+		get_template_directory_uri() . "/blocks/$editor_css",
+		{{/theme}}
 		array(
 			'wp-blocks',
 		),
@@ -40,7 +55,12 @@ function {{machine_name}}_block_init() {
 	$style_css = '{{slug}}/style.css';
 	wp_register_style(
 		'{{slug}}-block',
+		{{#plugin}}
 		plugins_url( $style_css, __FILE__ ),
+		{{/plugin}}
+		{{#theme}}
+		get_template_directory_uri() . "/blocks/$style_css",
+		{{/theme}}
 		array(
 			'wp-blocks',
 		),
