@@ -35,7 +35,10 @@ Feature: Scaffold plugin unit tests
       """
       install-wp-tests.sh
       """
-    And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
+    And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should contain:
+      """
+      <exclude>./tests/test-sample.php</exclude>
+      """
     And the {PLUGIN_DIR}/hello-world/phpcs.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/circle.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.circleci directory should not exist
