@@ -290,6 +290,8 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$data['namespace'] = $control_args['plugin'] ? $control_args['plugin'] : $this->get_theme_name( $control_args['theme'] );
 		$data['machine_name'] = $this->generate_machine_name( $slug );
+		$data['plugin'] = $control_args['plugin'] ? true : false;
+		$data['theme'] = ! $data['plugin'];
 
 		$block_dir = $this->get_output_path( $control_args, "/blocks" );
 		if ( ! $block_dir ) {
