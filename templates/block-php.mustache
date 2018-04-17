@@ -20,21 +20,21 @@ function {{machine_name}}_block_init() {
 	$dir = get_template_directory() . '/blocks';
 	{{/theme}}
 
-	$block_js = '{{slug}}/block.js';
+	$index_js = '{{slug}}/index.js';
 	wp_register_script(
 		'{{slug}}-block-editor',
 		{{#plugin}}
-		plugins_url( $block_js, __FILE__ ),
+		plugins_url( $index_js, __FILE__ ),
 		{{/plugin}}
 		{{#theme}}
-		get_template_directory_uri() . "/blocks/$block_js",
+		get_template_directory_uri() . "/blocks/$index_js,
 		{{/theme}}
 		array(
 			'wp-blocks',
 			'wp-i18n',
 			'wp-element',
 		),
-		filemtime( "$dir/$block_js" )
+		filemtime( "$dir/$index_js" )
 	);
 
 	$editor_css = '{{slug}}/editor.css';
