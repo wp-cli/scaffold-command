@@ -40,7 +40,7 @@ Feature: WordPress block code scaffolding
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
       """
-      $block_js = 'the-green-mile/block.js';
+      index_js = 'the-green-mile/index.js';
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
       """
@@ -58,24 +58,24 @@ Feature: WordPress block code scaffolding
       """
 	    add_action( 'init', 'the_green_mile_block_init' );
       """
-    And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should exist
-    And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
+    And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should exist
+    And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
       registerBlockType( 'movies/the-green-mile', {
       """
-    And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
+    And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
       title: __( 'The green mile' ),
       """
-    And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
+    And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
       category: 'widgets',
       """
-    And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
+    And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
       __( 'Hello from the editor!' )
       """
-    And the {PLUGIN_DIR}/blocks/the-green-mile/block.js file should contain:
+    And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
       __( 'Hello from the saved content!' )
       """
@@ -96,7 +96,7 @@ Feature: WordPress block code scaffolding
 
   Scenario: Scaffold a block with a specific title provided
     When I run `wp scaffold block shawshank-redemption --plugin=movies --title="The Shawshank Redemption"`
-    Then the {PLUGIN_DIR}/blocks/shawshank-redemption/block.js file should contain:
+    Then the {PLUGIN_DIR}/blocks/shawshank-redemption/index.js file should contain:
       """
       title: __( 'The Shawshank Redemption' ),
       """
@@ -107,7 +107,7 @@ Feature: WordPress block code scaffolding
 
   Scenario: Scaffold a block with a specific dashicon provided
     When I run `wp scaffold block forrest-gump --plugin=movies --dashicon=movie`
-    Then the {PLUGIN_DIR}/blocks/forrest-gump/block.js file should contain:
+    Then the {PLUGIN_DIR}/blocks/forrest-gump/index.js file should contain:
       """
       icon: 'movie',
       """
@@ -118,7 +118,7 @@ Feature: WordPress block code scaffolding
 
   Scenario: Scaffold a block with a specific category provided
     When I run `wp scaffold block pulp-fiction --plugin=movies --category=embed`
-    Then the {PLUGIN_DIR}/blocks/pulp-fiction/block.js file should contain:
+    Then the {PLUGIN_DIR}/blocks/pulp-fiction/index.js file should contain:
       """
       category: 'embed',
       """
@@ -130,7 +130,7 @@ Feature: WordPress block code scaffolding
   Scenario: Scaffold a block for an active theme
     When I run `wp scaffold block fight-club --theme`
     Then the {THEME_DIR}/blocks/fight-club.php file should exist
-    And the {THEME_DIR}/blocks/fight-club/block.js file should exist
+    And the {THEME_DIR}/blocks/fight-club/index.js file should exist
     And the {THEME_DIR}/blocks/fight-club/editor.css file should exist
     And the {THEME_DIR}/blocks/fight-club/style.css file should exist
     And STDOUT should be:
@@ -148,7 +148,7 @@ Feature: WordPress block code scaffolding
   Scenario: Scaffold a block for a specific theme
     When I run `wp scaffold block intouchables --theme=p2`
     Then the {THEME_DIR}/blocks/intouchables.php file should exist
-    And the {THEME_DIR}/blocks/intouchables/block.js file should exist
+    And the {THEME_DIR}/blocks/intouchables/index.js file should exist
     And the {THEME_DIR}/blocks/intouchables/editor.css file should exist
     And the {THEME_DIR}/blocks/intouchables/style.css file should exist
     And STDOUT should be:
