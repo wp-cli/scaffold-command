@@ -48,7 +48,7 @@ before_install:
       echo "xdebug.ini does not exist"
     fi
   - |
-    # Raise PHP memory limit to 2048MB.
+    # Raise PHP memory limit to 2048MB
     echo 'memory_limit = 2048M' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 install:
@@ -58,11 +58,6 @@ install:
 
 before_script:
   - composer validate
-  - |
-    # Use phpunit 6.5.6 for PHP 7.2 temporarily until core tests are compat https://core.trac.wordpress.org/ticket/43218.
-    if [[ ${TRAVIS_PHP_VERSION:0:3} = "7.2" ]]; then
-      curl -sSfL -o $TRAVIS_BUILD_DIR/vendor/bin/phpunit https://phar.phpunit.de/phpunit-6.5.6.phar && chmod +x $TRAVIS_BUILD_DIR/vendor/bin/phpunit
-    fi
 
 script:
   - bash bin/test.sh
