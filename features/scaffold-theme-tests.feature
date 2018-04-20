@@ -8,6 +8,7 @@ Feature: Scaffold theme unit tests
     When I run `wp theme path`
     Then save STDOUT as {THEME_DIR}
 
+  @less-than-php-7.2
   Scenario: Scaffold theme tests
     When I run `wp scaffold theme-tests p2child`
     Then STDOUT should not be empty
