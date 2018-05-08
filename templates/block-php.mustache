@@ -13,6 +13,10 @@
  * @see https://wordpress.org/gutenberg/handbook/blocks/writing-your-first-block-type/#enqueuing-block-scripts
  */
 function {{machine_name}}_block_init() {
+	// Skip block registration if Gutenberg is not enabled/merged.
+	if ( ! function_exists( 'register_block_type' ) ) {
+		return;
+	}
 	{{#plugin}}
 	$dir = dirname( __FILE__ );
 	{{/plugin}}
