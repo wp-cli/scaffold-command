@@ -50,9 +50,7 @@ function {{machine_name}}_block_init() {
 		{{#theme}}
 		get_template_directory_uri() . "/blocks/$editor_css",
 		{{/theme}}
-		array(
-			'wp-blocks',
-		),
+		array(),
 		filemtime( "$dir/$editor_css" )
 	);
 
@@ -65,9 +63,7 @@ function {{machine_name}}_block_init() {
 		{{#theme}}
 		get_template_directory_uri() . "/blocks/$style_css",
 		{{/theme}}
-		array(
-			'wp-blocks',
-		),
+		array(),
 		filemtime( "$dir/$style_css" )
 	);
 
