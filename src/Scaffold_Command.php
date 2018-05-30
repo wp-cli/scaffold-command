@@ -276,7 +276,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$data['slug']             = $slug;
 		$data['title_ucfirst']    = ucfirst( $data['title'] );
-		$data['title_ucfirst_js'] = esc_js( $data['title'] );
+		$data['title_ucfirst_js'] = esc_js( $data['title_ucfirst'] );
 
 		$dashicon = $this->extract_dashicon( $assoc_args );
 		if ( $dashicon ) {
