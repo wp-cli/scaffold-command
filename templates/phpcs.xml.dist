@@ -2,6 +2,9 @@
 <ruleset name="WordPress Coding Standards for Plugins">
 	<description>Generally-applicable sniffs for WordPress plugins</description>
 
+	<rule ref="PHPCompatibility"/>
+	<config name="testVersion" value="5.3-"/>
+
 	<rule ref="WordPress-Core" />
 	<rule ref="WordPress-Docs" />
 
