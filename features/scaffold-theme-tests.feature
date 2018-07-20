@@ -37,7 +37,7 @@ Feature: Scaffold theme unit tests
       """
       <exclude>./tests/test-sample.php</exclude>
       """
-    And the {THEME_DIR}/p2child/phpcs.xml.dist file should exist
+    And the {THEME_DIR}/p2child/.phpcs.xml.dist file should exist
     And the {THEME_DIR}/p2child/circle.yml file should not exist
     And the {THEME_DIR}/p2child/.circleci directory should not exist
     And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should not exist

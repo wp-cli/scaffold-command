@@ -39,7 +39,7 @@ Feature: Scaffold plugin unit tests
       """
       <exclude>./tests/test-sample.php</exclude>
       """
-    And the {PLUGIN_DIR}/hello-world/phpcs.xml.dist file should exist
+    And the {PLUGIN_DIR}/hello-world/.phpcs.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/circle.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.circleci directory should not exist
     And the {PLUGIN_DIR}/hello-world/bitbucket-pipelines.yml file should not exist
