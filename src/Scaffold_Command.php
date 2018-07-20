@@ -340,7 +340,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * : Include stylesheets as SASS.
 	 *
 	 * [--woocommerce]
-	 * : Include WooCommerce boilerplate files
+	 * : Include WooCommerce boilerplate files.
 	 *
 	 * [--force]
 	 * : Overwrite files that already exist.
