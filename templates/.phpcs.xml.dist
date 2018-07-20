@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards for Plugins">
+<ruleset name="WordPress Coding Standards for this plugin">
     <description>Generally-applicable sniffs for WordPress plugins.</description>
 
     <!-- What to scan -->
@@ -8,19 +8,17 @@
 
     <!-- How to scan -->
     <arg value="sp"/> <!-- Show sniff and progress -->
-    <arg name="basepath" value="."/><!-- Strip the file paths down to the relevant bit -->
-    <arg name="colors" />
+    <arg name="basepath" value="./"/><!-- Strip the file paths down to the relevant bit -->
+    <arg name="colors"/>
     <arg name="extensions" value="php"/>
-    <arg name="report" value="full"/>
-    <arg name="report" value="summary"/>
-    <arg name="report" value="source"/>
+    <arg name="parallel" value="8"/>
 
 	<!-- Rules: Check PHP version compatibility -->
 	<config name="testVersion" value="5.3-"/>
 	<rule ref="PHPCompatibility"/>
 
     <!-- Rules: WordPress Coding Standards -->
-    <config name="minimum_supported_wp_version" value="3.3"/>
+    <config name="minimum_supported_wp_version" value="4.6"/>
     <rule ref="WordPress">
         <exclude name="WordPress.VIP"/>
     </rule>
