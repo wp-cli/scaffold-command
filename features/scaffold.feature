@@ -355,6 +355,19 @@ Feature: WordPress code scaffolding
       """
     And the {THEME_DIR}/starter-theme/sass directory should exist
 
+  Scenario: Scaffold starter code for a WooCommerce theme
+    Given a WP install
+    Given I run `wp theme path`
+    And save STDOUT as {THEME_DIR}
+
+    When I run `wp scaffold _s starter-theme --woocommerce`
+    Then STDOUT should contain:
+      """
+      Success: Created theme 'Starter-theme'.
+      """
+    And the {THEME_DIR}/starter-theme/woocommerce.css file should exist
+    And the {THEME_DIR}/starter-theme/inc/woocommerce.php file should exist
+
   Scenario: Scaffold starter code for a theme and activate it
     Given a WP install
     When I run `wp scaffold _s starter-theme --activate`

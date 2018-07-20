@@ -340,6 +340,9 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * [--sassify]
 	 * : Include stylesheets as SASS.
 	 *
+	 * [--woocommerce]
+	 * : Include WooCommerce boilerplate files.
+	 *
 	 * [--force]
 	 * : Overwrite files that already exist.
 	 *
@@ -391,6 +394,10 @@ class Scaffold_Command extends WP_CLI_Command {
 		$body['underscoresme_generate']        = "1";
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'sassify' ) ) {
 			$body['underscoresme_sass'] = 1;
+		}
+
+		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'woocommerce' ) ) {
+			$body['underscoresme_woocommerce'] = 1;
 		}
 
 		$tmpfname = wp_tempnam( $url );
