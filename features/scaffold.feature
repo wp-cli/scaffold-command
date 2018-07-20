@@ -355,7 +355,7 @@ Feature: WordPress code scaffolding
     Given I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
-    When I run `wp scaffold _s starter-theme --woocommerce
+    When I run `wp scaffold _s starter-theme --woocommerce`
     Then STDOUT should contain:
       """
       Success: Created theme 'Starter-theme'.
