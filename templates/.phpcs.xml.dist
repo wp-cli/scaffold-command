@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards for this plugin">
+<ruleset name="WordPress Coding Standards based custom ruleset for your plugin">
     <description>Generally-applicable sniffs for WordPress plugins.</description>
 
     <!-- What to scan -->
@@ -11,7 +11,7 @@
     <arg name="basepath" value="./"/><!-- Strip the file paths down to the relevant bit -->
     <arg name="colors"/>
     <arg name="extensions" value="php"/>
-    <arg name="parallel" value="8"/>
+    <arg name="parallel" value="8"/><!-- Enables parallel processing when available for faster results. -->
 
 	<!-- Rules: Check PHP version compatibility -->
 	<config name="testVersion" value="5.3-"/>
