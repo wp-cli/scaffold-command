@@ -224,9 +224,12 @@ Feature: WordPress code scaffolding
       .git
       .gitignore
       """
-    And the {PLUGIN_DIR}/hello-world/phpcs.xml.dist file should contain:
+    And the {PLUGIN_DIR}/hello-world/.phpcs.xml.dist file should contain:
       """
-      	<rule ref="PHPCompatibility"/>
+      	<rule ref="PHPCompatibilityWP"/>
+      """
+    And the {PLUGIN_DIR}/hello-world/.phpcs.xml.dist file should contain:
+      """
       	<config name="testVersion" value="5.3-"/>
       """
     And the {PLUGIN_DIR}/hello-world/hello-world.php file should contain:
