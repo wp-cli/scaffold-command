@@ -1,11 +1,8 @@
 {
     "name": "wp-cli/scaffold-command",
-    "description": "Generates code for post types, taxonomies, blocks, plugins, child themes, etc.",
     "type": "wp-cli-package",
+    "description": "Generates code for post types, taxonomies, blocks, plugins, child themes, etc.",
     "homepage": "https://github.com/wp-cli/scaffold-command",
-    "support": {
-        "issues": "https://github.com/wp-cli/scaffold-command/issues"
-    },
     "license": "MIT",
     "authors": [
         {
@@ -14,19 +11,14 @@
             "homepage": "https://runcommand.io"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "autoload": {
-        "psr-4": {
-            "": "src/"
-        },
-        "files": [ "scaffold-command.php" ]
-    },
     "require": {
         "wp-cli/wp-cli": "^2"
     },
     "require-dev": {
         "wp-cli/wp-cli-tests": "^0"
+    },
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {
@@ -45,11 +37,21 @@
             "scaffold theme-tests"
         ]
     },
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        },
+        "files": [
+            "scaffold-command.php"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "scripts": {
+        "behat": "run-behat-tests",
         "lint": "run-linter-tests",
         "phpcs": "run-phpcs-tests",
         "phpunit": "run-php-unit-tests",
-        "behat": "run-behat-tests",
         "prepare-tests": "install-package-tests",
         "test": [
             "@lint",
@@ -57,5 +59,8 @@
             "@phpunit",
             "@behat"
         ]
+    },
+    "support": {
+        "issues": "https://github.com/wp-cli/scaffold-command/issues"
     }
 }
