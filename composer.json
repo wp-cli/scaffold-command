@@ -19,7 +19,8 @@
         "wp-cli/wp-cli-tests": "^0"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "process-timeout": 7200
     },
     "extra": {
         "branch-alias": {
