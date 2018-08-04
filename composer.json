@@ -15,6 +15,7 @@
         "wp-cli/wp-cli": "^2"
     },
     "require-dev": {
+        "wp-cli/extension-command": "^1.2",
         "wp-cli/wp-cli-tests": "^0"
     },
     "config": {
