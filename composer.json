@@ -15,16 +15,16 @@
         "wp-cli/wp-cli": "^2"
     },
     "require-dev": {
-        "wp-cli/extension-command": "^1.2",
-        "wp-cli/wp-cli-tests": "^0"
+        "wp-cli/extension-command": "^1.2 || ^2",
+        "wp-cli/wp-cli-tests": "^2"
     },
     "config": {
-        "sort-packages": true,
-        "process-timeout": 7200
+        "process-timeout": 7200,
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "2.x-dev"
         },
         "bundled": true,
         "commands": [
