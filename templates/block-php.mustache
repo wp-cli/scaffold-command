@@ -31,7 +31,7 @@ function {{machine_name}}_block_init() {
 		plugins_url( $index_js, __FILE__ ),
 		{{/plugin}}
 		{{#theme}}
-		get_template_directory_uri() . "/blocks/$index_js,
+		get_template_directory_uri() . "/blocks/$index_js",
 		{{/theme}}
 		array(
 			'wp-blocks',
