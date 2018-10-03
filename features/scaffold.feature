@@ -44,7 +44,7 @@ Feature: WordPress code scaffolding
     When I try `wp scaffold child-theme hello-world --parent_theme=just-test --enable-network --quiet`
     Then STDERR should contain:
       """
-      Error: This is not a multisite install.
+      Error: This is not a multisite installation.
       """
     And the return code should be 1
 
