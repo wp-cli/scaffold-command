@@ -338,7 +338,8 @@ Feature: WordPress code scaffolding
     Given I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
-    When I run `wp scaffold _s starter-theme`
+    # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
+    When I try `wp scaffold _s starter-theme`
     Then STDOUT should contain:
       """
       Success: Created theme 'Starter-theme'.
@@ -351,7 +352,8 @@ Feature: WordPress code scaffolding
     Given I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
-    When I run `wp scaffold _s starter-theme --sassify`
+    # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
+    When I try `wp scaffold _s starter-theme --sassify`
     Then STDOUT should contain:
       """
       Success: Created theme 'Starter-theme'.
@@ -363,7 +365,8 @@ Feature: WordPress code scaffolding
     Given I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
-    When I run `wp scaffold _s starter-theme --woocommerce`
+    # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
+    When I try `wp scaffold _s starter-theme --woocommerce`
     Then STDOUT should contain:
       """
       Success: Created theme 'Starter-theme'.
@@ -373,7 +376,8 @@ Feature: WordPress code scaffolding
 
   Scenario: Scaffold starter code for a theme and activate it
     Given a WP install
-    When I run `wp scaffold _s starter-theme --activate`
+    # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
+    When I try `wp scaffold _s starter-theme --activate`
     Then STDOUT should contain:
       """
       Success: Switched to 'Starter-theme' theme.
@@ -488,7 +492,8 @@ Feature: WordPress code scaffolding
 
   Scenario: Scaffold starter code for a theme and network enable it
     Given a WP multisite install
-    When I run `wp scaffold _s starter-theme --enable-network`
+    # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
+    When I try `wp scaffold _s starter-theme --enable-network`
     Then STDOUT should contain:
       """
       Success: Network enabled the 'Starter-theme' theme.
