@@ -414,9 +414,10 @@ class Scaffold_Command extends WP_CLI_Command {
 		// See https://github.com/wp-cli/scaffold-command/issues/181
 		if ( is_wp_error( $response )
 		     && false !== strpos( $response->get_error_message(), 'gnutls_handshake() failed' ) ) {
-			// Try again with HTTP instead of HTTPS.
-			$url      = str_replace( 'https://', 'http://', $url );
-			$response = wp_remote_post( $url, $post_args );
+			// Certificate problem, falling back to unsecured request instead.
+			$alt_url = str_replace( 'https://', 'http://', $url );
+			WP_CLI::warning( "Secured request to {$url} failed, using {$alt_url} as a fallback." );
+			$response = wp_remote_post( $alt_url, $post_args );
 		}
 
 		if ( is_wp_error( $response ) ) {
