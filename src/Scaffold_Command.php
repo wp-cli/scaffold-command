@@ -408,6 +408,21 @@ class Scaffold_Command extends WP_CLI_Command {
 			'filename' => $tmpfname,
 		) );
 
+		// Workaround to get scaffolding to work within Travis CI.
+		// See https://github.com/wp-cli/scaffold-command/issues/181
+		if ( is_wp_error( $response )
+		     && false !== strpos( $response->get_error_message(), 'gnutls_handshake() failed' ) ) {
+			// Try again with HTTP instead of HTTPS.
+			$url = str_replace( 'https://', 'http://', $url );
+
+			$response = wp_remote_post( $url, array(
+				'timeout'  => $timeout,
+				'body'     => $body,
+				'stream'   => true,
+				'filename' => $tmpfname,
+			) );
+		}
+
 		if ( is_wp_error( $response ) ) {
 			WP_CLI::error( $response );
 		}
