@@ -16,7 +16,7 @@
     },
     "require-dev": {
         "wp-cli/extension-command": "^1.2 || ^2",
-        "wp-cli/wp-cli-tests": "^2"
+        "wp-cli/wp-cli-tests": "^2.0.7"
     },
     "config": {
         "process-timeout": 7200,
@@ -51,6 +51,7 @@
     "prefer-stable": true,
     "scripts": {
         "behat": "run-behat-tests",
+        "behat-rerun": "rerun-behat-tests",
         "lint": "run-linter-tests",
         "phpcs": "run-phpcs-tests",
         "phpunit": "run-php-unit-tests",
