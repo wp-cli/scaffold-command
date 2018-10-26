@@ -400,13 +400,25 @@ class Scaffold_Command extends WP_CLI_Command {
 			$body['underscoresme_woocommerce'] = 1;
 		}
 
-		$tmpfname = wp_tempnam( $url );
-		$response = wp_remote_post( $url, array(
+		$tmpfname  = wp_tempnam( $url );
+		$post_args = array(
 			'timeout'  => $timeout,
 			'body'     => $body,
 			'stream'   => true,
 			'filename' => $tmpfname,
-		) );
+		);
+
+		$response = wp_remote_post( $url, $post_args );
+
+		// Workaround to get scaffolding to work within Travis CI.
+		// See https://github.com/wp-cli/scaffold-command/issues/181
+		if ( is_wp_error( $response )
+		     && false !== strpos( $response->get_error_message(), 'gnutls_handshake() failed' ) ) {
+			// Certificate problem, falling back to unsecured request instead.
+			$alt_url = str_replace( 'https://', 'http://', $url );
+			WP_CLI::warning( "Secured request to {$url} failed, using {$alt_url} as a fallback." );
+			$response = wp_remote_post( $alt_url, $post_args );
+		}
 
 		if ( is_wp_error( $response ) ) {
 			WP_CLI::error( $response );
