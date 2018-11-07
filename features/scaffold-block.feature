@@ -65,7 +65,7 @@ Feature: WordPress block code scaffolding
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
-      title: __( 'The green mile' ),
+      title: __( 'The green mile', 'movies' ),
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
@@ -73,11 +73,11 @@ Feature: WordPress block code scaffolding
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
-      __( 'Hello from the editor!' )
+      __( 'Hello from the editor!', 'movies' )
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/index.js file should contain:
       """
-      __( 'Hello from the saved content!' )
+      __( 'Hello from the saved content!', 'movies' )
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile/editor.css file should exist
     And the {PLUGIN_DIR}/blocks/the-green-mile/editor.css file should contain:
@@ -98,7 +98,7 @@ Feature: WordPress block code scaffolding
     When I run `wp scaffold block shawshank-redemption --plugin=movies --title="The Shawshank Redemption"`
     Then the {PLUGIN_DIR}/blocks/shawshank-redemption/index.js file should contain:
       """
-      title: __( 'The Shawshank Redemption' ),
+      title: __( 'The Shawshank Redemption', 'movies' ),
       """
     And STDOUT should be:
       """

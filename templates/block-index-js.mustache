@@ -24,7 +24,7 @@
 		 * This is the display title for your block, which can be translated with `i18n` functions.
 		 * The block inserter will show this name.
 		 */
-		title: __( '{{title_ucfirst_js}}' ),
+		title: __( '{{title_ucfirst_js}}', '{{namespace}}' ),
 
 		{{#dashicon}}
 		/**
@@ -60,7 +60,7 @@
 			return el(
 				'p',
 				{ className: props.className },
-				__( 'Hello from the editor!' )
+				__( 'Hello from the editor!', '{{namespace}}' )
 			);
 		},
 
@@ -75,7 +75,7 @@
 			return el(
 				'p',
 				{},
-				__( 'Hello from the saved content!' )
+				__( 'Hello from the saved content!', '{{namespace}}' )
 			);
 		}
 	} );
