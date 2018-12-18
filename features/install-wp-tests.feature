@@ -103,8 +103,14 @@ Feature: Scaffold install-wp-tests.sh tests
     And the /tmp/behat-wordpress directory should contain:
       """
       index.php
+      """
+      // WP 5.0+: js
+      """
       license.txt
       readme.html
+      """
+      // WP 5.0+: styles
+      """
       wp-activate.php
       wp-admin
       wp-blog-header.php
