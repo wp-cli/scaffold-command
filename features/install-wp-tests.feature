@@ -104,12 +104,12 @@ Feature: Scaffold install-wp-tests.sh tests
       """
       index.php
       """
-      // WP 5.0+: js
+      # WP 5.0+: js
       """
       license.txt
       readme.html
       """
-      // WP 5.0+: styles
+      # WP 5.0+: styles
       """
       wp-activate.php
       wp-admin
