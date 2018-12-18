@@ -104,12 +104,18 @@ Feature: Scaffold install-wp-tests.sh tests
       """
       index.php
       """
-      # WP 5.0+: js
+
+    # WP 5.0+: js
+
+    And the /tmp/behat-wordpress directory should contain:
       """
       license.txt
       readme.html
       """
-      # WP 5.0+: styles
+
+    # WP 5.0+: styles
+
+    And the /tmp/behat-wordpress directory should contain:
       """
       wp-activate.php
       wp-admin
