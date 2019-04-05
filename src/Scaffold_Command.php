@@ -289,6 +289,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			'theme'  => false,
 		) );
 
+		if ( isset( $control_args['plugin'] ) ) {
+			if ( ! preg_match( '/^[A-Za-z0-9\-]*$/', $control_args['plugin'] ) ) {
+				WP_CLI::error( "Invalid plugin name specified. Block work only if the plugin name contains lowercase alphanumeric characters or dashes" );
+			}
+		}
+
 		$data['namespace'] = $control_args['plugin'] ? $control_args['plugin'] : $this->get_theme_name( $control_args['theme'] );
 		$data['machine_name'] = $this->generate_machine_name( $slug );
 		$data['plugin'] = $control_args['plugin'] ? true : false;
