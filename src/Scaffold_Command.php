@@ -291,7 +291,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		if ( isset( $control_args['plugin'] ) ) {
 			if ( ! preg_match( '/^[A-Za-z0-9\-]*$/', $control_args['plugin'] ) ) {
-				WP_CLI::error( "Invalid plugin name specified. Block work only if the plugin name contains lowercase alphanumeric characters or dashes" );
+				WP_CLI::error( 'Invalid plugin name specified. The block editor can only register blocks for plugins that have nothing but lowercase alphanumeric characters or dashes in their slug.' );
 			}
 		}
 
