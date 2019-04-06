@@ -14,7 +14,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And the return code should be 1
 
-  @less-than-php-7.2
+  @require-php-5.6
   Scenario: Install latest version of WordPress
     Given a WP install
     And I run `wp plugin path`
@@ -76,7 +76,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
-  @less-than-php-7.2
+  @require-php-5.6
   Scenario: Install WordPress from trunk
     Given a WP install
     And I run `wp plugin path`
