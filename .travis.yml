@@ -71,4 +71,4 @@ jobs:
     - stage: test
       php: 5.4
       dist: precise
-      env: WP_VERSION=latest
+      env: WP_VERSION=5.1
