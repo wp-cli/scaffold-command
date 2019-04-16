@@ -188,11 +188,9 @@ class Scaffold_Command extends WP_CLI_Command {
 
 			$force = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
 			$files_written = $this->create_files( array( $filename => $final_output ), $force );
-			$this->log_whether_files_written(
-				$files_written,
-				$skip_message = "Skipped creating '$filename'.",
-				$success_message = "Created '$filename'."
-			);
+			$skip_message    = "Skipped creating '$filename'.";
+			$success_message = "Created '$filename'.";
+			$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		} else {
 			// STDOUT
@@ -305,11 +303,9 @@ class Scaffold_Command extends WP_CLI_Command {
 			"$block_dir/$slug/editor.css" => self::mustache_render( 'block-editor-css.mustache', $data ),
 			"$block_dir/$slug/style.css" => self::mustache_render( 'block-style-css.mustache', $data ),
 		), $control_args['force'] );
-		$this->log_whether_files_written(
-			$files_written,
-			$skip_message = 'All block files were skipped.',
-			$success_message = "Created block '{$data['title_ucfirst']}'."
-		);
+		$skip_message    = 'All block files were skipped.';
+		$success_message = "Created block '{$data['title_ucfirst']}'.";
+		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 	}
 
 	/**
@@ -528,11 +524,9 @@ class Scaffold_Command extends WP_CLI_Command {
 			$theme_functions_path => self::mustache_render( 'child_theme_functions.mustache', $data ),
 			"$theme_dir/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
 		), $force );
-		$this->log_whether_files_written(
-			$files_written,
-			$skip_message = 'All theme files were skipped.',
-			$success_message = "Created '$theme_dir'."
-		);
+		$skip_message    = 'All theme files were skipped.';
+		$success_message = "Created '$theme_dir'.";
+		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'activate' ) ) {
 			WP_CLI::run_command( array( 'theme', 'activate', $theme_slug ) );
@@ -690,11 +684,9 @@ class Scaffold_Command extends WP_CLI_Command {
 			"$plugin_dir/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
 		), $force );
 
-		$this->log_whether_files_written(
-			$files_written,
-			$skip_message = 'All plugin files were skipped.',
-			$success_message = 'Created plugin files.'
-		);
+		$skip_message    = 'All plugin files were skipped.';
+		$success_message = 'Created plugin files.';
+		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		if ( ! \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-tests' ) ) {
 			$ci = empty( $assoc_args['ci'] ) ? '' : $assoc_args['ci'];
@@ -920,11 +912,10 @@ class Scaffold_Command extends WP_CLI_Command {
 				}
 			}
 		}
-		$this->log_whether_files_written(
-			$files_written,
-			$skip_message = 'All test files were skipped.',
-			$success_message = 'Created test files.'
-		);
+
+		$skip_message    = 'All test files were skipped.';
+		$success_message = 'Created test files.';
+		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 	}
 
 	/**
