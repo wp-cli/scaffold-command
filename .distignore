@@ -7,6 +7,8 @@
 behat.yml
 .circleci/config.yml
 bitbucket-pipelines.yml
+phpcs.xml.dist
+phpunit.xml.dist
 bin/
 features/
 utils/
