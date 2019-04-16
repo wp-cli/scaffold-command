@@ -421,7 +421,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		}
 
 		$response_code = wp_remote_retrieve_response_code( $response );
-		if ( 200 != $response_code ) {
+		if ( 200 !== (int) $response_code ) {
 			WP_CLI::error( "Couldn't create theme (received $response_code response)." );
 		}
 
@@ -493,7 +493,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	function child_theme( $args, $assoc_args ) {
 		$theme_slug = $args[0];
 
-		if ( in_array( $theme_slug, array( '.', '..' ) ) ) {
+		if ( in_array( $theme_slug, array( '.', '..' ), true ) ) {
 			WP_CLI::error( "Invalid theme slug specified. The slug cannot be '.' or '..'." );
 		}
 
@@ -639,7 +639,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$plugin_name    = ucwords( str_replace( '-', ' ', $plugin_slug ) );
 		$plugin_package = str_replace( ' ', '_', $plugin_name );
 
-		if ( in_array( $plugin_slug, array( '.', '..' ) ) ) {
+		if ( in_array( $plugin_slug, array( '.', '..' ), true ) ) {
 			WP_CLI::error( "Invalid plugin slug specified. The slug cannot be '.' or '..'." );
 		}
 
@@ -811,7 +811,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		if ( ! empty( $args[0] ) ) {
 			$slug = $args[0];
-			if ( in_array( $slug, array( '.', '..' ) ) ) {
+			if ( in_array( $slug, array( '.', '..' ), true ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
 			}
 			if ( 'theme' === $type ) {
@@ -977,7 +977,7 @@ class Scaffold_Command extends WP_CLI_Command {
 					$default = false,
 					$marker = '[s/r]: '
 				);
-			} while ( ! in_array( $answer, array( 's', 'r' ) ) );
+			} while ( ! in_array( $answer, array( 's', 'r' ), true ) );
 			$should_write_file = 'r' === $answer;
 		}
 
