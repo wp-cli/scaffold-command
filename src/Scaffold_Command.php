@@ -181,7 +181,8 @@ class Scaffold_Command extends WP_CLI_Command {
 			$final_output = $raw_output;
 		}
 
-		if ( $path = $this->get_output_path( $control_args, $subdir ) ) {
+		$path = $this->get_output_path( $control_args, $subdir );
+		if ( is_string( $path ) && ! empty( $path ) ) {
 			$filename = "{$path}{$slug}.php";
 
 			$force           = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
@@ -365,7 +366,8 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$_s_theme_path = "$theme_path/$data[theme_name]";
 
-		if ( $error_msg = $this->check_target_directory( 'theme', $_s_theme_path ) ) {
+		$error_msg = $this->check_target_directory( 'theme', $_s_theme_path );
+		if ( ! empty( $error_msg ) ) {
 			WP_CLI::error( "Invalid theme slug specified. {$error_msg}" );
 		}
 
@@ -509,7 +511,8 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$theme_dir = WP_CONTENT_DIR . "/themes/{$theme_slug}";
 
-		if ( $error_msg = $this->check_target_directory( 'theme', $theme_dir ) ) {
+		$error_msg = $this->check_target_directory( 'theme', $theme_dir );
+		if ( ! empty( $error_msg ) ) {
 			WP_CLI::error( "Invalid theme slug specified. {$error_msg}" );
 		}
 
@@ -665,7 +668,8 @@ class Scaffold_Command extends WP_CLI_Command {
 			$plugin_dir = WP_PLUGIN_DIR . "/{$plugin_slug}";
 			$this->maybe_create_plugins_dir();
 
-			if ( $error_msg = $this->check_target_directory( 'plugin', $plugin_dir ) ) {
+			$error_msg = $this->check_target_directory( 'plugin', $plugin_dir );
+			if ( ! empty( $error_msg ) ) {
 				WP_CLI::error( "Invalid plugin slug specified. {$error_msg}" );
 			}
 		}
@@ -831,7 +835,9 @@ class Scaffold_Command extends WP_CLI_Command {
 			if ( empty( $assoc_args['dir'] ) && ! is_dir( $target_dir ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. No such target directory '{$target_dir}'." );
 			}
-			if ( $error_msg = $this->check_target_directory( $type, $target_dir ) ) {
+
+			$error_msg = $this->check_target_directory( $type, $target_dir );
+			if ( ! empty( $error_msg ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. {$error_msg}" );
 			}
 		}
