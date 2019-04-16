@@ -490,7 +490,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand child-theme
 	 */
-	function child_theme( $args, $assoc_args ) {
+	public function child_theme( $args, $assoc_args ) {
 		$theme_slug = $args[0];
 
 		if ( in_array( $theme_slug, array( '.', '..' ) ) ) {
@@ -634,7 +634,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *     Success: Created plugin files.
 	 *     Success: Created test files.
 	 */
-	function plugin( $args, $assoc_args ) {
+	public function plugin( $args, $assoc_args ) {
 		$plugin_slug    = $args[0];
 		$plugin_name    = ucwords( str_replace( '-', ' ', $plugin_slug ) );
 		$plugin_package = str_replace( ' ', '_', $plugin_name );
