@@ -173,10 +173,8 @@ class Scaffold_Command extends WP_CLI_Command {
 		$raw_output = self::mustache_render( $raw_template, $vars );
 
 		if ( ! $control_args['raw'] ) {
-			$vars = array_merge( $vars, array(
-				'machine_name' => $machine_name,
-				'output'       => $raw_output,
-			) );
+			$vars['machine_name'] = $machine_name;
+			$vars['output']       = $raw_output;
 
 			$final_output = self::mustache_render( $extended_template, $vars );
 		} else {
