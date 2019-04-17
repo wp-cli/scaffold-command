@@ -432,7 +432,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		}
 
 		$response_code = wp_remote_retrieve_response_code( $response );
-		if ( 200 != $response_code ) {
+		if ( 200 !== (int) $response_code ) {
 			WP_CLI::error( "Couldn't create theme (received {$response_code} response)." );
 		}
 
