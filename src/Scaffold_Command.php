@@ -82,7 +82,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'post_type_extended.mustache',
 		);
 
-		$this->_scaffold( $args[0], $assoc_args, $defaults, '/post-types/', $templates );
+		$this->scaffold( $args[0], $assoc_args, $defaults, '/post-types/', $templates );
 	}
 
 	/**
@@ -139,10 +139,10 @@ class Scaffold_Command extends WP_CLI_Command {
 			'taxonomy_extended.mustache',
 		);
 
-		$this->_scaffold( $args[0], $assoc_args, $defaults, '/taxonomies/', $templates );
+		$this->scaffold( $args[0], $assoc_args, $defaults, '/taxonomies/', $templates );
 	}
 
-	private function _scaffold( $slug, $assoc_args, $defaults, $subdir, $templates ) {
+	private function scaffold( $slug, $assoc_args, $defaults, $subdir, $templates ) {
 		$wp_filesystem = $this->init_wp_filesystem();
 
 		$control_defaults = array(
