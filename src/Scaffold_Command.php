@@ -346,8 +346,10 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *     # Generate a theme with name "Sample Theme" and author "John Doe"
 	 *     $ wp scaffold _s sample-theme --theme_name="Sample Theme" --author="John Doe"
 	 *     Success: Created theme 'Sample Theme'.
+	 *
+	 * @alias _s
 	 */
-	public function _s( $args, $assoc_args ) {
+	public function underscores( $args, $assoc_args ) {
 
 		$theme_slug = $args[0];
 		$theme_path = WP_CONTENT_DIR . '/themes';
