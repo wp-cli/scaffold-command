@@ -77,7 +77,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'dashicon'   => 'admin-post',
 		);
 
-		$this->_scaffold( $args[0], $assoc_args, $defaults, '/post-types/', array(
+		$this->scaffold( $args[0], $assoc_args, $defaults, '/post-types/', array(
 			'post_type.mustache',
 			'post_type_extended.mustache',
 		) );
@@ -132,13 +132,13 @@ class Scaffold_Command extends WP_CLI_Command {
 			$assoc_args['post_types'] = $this->quote_comma_list_elements( $assoc_args['post_types'] );
 		}
 
-		$this->_scaffold( $args[0], $assoc_args, $defaults, '/taxonomies/', array(
+		$this->scaffold( $args[0], $assoc_args, $defaults, '/taxonomies/', array(
 			'taxonomy.mustache',
 			'taxonomy_extended.mustache',
 		) );
 	}
 
-	private function _scaffold( $slug, $assoc_args, $defaults, $subdir, $templates ) {
+	private function scaffold( $slug, $assoc_args, $defaults, $subdir, $templates ) {
 		$wp_filesystem = $this->init_wp_filesystem();
 
 		$control_args = $this->extract_args( $assoc_args, array(
