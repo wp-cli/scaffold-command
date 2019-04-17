@@ -77,10 +77,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			'dashicon'   => 'admin-post',
 		);
 
-		$this->scaffold( $args[0], $assoc_args, $defaults, '/post-types/', array(
+		$templates = array(
 			'post_type.mustache',
 			'post_type_extended.mustache',
-		) );
+		);
+
+		$this->scaffold( $args[0], $assoc_args, $defaults, '/post-types/', $templates );
 	}
 
 	/**
@@ -132,21 +134,24 @@ class Scaffold_Command extends WP_CLI_Command {
 			$assoc_args['post_types'] = $this->quote_comma_list_elements( $assoc_args['post_types'] );
 		}
 
-		$this->scaffold( $args[0], $assoc_args, $defaults, '/taxonomies/', array(
+		$templates = array(
 			'taxonomy.mustache',
 			'taxonomy_extended.mustache',
-		) );
+		);
+
+		$this->scaffold( $args[0], $assoc_args, $defaults, '/taxonomies/', $templates );
 	}
 
 	private function scaffold( $slug, $assoc_args, $defaults, $subdir, $templates ) {
 		$wp_filesystem = $this->init_wp_filesystem();
 
-		$control_args = $this->extract_args( $assoc_args, array(
+		$control_defaults = array(
 			'label'  => preg_replace( '/_|-/', ' ', strtolower( $slug ) ),
 			'theme'  => false,
 			'plugin' => false,
 			'raw'    => false,
-		) );
+		);
+		$control_args     = $this->extract_args( $assoc_args, $control_defaults );
 
 		$vars = $this->extract_args( $assoc_args, $defaults );
 
@@ -280,11 +285,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			$data['dashicon'] = $dashicon;
 		}
 
-		$control_args = $this->extract_args( $assoc_args, array(
+		$control_defaults = array(
 			'force'  => false,
 			'plugin' => false,
 			'theme'  => false,
-		) );
+		);
+		$control_args     = $this->extract_args( $assoc_args, $control_defaults );
 
 		$data['namespace']    = $control_args['plugin'] ? $control_args['plugin'] : $this->get_theme_name( $control_args['theme'] );
 		$data['machine_name'] = $this->generate_machine_name( $slug );
@@ -296,12 +302,13 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( 'No plugin or theme selected.' );
 		}
 
-		$files_written   = $this->create_files( array(
+		$files_to_create = array(
 			"{$block_dir}/{$slug}.php"        => self::mustache_render( 'block-php.mustache', $data ),
 			"{$block_dir}/{$slug}/index.js"   => self::mustache_render( 'block-index-js.mustache', $data ),
 			"{$block_dir}/{$slug}/editor.css" => self::mustache_render( 'block-editor-css.mustache', $data ),
 			"{$block_dir}/{$slug}/style.css"  => self::mustache_render( 'block-style-css.mustache', $data ),
-		), $control_args['force'] );
+		);
+		$files_written   = $this->create_files( $files_to_create, $control_args['force'] );
 		$skip_message    = 'All block files were skipped.';
 		$success_message = "Created block '{$data['title_ucfirst']}'.";
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
@@ -358,11 +365,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( 'Invalid theme slug specified. Theme slugs can only contain letters, numbers, underscores and hyphens, and can only start with a letter or underscore.' );
 		}
 
-		$data = wp_parse_args( $assoc_args, array(
+		$defaults = array(
 			'theme_name' => ucfirst( $theme_slug ),
 			'author'     => 'Me',
 			'author_uri' => '',
-		) );
+		);
+		$data     = wp_parse_args( $assoc_args, $defaults );
 
 		$_s_theme_path = "$theme_path/$data[theme_name]";
 
@@ -434,9 +442,10 @@ class Scaffold_Command extends WP_CLI_Command {
 		unlink( $tmpfname );
 
 		if ( true === $unzip_result ) {
-			$this->create_files( array(
+			$files_to_create = array(
 				"{$theme_path}/{$theme_slug}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
-			), false );
+			);
+			$this->create_files( $files_to_create, false );
 			WP_CLI::success( "Created theme '{$data['theme_name']}'." );
 		} else {
 			WP_CLI::error( "Could not decompress your theme files ('{$tmpfname}') at '{$theme_path}': {$unzip_result->get_error_message()}" );
@@ -498,13 +507,14 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( "Invalid theme slug specified. The slug cannot be '.' or '..'." );
 		}
 
-		$data = wp_parse_args( $assoc_args, array(
+		$defaults = array(
 			'theme_name' => ucfirst( $theme_slug ),
 			'author'     => 'Me',
 			'author_uri' => '',
 			'theme_uri'  => '',
-		) );
+		);
 
+		$data                               = wp_parse_args( $assoc_args, $defaults );
 		$data['slug']                       = $theme_slug;
 		$data['parent_theme_function_safe'] = str_replace( array( ' ', '-' ), '_', $data['parent_theme'] );
 		$data['description']                = ucfirst( $data['parent_theme'] ) . ' child theme.';
@@ -521,12 +531,13 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$this->maybe_create_themes_dir();
 
-		$force           = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
-		$files_written   = $this->create_files( array(
+		$files_to_create = array(
 			$theme_style_path            => self::mustache_render( 'child_theme.mustache', $data ),
 			$theme_functions_path        => self::mustache_render( 'child_theme_functions.mustache', $data ),
 			"{$theme_dir}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
-		), $force );
+		);
+		$force           = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+		$files_written   = $this->create_files( $files_to_create, $force );
 		$skip_message    = 'All theme files were skipped.';
 		$success_message = "Created '{$theme_dir}'.";
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
@@ -646,7 +657,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( "Invalid plugin slug specified. The slug cannot be '.' or '..'." );
 		}
 
-		$data = wp_parse_args( $assoc_args, array(
+		$defaults = array(
 			'plugin_slug'         => $plugin_slug,
 			'plugin_name'         => $plugin_name,
 			'plugin_package'      => $plugin_package,
@@ -655,7 +666,8 @@ class Scaffold_Command extends WP_CLI_Command {
 			'plugin_author_uri'   => 'YOUR SITE HERE',
 			'plugin_uri'          => 'PLUGIN SITE HERE',
 			'plugin_tested_up_to' => get_bloginfo( 'version' ),
-		) );
+		);
+		$data     = wp_parse_args( $assoc_args, $defaults );
 
 		$data['textdomain'] = $plugin_slug;
 
@@ -677,8 +689,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$plugin_path        = "{$plugin_dir}/{$plugin_slug}.php";
 		$plugin_readme_path = "{$plugin_dir}/readme.txt";
 
-		$force         = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
-		$files_written = $this->create_files( array(
+		$files_to_create = array(
 			$plugin_path                  => self::mustache_render( 'plugin.mustache', $data ),
 			$plugin_readme_path           => self::mustache_render( 'plugin-readme.mustache', $data ),
 			"{$plugin_dir}/package.json"  => self::mustache_render( 'plugin-packages.mustache', $data ),
@@ -686,19 +697,21 @@ class Scaffold_Command extends WP_CLI_Command {
 			"{$plugin_dir}/.gitignore"    => self::mustache_render( 'plugin-gitignore.mustache', $data ),
 			"{$plugin_dir}/.distignore"   => self::mustache_render( 'plugin-distignore.mustache', $data ),
 			"{$plugin_dir}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
-		), $force );
+		);
+		$force           = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+		$files_written   = $this->create_files( $files_to_create, $force );
 
 		$skip_message    = 'All plugin files were skipped.';
 		$success_message = 'Created plugin files.';
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		if ( ! \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-tests' ) ) {
-			$ci = empty( $assoc_args['ci'] ) ? '' : $assoc_args['ci'];
-			WP_CLI::run_command( array( 'scaffold', 'plugin-tests', $plugin_slug ), array(
+			$command_args = array(
 				'dir'   => $plugin_dir,
-				'ci'    => $ci,
+				'ci'    => empty( $assoc_args['ci'] ) ? '' : $assoc_args['ci'],
 				'force' => $force,
-			) );
+			);
+			WP_CLI::run_command( array( 'scaffold', 'plugin-tests', $plugin_slug ), $command_args );
 		}
 
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'activate' ) ) {
