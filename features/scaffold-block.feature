@@ -31,6 +31,14 @@ Feature: WordPress block code scaffolding
       Error: Can't find 'unknown' plugin.
       """
 
+  Scenario: Scaffold a block for an invalid plugin slug
+    When I run `wp scaffold plugin plugin.name.with.dots`
+    And I try `wp scaffold block some-block --plugin=plugin.name.with.dots`
+    Then STDERR should contain:
+      """
+      Error: Invalid plugin name specified.
+      """
+
   Scenario: Scaffold a block for a specific plugin
     When I run `wp scaffold block the-green-mile --plugin=movies`
     Then the {PLUGIN_DIR}/blocks/the-green-mile.php file should exist
@@ -175,3 +183,4 @@ Feature: WordPress block code scaffolding
       """
       plugins_url
       """
+
