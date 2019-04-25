@@ -36,12 +36,12 @@ wp scaffold
 
 
 
-### wp scaffold _s
+### wp scaffold underscores
 
 Generates starter code for a theme based on _s.
 
 ~~~
-wp scaffold _s <slug> [--activate] [--enable-network] [--theme_name=<title>] [--author=<full-name>] [--author_uri=<uri>] [--sassify] [--force]
+wp scaffold underscores <slug> [--activate] [--enable-network] [--theme_name=<title>] [--author=<full-name>] [--author_uri=<uri>] [--sassify] [--woocommerce] [--force]
 ~~~
 
 See the [Underscores website](https://underscores.me/) for more details.
@@ -68,6 +68,9 @@ See the [Underscores website](https://underscores.me/) for more details.
 
 	[--sassify]
 		Include stylesheets as SASS.
+
+	[--woocommerce]
+		Include WooCommerce boilerplate files.
 
 	[--force]
 		Overwrite files that already exist.
@@ -313,6 +316,7 @@ variable.
 		  - travis
 		  - circle
 		  - gitlab
+		  - bitbucket
 		---
 
 	[--force]
@@ -451,6 +455,7 @@ variable.
 		  - travis
 		  - circle
 		  - gitlab
+		  - bitbucket
 		---
 
 	[--force]
