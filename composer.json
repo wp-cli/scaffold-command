@@ -29,7 +29,7 @@
         "bundled": true,
         "commands": [
             "scaffold",
-            "scaffold _s",
+            "scaffold underscores",
             "scaffold block",
             "scaffold child-theme",
             "scaffold plugin",
