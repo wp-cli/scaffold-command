@@ -522,10 +522,18 @@ class Scaffold_Command extends WP_CLI_Command {
 			'theme_uri'  => '',
 		);
 
-		$data                               = wp_parse_args( $assoc_args, $defaults );
-		$data['slug']                       = $theme_slug;
-		$data['parent_theme_function_safe'] = str_replace( array( ' ', '-' ), '_', $data['parent_theme'] );
-		$data['description']                = ucfirst( $data['parent_theme'] ) . ' child theme.';
+		$data                              = wp_parse_args( $assoc_args, $defaults );
+		$data['slug']                      = $theme_slug;
+		$data['child_theme_function_safe'] = str_replace( array( ' ', '-' ), '_', $data['slug'] );
+		$data['description']               = ucfirst( $data['parent_theme'] ) . ' child theme.';
+
+		if ( version_compare( $GLOBALS['wp_version'], '4.7', '<' ) ) {
+			$data['parent_file_uri_function'] = 'get_template_directory_uri()';
+			$data['child_file_uri_function']  = 'get_stylesheet_directory_uri()';
+		} else {
+			$data['parent_file_uri_function'] = 'get_parent_theme_file_uri()';
+			$data['child_file_uri_function']  = 'get_theme_file_uri()';
+		}
 
 		$theme_dir = WP_CONTENT_DIR . "/themes/{$theme_slug}";
 
