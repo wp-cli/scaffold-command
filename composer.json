@@ -12,6 +12,7 @@
         }
     ],
     "require": {
+        "php": "^5.4 || ^7.0",
         "wp-cli/wp-cli": "^2"
     },
     "require-dev": {
