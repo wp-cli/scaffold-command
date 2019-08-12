@@ -73,7 +73,7 @@ Feature: Scaffold install-wp-tests.sh tests
       wp_cli_test_scaffold
       """
 
-    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib vendor/bin/phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
   @require-php-5.6
@@ -148,7 +148,7 @@ Feature: Scaffold install-wp-tests.sh tests
       wp_cli_test_scaffold
       """
 
-    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib vendor/bin/phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
   Scenario: Install WordPress 3.7 and phpunit will not run
