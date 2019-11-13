@@ -21,7 +21,7 @@ function {{machine_name}}_block_init() {
 	$dir = dirname( __FILE__ );
 	{{/plugin}}
 	{{#theme}}
-	$dir = get_template_directory() . '/blocks';
+	$dir = get_stylesheet_directory() . '/blocks';
 	{{/theme}}
 
 	$index_js = '{{slug}}/index.js';
@@ -31,7 +31,7 @@ function {{machine_name}}_block_init() {
 		plugins_url( $index_js, __FILE__ ),
 		{{/plugin}}
 		{{#theme}}
-		get_template_directory_uri() . "/blocks/$index_js",
+		get_stylesheet_directory_uri() . "/blocks/$index_js",
 		{{/theme}}
 		array(
 			'wp-blocks',
@@ -48,7 +48,7 @@ function {{machine_name}}_block_init() {
 		plugins_url( $editor_css, __FILE__ ),
 		{{/plugin}}
 		{{#theme}}
-		get_template_directory_uri() . "/blocks/$editor_css",
+		get_stylesheet_directory_uri() . "/blocks/$editor_css",
 		{{/theme}}
 		array(),
 		filemtime( "$dir/$editor_css" )
@@ -61,7 +61,7 @@ function {{machine_name}}_block_init() {
 		plugins_url( $style_css, __FILE__ ),
 		{{/plugin}}
 		{{#theme}}
-		get_template_directory_uri() . "/blocks/$style_css",
+		get_stylesheet_directory_uri() . "/blocks/$style_css",
 		{{/theme}}
 		array(),
 		filemtime( "$dir/$style_css" )
