@@ -22,6 +22,9 @@ env:
     - PATH="$TRAVIS_BUILD_DIR/vendor/bin:$PATH"
     - WP_CLI_BIN_DIR="$TRAVIS_BUILD_DIR/vendor/bin"
 
+services:
+  - mysql
+
 before_install:
   - |
     # Remove Xdebug for a huge performance increase:
