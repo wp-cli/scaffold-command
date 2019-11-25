@@ -48,6 +48,7 @@ Feature: WordPress code scaffolding
       """
     And the return code should be 1
 
+  @require-wp-4.6
   Scenario: Scaffold a child theme and network enable it
     Given a WP multisite install
 
@@ -309,6 +310,7 @@ Feature: WordPress code scaffolding
       Plugin 'hello-world' activated.
       """
 
+  @require-wp-4.6
   Scenario: Scaffold a plugin and network activate it
     Given a WP multisite install
     When I run `wp scaffold plugin hello-world --activate-network`
@@ -333,6 +335,7 @@ Feature: WordPress code scaffolding
       """
     And the return code should be 1
 
+  @require-php-5.6
   Scenario: Scaffold starter code for a theme
     Given a WP install
     Given I run `wp theme path`
@@ -347,6 +350,7 @@ Feature: WordPress code scaffolding
     And the {THEME_DIR}/starter-theme/style.css file should exist
     And the {THEME_DIR}/starter-theme/.editorconfig file should exist
 
+  @require-php-5.6
   Scenario: Scaffold starter code for a theme with sass
     Given a WP install
     Given I run `wp theme path`
@@ -360,6 +364,7 @@ Feature: WordPress code scaffolding
       """
     And the {THEME_DIR}/starter-theme/sass directory should exist
 
+  @require-php-5.6
   Scenario: Scaffold starter code for a WooCommerce theme
     Given a WP install
     Given I run `wp theme path`
@@ -374,6 +379,7 @@ Feature: WordPress code scaffolding
     And the {THEME_DIR}/starter-theme/woocommerce.css file should exist
     And the {THEME_DIR}/starter-theme/inc/woocommerce.php file should exist
 
+  @require-php-5.6
   Scenario: Scaffold starter code for a theme and activate it
     Given a WP install
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
@@ -490,6 +496,7 @@ Feature: WordPress code scaffolding
             env: WP_VERSION=latest
       """
 
+  @require-php-5.6 @require-wp-4.6
   Scenario: Scaffold starter code for a theme and network enable it
     Given a WP multisite install
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
@@ -499,6 +506,7 @@ Feature: WordPress code scaffolding
       Success: Network enabled the 'Starter-theme' theme.
       """
 
+  @require-php-5.6
   Scenario: Scaffold starter code for a theme, but can't unzip theme files
     Given a WP install
     And a misconfigured WP_CONTENT_DIR constant directory
