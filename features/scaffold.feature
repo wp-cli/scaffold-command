@@ -48,6 +48,7 @@ Feature: WordPress code scaffolding
       """
     And the return code should be 1
 
+  @require-wp-4.6
   Scenario: Scaffold a child theme and network enable it
     Given a WP multisite install
 
@@ -309,6 +310,7 @@ Feature: WordPress code scaffolding
       Plugin 'hello-world' activated.
       """
 
+  @require-wp-4.6
   Scenario: Scaffold a plugin and network activate it
     Given a WP multisite install
     When I run `wp scaffold plugin hello-world --activate-network`
@@ -494,7 +496,7 @@ Feature: WordPress code scaffolding
             env: WP_VERSION=latest
       """
 
-  @require-php-5.6
+  @require-php-5.6 @require-wp-4.6
   Scenario: Scaffold starter code for a theme and network enable it
     Given a WP multisite install
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
