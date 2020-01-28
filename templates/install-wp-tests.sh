@@ -147,8 +147,19 @@ install_db() {
 	fi
 
 	# create database
-	mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA > /dev/null 2>&1
-	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	if [ $(mysql -e 'show databases;' | grep ^$DB_NAME$) ]
+	then
+		echo "Reinstalling will delete the existing test database ($DB_NAME)"
+		read -p 'Are you sure you want to proceed? [No/Yes]: ' DELETE_EXISTING_DB
+		# Matches on Y, y, Ye, YE, ye, yE, Ys, YS, ys, yS, Yes, yes, YEs, YES, yES, yeS, yEs, yeS, and maybe others
+		if [[ $DELETE_EXISTING_DB =~ [yY]+[eEsS]* ]]
+		then
+			mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA > /dev/null 2>&1
+			mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+		else
+			echo "Leaving the existing database ($DB_NAME) in place."
+		fi
+	fi
 }
 
 install_wp
