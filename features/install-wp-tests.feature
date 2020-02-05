@@ -17,6 +17,10 @@ Feature: Scaffold install-wp-tests.sh tests
   @require-php-5.6
   Scenario: Install latest version of WordPress
     Given a WP install
+    And a affirmative-response file:
+    """
+    Y
+    """
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -75,6 +79,13 @@ Feature: Scaffold install-wp-tests.sh tests
 
     When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
+
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest < affirmative-response`
+    Then the return code should be 0
+    And STDOUT should contain:
+      """
+      Recreated the database
+      """
 
   @require-php-5.6
   Scenario: Install WordPress from trunk
