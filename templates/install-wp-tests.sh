@@ -147,7 +147,7 @@ install_db() {
 	fi
 
 	# create database
-	if [ $(mysql -e --user="$DB_USER" --password="$DB_PASS" 'show databases;' | grep ^$DB_NAME$) ]
+	if [ $(mysql -u "$DB_USER" -p"$DB_PASS" -e 'show databases;' | grep ^$DB_NAME$) ]
 	then
 		echo "Reinstalling will delete the existing test database ($DB_NAME)"
 		read -p 'Are you sure you want to proceed? [y/N]: ' DELETE_EXISTING_DB
@@ -156,6 +156,7 @@ install_db() {
 		then
 			mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA > /dev/null 2>&1
 			mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+			echo "Recreated the database ($DB_NAME)."
 		else
 			echo "Leaving the existing database ($DB_NAME) in place."
 		fi
