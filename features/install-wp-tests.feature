@@ -82,9 +82,13 @@ Feature: Scaffold install-wp-tests.sh tests
 
     When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest < affirmative-response`
     Then the return code should be 0
+    And STDERR should contain:
+      """
+      Reinstalling
+      """
     And STDOUT should contain:
       """
-      Recreated the database
+      wp_cli_test_scaffold
       """
 
   @require-php-5.6
