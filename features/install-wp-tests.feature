@@ -21,6 +21,10 @@ Feature: Scaffold install-wp-tests.sh tests
     """
     Y
     """
+    And a negative-response file:
+    """
+    No
+    """
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -89,6 +93,17 @@ Feature: Scaffold install-wp-tests.sh tests
     And STDOUT should contain:
       """
       wp_cli_test_scaffold
+      """
+
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest < negative-response`
+    Then the return code should be 0
+    And STDERR should contain:
+      """
+      Reinstalling
+      """
+    And STDOUT should contain:
+      """
+      Leaving the existing database
       """
 
   @require-php-5.6
