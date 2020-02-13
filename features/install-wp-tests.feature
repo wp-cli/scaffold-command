@@ -103,7 +103,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And STDOUT should contain:
       """
-      Leaving the existing database
+      Leaving the existing database wp_cli_test_scaffold in place
       """
 
   @require-php-5.6
