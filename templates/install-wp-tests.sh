@@ -124,6 +124,23 @@ install_test_suite() {
 
 }
 
+recreate_db() {
+	shopt -s nocasematch
+	if [[ $1 =~ ^(y|yes)$ ]]
+	then
+		mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA
+		create_db
+		echo "Recreated the database ($DB_NAME)."
+	else
+		echo "Leaving the existing database ($DB_NAME) in place."
+	fi
+	shopt -u nocasematch
+}
+
+create_db() {
+	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+}
+
 install_db() {
 
 	if [ ${SKIP_DB_CREATE} = "true" ]; then
@@ -147,7 +164,14 @@ install_db() {
 	fi
 
 	# create database
-	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	if [ $(mysql -u "$DB_USER" -p"$DB_PASS" -e 'show databases;' | grep ^$DB_NAME$) ]
+	then
+		echo "Reinstalling will delete the existing test database ($DB_NAME)"
+		read -p 'Are you sure you want to proceed? [y/N]: ' DELETE_EXISTING_DB
+		recreate_db $DELETE_EXISTING_DB
+	else
+		create_db
+	fi
 }
 
 install_wp
