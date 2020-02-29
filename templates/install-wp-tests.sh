@@ -1,16 +1,29 @@
 #!/usr/bin/env bash
 
-if [ $# -lt 3 ]; then
-	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]"
-	exit 1
+while getopts d:u:p:h:v:s: option; do
+  case ${option} in
+    d) DB_NAME=${OPTARG};;
+    u) DB_USER=${OPTARG};;
+    p) DB_PASS=${OPTARG};;
+    h) DB_HOST=${OPTARG};;
+    v) WP_VERSION=${OPTARG};;
+    s) SKIP_DB_CREATE=${OPTARG};;
+  esac
+done
+
+if [ -z "${DB_NAME}" ] || [ -z ${DB_USER} ] || [ -z ${DB_PASS} ]; then
+    echo "Usage: $0 -d <db-name> -u <db-user> -p <db-pass> -h [db-host] -v [wp-version] -s [skip-database-creation]";
+    exit 1;
 fi
 
-DB_NAME=$1
-DB_USER=$2
-DB_PASS=$3
-DB_HOST=${4-localhost}
-WP_VERSION=${5-latest}
-SKIP_DB_CREATE=${6-false}
+
+
+DB_NAME=${DB_NAME}
+DB_USER=${DB_USER}
+DB_PASS=${DB_PASS}
+DB_HOST=${DB_HOST-localhost}
+WP_VERSION=${WP_VERSION-latest}
+SKIP_DB_CREATE=${SKIP_DB_CREATE-false}
 
 TMPDIR=${TMPDIR-/tmp}
 TMPDIR=$(echo $TMPDIR | sed -e "s/\/$//")
