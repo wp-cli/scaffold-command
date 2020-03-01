@@ -32,7 +32,7 @@ Feature: Scaffold install-wp-tests.sh tests
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh -d wp_cli_test_scaffold -u wp_cli_test -p password1 -h localhost -v latest`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
@@ -84,7 +84,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest < affirmative-response`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh -d wp_cli_test_scaffold -u wp_cli_test -p password1 -h localhost -v latest < affirmative-response`
     Then the return code should be 0
     And STDERR should contain:
       """
@@ -95,7 +95,7 @@ Feature: Scaffold install-wp-tests.sh tests
       Recreated the database (wp_cli_test_scaffold)
       """
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest < negative-response`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh -d wp_cli_test_scaffold -u wp_cli_test -p password1 -h localhost -v latest < negative-response`
     Then the return code should be 0
     And STDERR should contain:
       """
@@ -116,7 +116,7 @@ Feature: Scaffold install-wp-tests.sh tests
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost trunk`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh -d wp_cli_test_scaffold -u wp_cli_test -p password1 -h localhost -v trunk`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
@@ -190,7 +190,7 @@ Feature: Scaffold install-wp-tests.sh tests
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost 3.7`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh -d wp_cli_test_scaffold -u wp_cli_test -p password1 -h localhost -v 3.7`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
