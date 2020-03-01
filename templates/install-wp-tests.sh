@@ -12,7 +12,7 @@ while getopts d:u:p:h:v:s: option; do
 done
 
 if [ -z "${DB_NAME}" ] || [ -z ${DB_USER} ] || [ -z ${DB_PASS} ]; then
-    echo "Usage: $0 -d <db-name> -u <db-user> -p <db-pass> -h [db-host] -v [wp-version] -s [skip-database-creation]";
+    echo "usage: $0 -d <db-name> -u <db-user> -p <db-pass> -h [db-host] -v [wp-version] -s [skip-database-creation]";
     exit 1;
 fi
 
