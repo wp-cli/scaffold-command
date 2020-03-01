@@ -128,17 +128,17 @@ Feature: Scaffold plugin unit tests
     And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
       """
                   rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-                  bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 4.5 $SKIP_DB_CREATE
+                  bash bin/install-wp-tests.sh -d wordpress_test -u root -p '' -h 127.0.0.1 -v 4.5 -s $SKIP_DB_CREATE
                   phpunit
                   WP_MULTISITE=1 phpunit
                   SKIP_DB_CREATE=true
                   rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-                  bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest $SKIP_DB_CREATE
+                  bash bin/install-wp-tests.sh -d wordpress_test -u root -p '' -h 127.0.0.1 -v latest -s $SKIP_DB_CREATE
                   phpunit
                   WP_MULTISITE=1 phpunit
                   SKIP_DB_CREATE=true
                   rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-                  bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 trunk $SKIP_DB_CREATE
+                  bash bin/install-wp-tests.sh -d wordpress_test -u root -p '' -h 127.0.0.1 -v trunk -s $SKIP_DB_CREATE
                   phpunit
                   WP_MULTISITE=1 phpunit
                   SKIP_DB_CREATE=true
