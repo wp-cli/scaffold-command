@@ -44,6 +44,7 @@ Feature: Scaffold plugin unit tests
     And the {PLUGIN_DIR}/hello-world/.circleci directory should not exist
     And the {PLUGIN_DIR}/hello-world/bitbucket-pipelines.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.gitlab-ci.yml file should not exist
+    And the {PLUGIN_DIR}/hello-world/.github directory should not exist
     And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
       """
       script:
@@ -157,6 +158,21 @@ Feature: Scaffold plugin unit tests
     And the {PLUGIN_DIR}/.gitlab-ci.yml file should contain:
       """
       MYSQL_DATABASE
+      """
+
+  Scenario: Scaffold plugin tests with GitHub as the provider
+    Given a WP install
+    And I run `wp scaffold plugin hello-world --skip-tests`
+
+    When I run `wp plugin path hello-world --dir`
+    Then save STDOUT as {PLUGIN_DIR}
+
+    When I run `wp scaffold plugin-tests hello-world --ci=github`
+    Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/.travis.yml file should not exist
+    And the {PLUGIN_DIR}/.github/workflows/main.yml file should contain:
+      """
+      name: Coding Standards and Tests
       """
 
   Scenario: Scaffold plugin tests with Bitbucket Pipelines as the provider

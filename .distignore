@@ -1,6 +1,7 @@
 .DS_Store
 .git
 .gitignore
+.github/workflows/main.yml
 .gitlab-ci.yml
 .editorconfig
 .travis.yml

@@ -1,0 +1,57 @@
+name: Coding Standards and Tests
+
+on: [ push ]
+
+env:
+  WP_TESTS_DIR: /github/home/wp-tests/wordpress-tests-lib
+  WP_CORE_DIR: /github/home/wp-tests/wordpress
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [ 7.2, 7.3, 7.4 ]
+        wordpress-version: [ latest ]
+    container:
+      image: junaidbhura/wp-tests:php-${{ matrix.php-version }}
+    services:
+      mysql:
+        image: mysql:5.7.27
+        env:
+          MYSQL_ROOT_PASSWORD: root
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    - name: Composer cache
+      id: composer-cache
+      uses: actions/cache@v1
+      with:
+        path: /github/home/.composer/vendor
+        key: composer-${{ hashFiles( '.github/workflows/main.yml' ) }}
+
+    - name: WordPress test suite cache
+      id: wp-test-suite
+      uses: actions/cache@v1
+      with:
+        path: /github/home/wp-tests
+        key: wp-tests-${{ hashFiles( '.github/workflows/main.yml' ) }}-${{ matrix.wordpress-version }}
+
+    - name: Install Composer dependencies
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: |
+        composer global require "phpunit/phpunit=6.1.0"
+        composer global require wp-coding-standards/wpcs
+        $HOME/.composer/vendor/bin/phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+
+    - name: Install WordPress test suite
+      run: bash bin/install-wp-tests.sh wordpress_test root root mysql ${{ matrix.wordpress-version }}
+
+    - name: Coding standards
+      run: $HOME/.composer/vendor/bin/phpcs
+
+    - name: Tests
+      run: $HOME/.composer/vendor/bin/phpunit

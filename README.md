@@ -257,6 +257,7 @@ The following files are also included unless the `--skip-tests` is used:
 		  - travis
 		  - circle
 		  - gitlab
+		  - github
 		---
 
 	[--activate]
@@ -316,6 +317,7 @@ variable.
 		  - travis
 		  - circle
 		  - gitlab
+		  - github
 		  - bitbucket
 		---
 
@@ -455,6 +457,7 @@ variable.
 		  - travis
 		  - circle
 		  - gitlab
+		  - github
 		  - bitbucket
 		---
 

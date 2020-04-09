@@ -639,6 +639,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - travis
 	 *   - circle
 	 *   - gitlab
+	 *   - github
 	 * ---
 	 *
 	 * [--activate]
@@ -764,6 +765,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - travis
 	 *   - circle
 	 *   - gitlab
+	 *   - github
 	 *   - bitbucket
 	 * ---
 	 *
@@ -817,6 +819,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - travis
 	 *   - circle
 	 *   - gitlab
+	 *   - github
 	 *   - bitbucket
 	 * ---
 	 *
@@ -915,6 +918,8 @@ class Scaffold_Command extends WP_CLI_Command {
 			$files_to_create[ "{$target_dir}/.circleci/config.yml" ] = self::mustache_render( 'plugin-circle.mustache', compact( 'wp_versions_to_test' ) );
 		} elseif ( 'gitlab' === $assoc_args['ci'] ) {
 			$files_to_create[ "{$target_dir}/.gitlab-ci.yml" ] = self::mustache_render( 'plugin-gitlab.mustache' );
+		} elseif ( 'github' === $assoc_args['ci'] ) {
+			$files_to_create[ "{$target_dir}/.github/workflows/main.yml" ] = self::mustache_render( 'plugin-github.mustache' );
 		} elseif ( 'bitbucket' === $assoc_args['ci'] ) {
 			$files_to_create[ "{$target_dir}/bitbucket-pipelines.yml" ] = self::mustache_render( 'plugin-bitbucket.mustache' );
 		}
