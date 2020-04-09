@@ -987,7 +987,7 @@ class Scaffold_Command extends WP_CLI_Command {
 				continue;
 			}
 
-			$wp_filesystem->mkdir( dirname( $filename ) );
+			wp_mkdir_p( dirname( $filename ) );
 
 			if ( ! $wp_filesystem->put_contents( $filename, $contents ) ) {
 				WP_CLI::error( "Error creating file: {$filename}" );
