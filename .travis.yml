@@ -4,6 +4,9 @@ dist: xenial
 language: php
 php: 7.3
 
+services:
+  - mysql
+
 notifications:
   email:
     on_success: never
