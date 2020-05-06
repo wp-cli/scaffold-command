@@ -231,7 +231,7 @@ Feature: WordPress code scaffolding
       """
     And the {PLUGIN_DIR}/hello-world/.phpcs.xml.dist file should contain:
       """
-      	<config name="testVersion" value="5.3-"/>
+      	<config name="testVersion" value="5.6-"/>
       """
     And the {PLUGIN_DIR}/hello-world/hello-world.php file should contain:
       """
@@ -492,8 +492,6 @@ Feature: WordPress code scaffolding
             env: WP_VERSION=trunk
           - php: 5.6
             env: WP_TRAVISCI=phpcs
-          - php: 5.3
-            env: WP_VERSION=latest
       """
 
   @require-php-5.6 @require-wp-4.6
