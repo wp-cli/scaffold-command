@@ -75,8 +75,6 @@ Feature: Scaffold plugin unit tests
             env: WP_VERSION=trunk
           - php: 5.6
             env: WP_TRAVISCI=phpcs
-          - php: 5.3
-            env: WP_VERSION=latest
       """
 
     When I run `wp eval "if ( is_executable( '{PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh' ) ) { echo 'executable'; } else { exit( 1 ); }"`

@@ -30,9 +30,6 @@ matrix:
     {{/wp_versions_to_test}}
     - php: 5.6
       env: WP_TRAVISCI=phpcs
-    - php: 5.3
-      env: WP_VERSION=latest
-      dist: precise
 
 before_script:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
@@ -50,7 +47,10 @@ before_script:
   - |
     if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
       composer global require wp-coding-standards/wpcs
-      phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+      composer global require phpcompatibility/php-compatibility
+      composer global require phpcompatibility/phpcompatibility-paragonie
+      composer global require phpcompatibility/phpcompatibility-wp
+      phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs,$HOME/.composer/vendor/phpcompatibility/php-compatibility,$HOME/.composer/vendor/phpcompatibility/phpcompatibility-paragonie,$HOME/.composer/vendor/phpcompatibility/phpcompatibility-wp
     fi
 
 script:
