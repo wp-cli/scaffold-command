@@ -173,11 +173,11 @@ Feature: WordPress block code scaffolding
       """
     And the {PLUGIN_DIR}/blocks/plugin-block.php file should not contain:
       """
-      get_template_directory
+      get_stylesheet_directory
       """
     And the {THEME_DIR}/blocks/theme-block.php file should contain:
       """
-      get_template_directory
+      get_stylesheet_directory
       """
     And the {THEME_DIR}/blocks/theme-block.php file should not contain:
       """
