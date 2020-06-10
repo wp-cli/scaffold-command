@@ -48,11 +48,6 @@ script:
 
 jobs:
   include:
-    - stage: sniff
-      script:
-        - composer lint
-        - composer phpcs
-      env: BUILD=sniff
     - stage: test
       php: 7.4
       env: WP_VERSION=latest
