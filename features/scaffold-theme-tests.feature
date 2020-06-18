@@ -42,6 +42,7 @@ Feature: Scaffold theme unit tests
     And the {THEME_DIR}/p2child/.circleci directory should not exist
     And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should not exist
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should not exist
+    And the {THEME_DIR}/p2child/.github directory should not exist
     And the {THEME_DIR}/p2child/.travis.yml file should contain:
       """
       script:
