@@ -61,6 +61,10 @@ Feature: Scaffold plugin unit tests
       """
       matrix:
         include:
+          - php: 7.4
+            env: WP_VERSION=latest
+          - php: 7.3
+            env: WP_VERSION=latest
           - php: 7.2
             env: WP_VERSION=latest
           - php: 7.1
