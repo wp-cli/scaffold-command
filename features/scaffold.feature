@@ -93,7 +93,7 @@ Feature: WordPress code scaffolding
     When I run `wp scaffold post-type zombie`
     Then STDOUT should contain:
       """
-      register_post_type( 'zombie'
+      'rest_base'             => 'zombie'
       """
     And STDOUT should contain:
       """
