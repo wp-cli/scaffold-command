@@ -43,3 +43,32 @@ function {{machine_name}}_updated_messages( $messages ) {
 	return $messages;
 }
 add_filter( 'post_updated_messages', '{{machine_name}}_updated_messages' );
+
+/**
+ * Sets the bulk post updated messages for the `{{machine_name}}` post type.
+ *
+ * @param  array $bulk_messages Arrays of messages, each keyed by the corresponding post type. Messages are
+ *                              keyed with 'updated', 'locked', 'deleted', 'trashed', and 'untrashed'.
+ * @param  int[] $bulk_counts   Array of item counts for each message, used to build internationalized strings.
+ * @return array Bulk messages for the `{{machine_name}}` post type.
+ */
+function {{machine_name}}_bulk_updated_messages( $bulk_messages, $bulk_counts ) {
+	global $post;
+
+	$bulk_messages['{{slug}}'] = array(
+		/* translators: %s: Number of {{label_plural}}. */
+		'updated'   => _n( '%s {{label}} updated.', '%s {{label_plural}} updated.', $bulk_counts['updated'], '{{textdomain}}' ),
+		'locked'    => ( 1 === $bulk_counts['locked'] ) ? __( '1 {{label}} not updated, somebody is editing it.', '{{textdomain}}' ) :
+						/* translators: %s: Number of {{label_plural}}. */
+						_n( '%s {{label}} not updated, somebody is editing it.', '%s {{label_plural}} not updated, somebody is editing them.', $bulk_counts['locked'], '{{textdomain}}' ),
+		/* translators: %s: Number of {{label_plural}}. */
+		'deleted'   => _n( '%s {{label}} permanently deleted.', '%s {{label_plural}} permanently deleted.', $bulk_counts['deleted'], '{{textdomain}}' ),
+		/* translators: %s: Number of {{label_plural}}. */
+		'trashed'   => _n( '%s {{label}} moved to the Trash.', '%s {{label_plural}} moved to the Trash.', $bulk_counts['trashed'], '{{textdomain}}' ),
+		/* translators: %s: Number of {{label_plural}}. */
+		'untrashed' => _n( '%s {{label}} restored from the Trash.', '%s {{label_plural}} restored from the Trash.', $bulk_counts['untrashed'], '{{textdomain}}' ),
+	);
+
+	return $bulk_messages;
+}
+add_filter( 'bulk_post_updated_messages', '{{machine_name}}_bulk_updated_messages', 10, 2 );
