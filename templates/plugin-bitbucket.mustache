@@ -27,7 +27,7 @@ pipelines:
           - phpunit --version
 
           ## Run PHPUnit
-          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+          - bash bin/install-wp-tests.sh -d wordpress_tests -u root -p root -h 127.0.0.1 -v latest -s true
           - phpunit
         services:
           - database
@@ -59,7 +59,7 @@ pipelines:
           - phpunit --version
 
           ## Run PHPUnit
-          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+          - bash bin/install-wp-tests.sh -d wordpress_tests -u root -p root -h 127.0.0.1 -v latest -s true
           - phpunit
         services:
           - database
@@ -91,7 +91,7 @@ pipelines:
           - phpunit --version
 
           ## Run PHPUnit
-          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+          - bash bin/install-wp-tests.sh -d wordpress_tests -u root -p root -h 127.0.0.1 -v latest -s true
           - phpunit
         services:
           - database
@@ -123,7 +123,7 @@ pipelines:
           - phpunit --version
 
           ## Run PHPUnit
-          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+          - bash bin/install-wp-tests.sh -d wordpress_tests -u root -p root -h 127.0.0.1 -v latest -s true
           - phpunit
         services:
           - database

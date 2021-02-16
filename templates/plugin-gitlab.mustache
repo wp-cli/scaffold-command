@@ -17,7 +17,7 @@ before_script:
   - docker-php-ext-enable mbstring mcrypt mysqli pdo_mysql intl gd zip bz2
 
   # Set up WordPress tests
-  - bash bin/install-wp-tests.sh wordpress_tests root mysql mysql latest true
+  - bash bin/install-wp-tests.sh -d wordpress_tests -u root -p mysql -h mysql -v latest -s true
 
   # Install PHPCS and WPCS
   - composer global require "squizlabs/php_codesniffer=*"
