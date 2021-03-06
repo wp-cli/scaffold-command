@@ -88,10 +88,10 @@ Feature: Scaffold theme unit tests
       """
       <?php echo __FILE__ . " loaded.\n";
       """
-    And I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    And I run `MYSQL_HOST={DB_HOST} MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
-	And I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress {THEME_DIR}/p2child/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest`
+	  And I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress {THEME_DIR}/p2child/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
     Then the return code should be 0
 
     When I run `cd {THEME_DIR}/p2child; WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit`
