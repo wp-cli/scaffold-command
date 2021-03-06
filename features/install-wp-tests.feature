@@ -1,4 +1,4 @@
-# Note: You need to execute the mysql command `GRANT ALL PRIVILEGES ON wp_cli_test_scaffold.* TO "wp_cli_test"@"localhost" IDENTIFIED BY "password1";` for these tests to work locally.
+# Note: You need to execute the mysql command `GRANT ALL PRIVILEGES ON wp_cli_test_scaffold.* TO "wp_cli_test"@"localhost" IDENTIFIED BY "{DB_PASSWORD}";` for these tests to work locally.
 Feature: Scaffold install-wp-tests.sh tests
 
   Scenario: Help should be displayed
@@ -28,11 +28,11 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
-    And I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    And I run `MYSQL_HOST={DB_HOST} MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
@@ -74,7 +74,7 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    When I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "SHOW DATABASES"`
+    When I run `MYSQL_HOST={DB_HOST} MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "SHOW DATABASES"`
     Then the return code should be 0
     And STDOUT should contain:
       """
@@ -84,7 +84,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest < affirmative-response`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
     Then the return code should be 0
     And STDERR should contain:
       """
@@ -95,7 +95,7 @@ Feature: Scaffold install-wp-tests.sh tests
       Recreated the database (wp_cli_test_scaffold)
       """
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest < negative-response`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < negative-response`
     Then the return code should be 0
     And STDERR should contain:
       """
@@ -112,11 +112,11 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
-    And I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    And I run `MYSQL_HOST={DB_HOST} MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost trunk`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} trunk`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
@@ -171,7 +171,7 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    When I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "SHOW DATABASES"`
+    When I run `MYSQL_HOST={DB_HOST} MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "SHOW DATABASES"`
     Then the return code should be 0
     And STDOUT should contain:
       """
@@ -186,11 +186,11 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
-    And I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    And I run `MYSQL_HOST={DB_HOST} MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
-    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost 3.7`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} 3.7`
     Then the return code should be 0
     And the /tmp/behat-wordpress-tests-lib directory should contain:
       """
@@ -235,7 +235,7 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    When I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "SHOW DATABASES"`
+    When I run `MYSQL_HOST={DB_HOST} MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "SHOW DATABASES"`
     Then the return code should be 0
     And STDOUT should contain:
       """
