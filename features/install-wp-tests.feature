@@ -28,7 +28,8 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
-    And I run `MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    # Hardcoded for GHA, needs to be made more flexible for local setups.
+    And I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{$MYSQL_HOST} -P{$MYSQL_TCP_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
@@ -74,7 +75,8 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    When I run `MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "SHOW DATABASES"`
+    # Hardcoded for GHA, needs to be made more flexible for local setups.
+    When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{$MYSQL_HOST} -P{$MYSQL_TCP_PORT} --protocol=tcp -e "SHOW DATABASES"`
     Then the return code should be 0
     And STDOUT should contain:
       """
@@ -112,7 +114,8 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
-    And I run `MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    # Hardcoded for GHA, needs to be made more flexible for local setups.
+    And I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{$MYSQL_HOST} -P{$MYSQL_TCP_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
@@ -171,7 +174,8 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    When I run `MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "SHOW DATABASES"`
+    # Hardcoded for GHA, needs to be made more flexible for local setups.
+    When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{$MYSQL_HOST} -P{$MYSQL_TCP_PORT} --protocol=tcp -e "SHOW DATABASES"`
     Then the return code should be 0
     And STDOUT should contain:
       """
@@ -186,7 +190,8 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
-    And I run `MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    # Hardcoded for GHA, needs to be made more flexible for local setups.
+    And I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{$MYSQL_HOST} -P{$MYSQL_TCP_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 
@@ -235,7 +240,8 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    When I run `MYSQL_PWD={DB_PASSWORD} mysql -u {DB_USER} -e "SHOW DATABASES"`
+    # Hardcoded for GHA, needs to be made more flexible for local setups.
+    When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{$MYSQL_HOST} -P{$MYSQL_TCP_PORT} --protocol=tcp -e "SHOW DATABASES"`
     Then the return code should be 0
     And STDOUT should contain:
       """
