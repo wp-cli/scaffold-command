@@ -89,7 +89,7 @@ Feature: Scaffold theme unit tests
       <?php echo __FILE__ . " loaded.\n";
       """
     # Hardcoded for GHA, needs to be made more flexible for local setups.
-    And I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h$MYSQL_HOST -P$MYSQL_TCP_PORT --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    And I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_TCP_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
     And I try `rm -fr /tmp/behat-wordpress`
 	  And I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress {THEME_DIR}/p2child/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
