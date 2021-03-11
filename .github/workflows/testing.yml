@@ -109,6 +109,10 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=wp_cli_test --entrypoint sh mysql:${{ matrix.mysql }} -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
 
     steps:
+
+      - name: Test connect to MySQL
+        run: mysql -uroot -proot -h127.0.0.1 -P${{ job.services.mysql.ports[3306] }} -e "SHOW DATABASES"
+
       - name: Check out source code
         uses: actions/checkout@v2
 
@@ -125,7 +129,7 @@ jobs:
           php-version: '${{ matrix.php }}'
           extensions: mysql, zip
           coverage: none
-          tools: composer
+          tools: composer, phpunit:5.7.27
 
       - name: Get Composer cache Directory
         if: steps.check_files.outputs.files_exists == 'true'
@@ -145,10 +149,6 @@ jobs:
       - name: Install dependencies
         if: steps.check_files.outputs.files_exists == 'true'
         run: COMPOSER_ROOT_VERSION=dev-master composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Start MySQL server
-        if: steps.check_files.outputs.files_exists == 'true'
-        run: sudo systemctl start mysql
 
       - name: Configure DB environment
         if: steps.check_files.outputs.files_exists == 'true'
