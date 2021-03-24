@@ -76,8 +76,9 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    # Hardcoded for GHA, needs to be made more flexible for local setups.
-    When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
+    # TODO: Hardcoded for GHA, needs to be made more flexible for local setups.
+    # This throws a warning for the password provided via command line.
+    When I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
     And STDOUT should contain:
       """
       wp_cli_test_scaffold
@@ -175,8 +176,9 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    # Hardcoded for GHA, needs to be made more flexible for local setups.
-    When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
+    # TODO: Hardcoded for GHA, needs to be made more flexible for local setups.
+    # This throws a warning for the password provided via command line.
+    When I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
     And STDOUT should contain:
       """
       wp_cli_test_scaffold
@@ -241,8 +243,9 @@ Feature: Scaffold install-wp-tests.sh tests
       install_test_suite
       """
 
-    # Hardcoded for GHA, needs to be made more flexible for local setups.
-    When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
+    # TODO: Hardcoded for GHA, needs to be made more flexible for local setups.
+    # This throws a warning for the password provided via command line.
+    When I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
     And STDOUT should contain:
       """
       wp_cli_test_scaffold
