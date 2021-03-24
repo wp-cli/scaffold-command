@@ -78,7 +78,6 @@ Feature: Scaffold install-wp-tests.sh tests
 
     # Hardcoded for GHA, needs to be made more flexible for local setups.
     When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
-    Then the return code should be 0
     And STDOUT should contain:
       """
       wp_cli_test_scaffold
@@ -178,7 +177,6 @@ Feature: Scaffold install-wp-tests.sh tests
 
     # Hardcoded for GHA, needs to be made more flexible for local setups.
     When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
-    Then the return code should be 0
     And STDOUT should contain:
       """
       wp_cli_test_scaffold
@@ -245,7 +243,6 @@ Feature: Scaffold install-wp-tests.sh tests
 
     # Hardcoded for GHA, needs to be made more flexible for local setups.
     When I run `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
-    Then the return code should be 0
     And STDOUT should contain:
       """
       wp_cli_test_scaffold
