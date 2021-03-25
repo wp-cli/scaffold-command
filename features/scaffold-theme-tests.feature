@@ -153,6 +153,18 @@ Feature: Scaffold theme unit tests
       """
       php71-build
       """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php72-build
+      """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php73-build
+      """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php74-build
+      """
 
   Scenario: Scaffold theme tests with Gitlab as the provider
     When I run `wp scaffold theme-tests p2child --ci=gitlab`
