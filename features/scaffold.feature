@@ -93,7 +93,7 @@ Feature: WordPress code scaffolding
     When I run `wp scaffold post-type zombie`
     Then STDOUT should contain:
       """
-      'rest_base'             => 'zombie'
+      'rest_base'                 => 'zombie'
       """
     And STDOUT should contain:
       """
@@ -116,7 +116,7 @@ Feature: WordPress code scaffolding
       """
     And STDOUT should contain:
       """
-      array( 'prefix-zombie', 'wraith' )
+      [ 'prefix-zombie', 'wraith' ]
       """
     And STDOUT should contain:
       """
