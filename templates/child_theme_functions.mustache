@@ -1,6 +1,6 @@
 <?php
 /**
- * {{theme_name}} Theme functions and definitions
+ * {{theme_name}} Theme functions and definitions.
  *
  * @link https://developer.wordpress.org/themes/basics/theme-functions/
  *
@@ -16,7 +16,6 @@ function {{parent_theme_function_safe}}_parent_theme_enqueue_styles() {
 	wp_enqueue_style( '{{parent_theme}}-style', get_template_directory_uri() . '/style.css' );
 	wp_enqueue_style( '{{slug}}-style',
 		get_stylesheet_directory_uri() . '/style.css',
-		array( '{{parent_theme}}-style' )
+		[ '{{parent_theme}}-style' ]
 	);
-
 }
