@@ -111,6 +111,18 @@ Feature: Scaffold plugin unit tests
       """
       php71-build
       """
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
+      """
+      php72-build
+      """
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
+      """
+      php73-build
+      """
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
+      """
+      php74-build
+      """
 
   Scenario: Scaffold plugin tests with Circle as the provider, part two
     Given a WP install
