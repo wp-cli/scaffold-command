@@ -449,7 +449,7 @@ Feature: Scaffold install-wp-tests.sh tests
       wp_cli_test_scaffold
       """
 
-    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 1
     And STDOUT should contain:
       """
