@@ -60,7 +60,7 @@ Feature: WordPress block code scaffolding
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
       """
-	    register_block_type( 'movies/the-green-mile', array(
+	    register_block_type( 'movies/the-green-mile', [
       """
     And the {PLUGIN_DIR}/blocks/the-green-mile.php file should contain:
       """

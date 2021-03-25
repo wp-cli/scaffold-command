@@ -116,7 +116,7 @@ Feature: WordPress code scaffolding
       """
     And STDOUT should contain:
       """
-      array( 'prefix-zombie', 'wraith' )
+      [ 'prefix-zombie', 'wraith' ]
       """
     And STDOUT should contain:
       """
