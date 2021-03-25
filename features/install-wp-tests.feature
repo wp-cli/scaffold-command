@@ -14,7 +14,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And the return code should be 1
 
-  @require-php-5.6
+  @require-php-5.6 @less-than-php-8.0
   Scenario: Install latest version of WordPress
     Given a WP install
     And a affirmative-response file:
@@ -128,7 +128,7 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
-  @require-php-5.6
+  @require-php-5.6 @less-than-php-8.0
   Scenario: Install WordPress from trunk
     Given a WP install
     And a get-phpunit-phar-url.php file:
