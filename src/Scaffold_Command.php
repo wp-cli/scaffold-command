@@ -71,15 +71,15 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( 'Post type slugs cannot exceed 20 characters in length.' );
 		}
 
-		$defaults = array(
+		$defaults = [
 			'textdomain' => '',
 			'dashicon'   => 'admin-post',
-		);
+		];
 
-		$templates = array(
+		$templates = [
 			'post_type.mustache',
 			'post_type_extended.mustache',
-		);
+		];
 
 		$this->scaffold( $args[0], $assoc_args, $defaults, '/post-types/', $templates );
 	}
@@ -124,19 +124,19 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * @alias      tax
 	 */
 	public function taxonomy( $args, $assoc_args ) {
-		$defaults = array(
+		$defaults = [
 			'textdomain' => '',
 			'post_types' => "'post'",
-		);
+		];
 
 		if ( isset( $assoc_args['post_types'] ) ) {
 			$assoc_args['post_types'] = $this->quote_comma_list_elements( $assoc_args['post_types'] );
 		}
 
-		$templates = array(
+		$templates = [
 			'taxonomy.mustache',
 			'taxonomy_extended.mustache',
-		);
+		];
 
 		$this->scaffold( $args[0], $assoc_args, $defaults, '/taxonomies/', $templates );
 	}
@@ -144,12 +144,12 @@ class Scaffold_Command extends WP_CLI_Command {
 	private function scaffold( $slug, $assoc_args, $defaults, $subdir, $templates ) {
 		$wp_filesystem = $this->init_wp_filesystem();
 
-		$control_defaults = array(
+		$control_defaults = [
 			'label'  => preg_replace( '/_|-/', ' ', strtolower( $slug ) ),
 			'theme'  => false,
 			'plugin' => false,
 			'raw'    => false,
-		);
+		];
 		$control_args     = $this->extract_args( $assoc_args, $control_defaults );
 
 		$vars = $this->extract_args( $assoc_args, $defaults );
@@ -190,7 +190,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			$filename = "{$path}{$slug}.php";
 
 			$force           = Utils\get_flag_value( $assoc_args, 'force' );
-			$files_written   = $this->create_files( array( $filename => $final_output ), $force );
+			$files_written   = $this->create_files( [ $filename => $final_output ], $force );
 			$skip_message    = "Skipped creating '{$filename}'.";
 			$success_message = "Created '{$filename}'.";
 			$this->log_whether_files_written( $files_written, $skip_message, $success_message );
@@ -269,10 +269,10 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( 'Invalid block slug specified. Block slugs can contain only lowercase alphanumeric characters or dashes, and start with a letter.' );
 		}
 
-		$defaults = array(
+		$defaults = [
 			'title'    => str_replace( '-', ' ', $slug ),
 			'category' => 'widgets',
-		);
+		];
 		$data     = $this->extract_args( $assoc_args, $defaults );
 
 		$data['slug']             = $slug;
@@ -284,11 +284,11 @@ class Scaffold_Command extends WP_CLI_Command {
 			$data['dashicon'] = $dashicon;
 		}
 
-		$control_defaults = array(
+		$control_defaults = [
 			'force'  => false,
 			'plugin' => false,
 			'theme'  => false,
-		);
+		];
 		$control_args     = $this->extract_args( $assoc_args, $control_defaults );
 
 		if ( isset( $control_args['plugin'] ) ) {
@@ -307,12 +307,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( 'No plugin or theme selected.' );
 		}
 
-		$files_to_create = array(
+		$files_to_create = [
 			"{$block_dir}/{$slug}.php"        => self::mustache_render( 'block-php.mustache', $data ),
 			"{$block_dir}/{$slug}/index.js"   => self::mustache_render( 'block-index-js.mustache', $data ),
 			"{$block_dir}/{$slug}/editor.css" => self::mustache_render( 'block-editor-css.mustache', $data ),
 			"{$block_dir}/{$slug}/style.css"  => self::mustache_render( 'block-style-css.mustache', $data ),
-		);
+		];
 		$files_written   = $this->create_files( $files_to_create, $control_args['force'] );
 		$skip_message    = 'All block files were skipped.';
 		$success_message = "Created block '{$data['title_ucfirst']}'.";
@@ -372,11 +372,11 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( 'Invalid theme slug specified. Theme slugs can only contain letters, numbers, underscores and hyphens, and can only start with a letter or underscore.' );
 		}
 
-		$defaults = array(
+		$defaults = [
 			'theme_name' => ucfirst( $theme_slug ),
 			'author'     => 'Me',
 			'author_uri' => '',
-		);
+		];
 		$data     = wp_parse_args( $assoc_args, $defaults );
 
 		$_s_theme_path = "$theme_path/$data[theme_name]";
@@ -395,7 +395,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$theme_description = "Custom theme: {$data['theme_name']}, developed by {$data['author']}";
 
-		$body                                  = array();
+		$body                                  = [];
 		$body['underscoresme_name']            = $data['theme_name'];
 		$body['underscoresme_slug']            = $theme_slug;
 		$body['underscoresme_author']          = $data['author'];
@@ -412,12 +412,12 @@ class Scaffold_Command extends WP_CLI_Command {
 		}
 
 		$tmpfname  = wp_tempnam( $url );
-		$post_args = array(
+		$post_args = [
 			'timeout'  => $timeout,
 			'body'     => $body,
 			'stream'   => true,
 			'filename' => $tmpfname,
-		);
+		];
 
 		$response = wp_remote_post( $url, $post_args );
 
@@ -449,9 +449,9 @@ class Scaffold_Command extends WP_CLI_Command {
 		unlink( $tmpfname );
 
 		if ( true === $unzip_result ) {
-			$files_to_create = array(
+			$files_to_create = [
 				"{$theme_path}/{$theme_slug}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
-			);
+			];
 			$this->create_files( $files_to_create, false );
 			WP_CLI::success( "Created theme '{$data['theme_name']}'." );
 		} else {
@@ -459,9 +459,9 @@ class Scaffold_Command extends WP_CLI_Command {
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
-			WP_CLI::run_command( array( 'theme', 'activate', $theme_slug ) );
+			WP_CLI::run_command( [ 'theme', 'activate', $theme_slug ] );
 		} elseif ( Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
-			WP_CLI::run_command( array( 'theme', 'enable', $theme_slug ), array( 'network' => true ) );
+			WP_CLI::run_command( [ 'theme', 'enable', $theme_slug ], [ 'network' => true ] );
 		}
 	}
 
@@ -510,20 +510,20 @@ class Scaffold_Command extends WP_CLI_Command {
 	public function child_theme( $args, $assoc_args ) {
 		$theme_slug = $args[0];
 
-		if ( in_array( $theme_slug, array( '.', '..' ), true ) ) {
+		if ( in_array( $theme_slug, [ '.', '..' ], true ) ) {
 			WP_CLI::error( "Invalid theme slug specified. The slug cannot be '.' or '..'." );
 		}
 
-		$defaults = array(
+		$defaults = [
 			'theme_name' => ucfirst( $theme_slug ),
 			'author'     => 'Me',
 			'author_uri' => '',
 			'theme_uri'  => '',
-		);
+		];
 
 		$data                               = wp_parse_args( $assoc_args, $defaults );
 		$data['slug']                       = $theme_slug;
-		$data['parent_theme_function_safe'] = str_replace( array( ' ', '-' ), '_', $data['parent_theme'] );
+		$data['parent_theme_function_safe'] = str_replace( [ ' ', '-' ], '_', $data['parent_theme'] );
 		$data['description']                = ucfirst( $data['parent_theme'] ) . ' child theme.';
 
 		$theme_dir = WP_CONTENT_DIR . "/themes/{$theme_slug}";
@@ -538,11 +538,11 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$this->maybe_create_themes_dir();
 
-		$files_to_create = array(
+		$files_to_create = [
 			$theme_style_path            => self::mustache_render( 'child_theme.mustache', $data ),
 			$theme_functions_path        => self::mustache_render( 'child_theme_functions.mustache', $data ),
 			"{$theme_dir}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
-		);
+		];
 		$force           = Utils\get_flag_value( $assoc_args, 'force' );
 		$files_written   = $this->create_files( $files_to_create, $force );
 		$skip_message    = 'All theme files were skipped.';
@@ -550,9 +550,9 @@ class Scaffold_Command extends WP_CLI_Command {
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
-			WP_CLI::run_command( array( 'theme', 'activate', $theme_slug ) );
+			WP_CLI::run_command( [ 'theme', 'activate', $theme_slug ] );
 		} elseif ( Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
-			WP_CLI::run_command( array( 'theme', 'enable', $theme_slug ), array( 'network' => true ) );
+			WP_CLI::run_command( [ 'theme', 'enable', $theme_slug ], [ 'network' => true ] );
 		}
 	}
 
@@ -660,11 +660,11 @@ class Scaffold_Command extends WP_CLI_Command {
 		$plugin_name    = ucwords( str_replace( '-', ' ', $plugin_slug ) );
 		$plugin_package = str_replace( ' ', '_', $plugin_name );
 
-		if ( in_array( $plugin_slug, array( '.', '..' ), true ) ) {
+		if ( in_array( $plugin_slug, [ '.', '..' ], true ) ) {
 			WP_CLI::error( "Invalid plugin slug specified. The slug cannot be '.' or '..'." );
 		}
 
-		$defaults = array(
+		$defaults = [
 			'plugin_slug'         => $plugin_slug,
 			'plugin_name'         => $plugin_name,
 			'plugin_package'      => $plugin_package,
@@ -673,7 +673,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'plugin_author_uri'   => 'YOUR SITE HERE',
 			'plugin_uri'          => 'PLUGIN SITE HERE',
 			'plugin_tested_up_to' => get_bloginfo( 'version' ),
-		);
+		];
 		$data     = wp_parse_args( $assoc_args, $defaults );
 
 		$data['textdomain'] = $plugin_slug;
@@ -696,7 +696,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$plugin_path        = "{$plugin_dir}/{$plugin_slug}.php";
 		$plugin_readme_path = "{$plugin_dir}/readme.txt";
 
-		$files_to_create = array(
+		$files_to_create = [
 			$plugin_path                  => self::mustache_render( 'plugin.mustache', $data ),
 			$plugin_readme_path           => self::mustache_render( 'plugin-readme.mustache', $data ),
 			"{$plugin_dir}/package.json"  => self::mustache_render( 'plugin-packages.mustache', $data ),
@@ -704,7 +704,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			"{$plugin_dir}/.gitignore"    => self::mustache_render( 'plugin-gitignore.mustache', $data ),
 			"{$plugin_dir}/.distignore"   => self::mustache_render( 'plugin-distignore.mustache', $data ),
 			"{$plugin_dir}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
-		);
+		];
 		$force           = Utils\get_flag_value( $assoc_args, 'force' );
 		$files_written   = $this->create_files( $files_to_create, $force );
 
@@ -713,18 +713,18 @@ class Scaffold_Command extends WP_CLI_Command {
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		if ( ! Utils\get_flag_value( $assoc_args, 'skip-tests' ) ) {
-			$command_args = array(
+			$command_args = [
 				'dir'   => $plugin_dir,
 				'ci'    => empty( $assoc_args['ci'] ) ? '' : $assoc_args['ci'],
 				'force' => $force,
-			);
-			WP_CLI::run_command( array( 'scaffold', 'plugin-tests', $plugin_slug ), $command_args );
+			];
+			WP_CLI::run_command( [ 'scaffold', 'plugin-tests', $plugin_slug ], $command_args );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
-			WP_CLI::run_command( array( 'plugin', 'activate', $plugin_slug ) );
+			WP_CLI::run_command( [ 'plugin', 'activate', $plugin_slug ] );
 		} elseif ( Utils\get_flag_value( $assoc_args, 'activate-network' ) ) {
-			WP_CLI::run_command( array( 'plugin', 'activate', $plugin_slug ), array( 'network' => true ) );
+			WP_CLI::run_command( [ 'plugin', 'activate', $plugin_slug ], [ 'network' => true ] );
 		}
 	}
 
@@ -839,7 +839,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		if ( ! empty( $args[0] ) ) {
 			$slug = $args[0];
-			if ( in_array( $slug, array( '.', '..' ), true ) ) {
+			if ( in_array( $slug, [ '.', '..' ], true ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
 			}
 			if ( 'theme' === $type ) {
@@ -885,7 +885,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$wp_filesystem->mkdir( $tests_dir );
 		$wp_filesystem->mkdir( $bin_dir );
 
-		$wp_versions_to_test = array();
+		$wp_versions_to_test = [];
 		// Parse plugin readme.txt
 		if ( file_exists( "{$target_dir}/readme.txt" ) ) {
 			$readme_content = file_get_contents( "{$target_dir}/readme.txt" );
@@ -898,16 +898,16 @@ class Scaffold_Command extends WP_CLI_Command {
 		$wp_versions_to_test[] = 'latest';
 		$wp_versions_to_test[] = 'trunk';
 
-		$template_data = array(
+		$template_data = [
 			"{$type}_slug"    => $slug,
 			"{$type}_package" => $package,
-		);
+		];
 
 		$force           = Utils\get_flag_value( $assoc_args, 'force' );
-		$files_to_create = array(
+		$files_to_create = [
 			"{$tests_dir}/bootstrap.php"   => self::mustache_render( "{$type}-bootstrap.mustache", $template_data ),
 			"{$tests_dir}/test-sample.php" => self::mustache_render( "{$type}-test-sample.mustache", $template_data ),
-		);
+		];
 		if ( 'travis' === $assoc_args['ci'] ) {
 			$files_to_create[ "{$target_dir}/.travis.yml" ] = self::mustache_render( 'plugin-travis.mustache', compact( 'wp_versions_to_test' ) );
 		} elseif ( 'circle' === $assoc_args['ci'] ) {
@@ -920,11 +920,11 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$files_written = $this->create_files( $files_to_create, $force );
 
-		$to_copy = array(
+		$to_copy = [
 			'install-wp-tests.sh' => $bin_dir,
 			'phpunit.xml.dist'    => $target_dir,
 			'.phpcs.xml.dist'     => $target_dir,
-		);
+		];
 
 		foreach ( $to_copy as $file => $dir ) {
 			$file_name         = "{$dir}/{$file}";
@@ -973,7 +973,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 	protected function create_files( $files_and_contents, $force ) {
 		$wp_filesystem = $this->init_wp_filesystem();
-		$wrote_files   = array();
+		$wrote_files   = [];
 
 		foreach ( $files_and_contents as $filename => $contents ) {
 			$should_write_file = $this->prompt_if_files_will_be_overwritten( $filename, $force );
@@ -1007,7 +1007,7 @@ class Scaffold_Command extends WP_CLI_Command {
 					$default = false,
 					$marker  = '[s/r]: '
 				);
-			} while ( ! in_array( $answer, array( 's', 'r' ), true ) );
+			} while ( ! in_array( $answer, [ 's', 'r' ], true ) );
 			$should_write_file = 'r' === $answer;
 		}
 
@@ -1081,7 +1081,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	}
 
 	protected function extract_args( $assoc_args, $defaults ) {
-		$out = array();
+		$out = [];
 
 		foreach ( $defaults as $key => $value ) {
 			$out[ $key ] = Utils\get_flag_value( $assoc_args, $key, $value );
@@ -1130,7 +1130,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Localizes the template path.
 	 */
-	private static function mustache_render( $template, $data = array() ) {
+	private static function mustache_render( $template, $data = [] ) {
 		return Utils\mustache_render( dirname( dirname( __FILE__ ) ) . "/templates/{$template}", $data );
 	}
 
@@ -1167,7 +1167,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			$path .= '/';
 		}
 
-		$output = array();
+		$output = [];
 
 		foreach ( explode( '/', $path ) as $segment ) {
 			if ( '..' === $segment ) {
