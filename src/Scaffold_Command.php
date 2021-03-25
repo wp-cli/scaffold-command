@@ -1,7 +1,6 @@
 <?php
 
 use WP_CLI\Utils;
-use WP_CLI\Process;
 use WP_CLI\Inflector;
 
 /**
@@ -190,7 +189,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( is_string( $path ) && ! empty( $path ) ) {
 			$filename = "{$path}{$slug}.php";
 
-			$force           = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+			$force           = Utils\get_flag_value( $assoc_args, 'force' );
 			$files_written   = $this->create_files( array( $filename => $final_output ), $force );
 			$skip_message    = "Skipped creating '{$filename}'.";
 			$success_message = "Created '{$filename}'.";
@@ -387,7 +386,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( "Invalid theme slug specified. {$error_msg}" );
 		}
 
-		$force             = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+		$force             = Utils\get_flag_value( $assoc_args, 'force' );
 		$should_write_file = $this->prompt_if_files_will_be_overwritten( $_s_theme_path, $force );
 		if ( ! $should_write_file ) {
 			WP_CLI::log( 'No files created' );
@@ -404,11 +403,11 @@ class Scaffold_Command extends WP_CLI_Command {
 		$body['underscoresme_description']     = $theme_description;
 		$body['underscoresme_generate_submit'] = 'Generate';
 		$body['underscoresme_generate']        = '1';
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'sassify' ) ) {
+		if ( Utils\get_flag_value( $assoc_args, 'sassify' ) ) {
 			$body['underscoresme_sass'] = 1;
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'woocommerce' ) ) {
+		if ( Utils\get_flag_value( $assoc_args, 'woocommerce' ) ) {
 			$body['underscoresme_woocommerce'] = 1;
 		}
 
@@ -459,9 +458,9 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::error( "Could not decompress your theme files ('{$tmpfname}') at '{$theme_path}': {$unzip_result->get_error_message()}" );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'activate' ) ) {
+		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
 			WP_CLI::run_command( array( 'theme', 'activate', $theme_slug ) );
-		} elseif ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
+		} elseif ( Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
 			WP_CLI::run_command( array( 'theme', 'enable', $theme_slug ), array( 'network' => true ) );
 		}
 	}
@@ -544,15 +543,15 @@ class Scaffold_Command extends WP_CLI_Command {
 			$theme_functions_path        => self::mustache_render( 'child_theme_functions.mustache', $data ),
 			"{$theme_dir}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
 		);
-		$force           = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+		$force           = Utils\get_flag_value( $assoc_args, 'force' );
 		$files_written   = $this->create_files( $files_to_create, $force );
 		$skip_message    = 'All theme files were skipped.';
 		$success_message = "Created '{$theme_dir}'.";
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'activate' ) ) {
+		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
 			WP_CLI::run_command( array( 'theme', 'activate', $theme_slug ) );
-		} elseif ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
+		} elseif ( Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
 			WP_CLI::run_command( array( 'theme', 'enable', $theme_slug ), array( 'network' => true ) );
 		}
 	}
@@ -706,14 +705,14 @@ class Scaffold_Command extends WP_CLI_Command {
 			"{$plugin_dir}/.distignore"   => self::mustache_render( 'plugin-distignore.mustache', $data ),
 			"{$plugin_dir}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
 		);
-		$force           = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+		$force           = Utils\get_flag_value( $assoc_args, 'force' );
 		$files_written   = $this->create_files( $files_to_create, $force );
 
 		$skip_message    = 'All plugin files were skipped.';
 		$success_message = 'Created plugin files.';
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
-		if ( ! \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-tests' ) ) {
+		if ( ! Utils\get_flag_value( $assoc_args, 'skip-tests' ) ) {
 			$command_args = array(
 				'dir'   => $plugin_dir,
 				'ci'    => empty( $assoc_args['ci'] ) ? '' : $assoc_args['ci'],
@@ -722,9 +721,9 @@ class Scaffold_Command extends WP_CLI_Command {
 			WP_CLI::run_command( array( 'scaffold', 'plugin-tests', $plugin_slug ), $command_args );
 		}
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'activate' ) ) {
+		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
 			WP_CLI::run_command( array( 'plugin', 'activate', $plugin_slug ) );
-		} elseif ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'activate-network' ) ) {
+		} elseif ( Utils\get_flag_value( $assoc_args, 'activate-network' ) ) {
 			WP_CLI::run_command( array( 'plugin', 'activate', $plugin_slug ), array( 'network' => true ) );
 		}
 	}
@@ -904,7 +903,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			"{$type}_package" => $package,
 		);
 
-		$force           = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+		$force           = Utils\get_flag_value( $assoc_args, 'force' );
 		$files_to_create = array(
 			"{$tests_dir}/bootstrap.php"   => self::mustache_render( "{$type}-bootstrap.mustache", $template_data ),
 			"{$tests_dir}/test-sample.php" => self::mustache_render( "{$type}-test-sample.mustache", $template_data ),
@@ -929,7 +928,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		foreach ( $to_copy as $file => $dir ) {
 			$file_name         = "{$dir}/{$file}";
-			$force             = \WP_CLI\Utils\get_flag_value( $assoc_args, 'force' );
+			$force             = Utils\get_flag_value( $assoc_args, 'force' );
 			$should_write_file = $this->prompt_if_files_will_be_overwritten( $file_name, $force );
 			if ( ! $should_write_file ) {
 				continue;
@@ -1033,7 +1032,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * @return string|null
 	 */
 	private function extract_dashicon( $assoc_args ) {
-		$dashicon = \WP_CLI\Utils\get_flag_value( $assoc_args, 'dashicon' );
+		$dashicon = Utils\get_flag_value( $assoc_args, 'dashicon' );
 		if ( ! $dashicon ) {
 			return null;
 		}
@@ -1085,7 +1084,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$out = array();
 
 		foreach ( $defaults as $key => $value ) {
-			$out[ $key ] = \WP_CLI\Utils\get_flag_value( $assoc_args, $key, $value );
+			$out[ $key ] = Utils\get_flag_value( $assoc_args, $key, $value );
 		}
 
 		return $out;
