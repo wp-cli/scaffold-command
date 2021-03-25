@@ -25,6 +25,25 @@ Feature: Scaffold install-wp-tests.sh tests
     """
     No
     """
+    And a get-phpunit-phar-url.php file:
+    """
+    <?php
+    $version = 4;
+    if(PHP_VERSION_ID >= 50600) {
+        $version = 5;
+    }
+    if(PHP_VERSION_ID >= 70000) {
+        $version = 6;
+    }
+    if(PHP_VERSION_ID >= 70100) {
+        $version = 7;
+    }
+    echo "https://phar.phpunit.de/phpunit-{$version}.phar";
+    """
+    And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
+    And save STDOUT as {PHPUNIT_PHAR_URL}
+    And I run `wget -O phpunit {PHPUNIT_PHAR_URL}`
+    And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -84,7 +103,7 @@ Feature: Scaffold install-wp-tests.sh tests
       wp_cli_test_scaffold
       """
 
-    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
     When I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
@@ -112,6 +131,25 @@ Feature: Scaffold install-wp-tests.sh tests
   @require-php-5.6
   Scenario: Install WordPress from trunk
     Given a WP install
+    And a get-phpunit-phar-url.php file:
+    """
+    <?php
+    $version = 4;
+    if(PHP_VERSION_ID >= 50600) {
+        $version = 5;
+    }
+    if(PHP_VERSION_ID >= 70000) {
+        $version = 6;
+    }
+    if(PHP_VERSION_ID >= 70100) {
+        $version = 7;
+    }
+    echo "https://phar.phpunit.de/phpunit-{$version}.phar";
+    """
+    And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
+    And save STDOUT as {PHPUNIT_PHAR_URL}
+    And I run `wget -O phpunit {PHPUNIT_PHAR_URL}`
+    And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -184,7 +222,7 @@ Feature: Scaffold install-wp-tests.sh tests
       wp_cli_test_scaffold
       """
 
-    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
   Scenario: Install WordPress 3.7 and phpunit will not run
