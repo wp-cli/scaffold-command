@@ -36,7 +36,8 @@ matrix:
       env: WP_TRAVISCI=phpcs
 
 before_script:
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - git clone https://github.com/ngyuki/phpenv-composer.git ~/.phpenv/plugins/phpenv-composer
+  - phpenv rehash
   - |
     if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
       phpenv config-rm xdebug.ini
