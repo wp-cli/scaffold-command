@@ -219,6 +219,10 @@ Feature: WordPress code scaffolding
       Thumbs.db
       wp-cli.local.yml
       node_modules/
+      vendor/
+      *.sql
+      *.tar.gz
+      *.zip
       """
     And the {PLUGIN_DIR}/hello-world/.distignore file should contain:
       """
