@@ -65,40 +65,31 @@ jobs:
         php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
         wp: ['latest']
         mysql: ['8.0']
-        test: ["composer behat || composer behat-rerun"]
         include:
           - php: '5.6'
             wp: 'trunk'
             mysql: '8.0'
-            test: "composer behat || composer behat-rerun"
           - php: '5.6'
             wp: 'trunk'
             mysql: '5.7'
-            test: "composer behat || composer behat-rerun"
           - php: '5.6'
             wp: 'trunk'
             mysql: '5.6'
-            test: "composer behat || composer behat-rerun"
           - php: '7.4'
             wp: 'trunk'
             mysql: '8.0'
-            test: "composer behat || composer behat-rerun"
           - php: '8.0'
             wp: 'trunk'
             mysql: '8.0'
-            test: "composer behat || composer behat-rerun"
           - php: '8.0'
             wp: 'trunk'
             mysql: '5.7'
-            test: "composer behat || composer behat-rerun"
           - php: '8.0'
             wp: 'trunk'
             mysql: '5.6'
-            test: "composer behat || composer behat-rerun"
           - php: '5.6'
             wp: '3.7'
             mysql: '5.6'
-            test: "composer behat || composer behat-rerun"
     runs-on: ubuntu-20.04
 
     services:
@@ -118,12 +109,18 @@ jobs:
         with:
           files: "composer.json, behat.yml"
 
+      - name: Install Ghostscript
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install ghostscript -y
+
       - name: Set up PHP envirnoment
         if: steps.check_files.outputs.files_exists == 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '${{ matrix.php }}'
-          extensions: mysql, zip
+          extensions: gd, imagick, mysql, zip
           coverage: none
           tools: composer
 
@@ -142,6 +139,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
+      - name: Change ImageMagick policy to allow pdf->png conversion.
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          sudo sed -i 's/^.*policy.*coder.*none.*PDF.*//' /etc/ImageMagick-6/policy.xml
+
       - name: Install dependencies
         if: steps.check_files.outputs.files_exists == 'true'
         run: COMPOSER_ROOT_VERSION=dev-master composer install --prefer-dist --no-progress --no-suggest
@@ -153,20 +155,25 @@ jobs:
       - name: Configure DB environment
         if: steps.check_files.outputs.files_exists == 'true'
         run: |
-          echo "MYSQL_HOST=127.0.0.1" >> $GITHUB_ENV
-          echo "MYSQL_TCP_PORT=${{ job.services.mysql.ports['3306'] }}" >> $GITHUB_ENV
+          export MYSQL_HOST=127.0.0.1
+          export MYSQL_TCP_PORT=${{ job.services.mysql.ports['3306'] }}
           echo "WP_CLI_TEST_DBROOTUSER=root" >> $GITHUB_ENV
           echo "WP_CLI_TEST_DBROOTPASS=root" >> $GITHUB_ENV
+          echo "WP_CLI_TEST_DBNAME=wp_cli_test" >> $GITHUB_ENV
           echo "WP_CLI_TEST_DBUSER=wp_cli_test" >> $GITHUB_ENV
           echo "WP_CLI_TEST_DBPASS=password1" >> $GITHUB_ENV
-          echo "WP_CLI_TEST_DBHOST=127.0.0.1:${{ job.services.mysql.ports['3306'] }}" >> $GITHUB_ENV
+          echo "WP_CLI_TEST_DBHOST=$MYSQL_HOST:$MYSQL_TCP_PORT" >> $GITHUB_ENV
 
       - name: Prepare test database
         if: steps.check_files.outputs.files_exists == 'true'
         run: composer prepare-tests
 
+      - name: Check Behat environment
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: WP_CLI_TEST_DEBUG_BEHAT_ENV=1 composer behat
+
       - name: Run Behat
         if: steps.check_files.outputs.files_exists == 'true'
         env:
           WP_VERSION: '${{ matrix.wp }}'
-        run: ${{ matrix.test }}
+        run: composer behat || composer behat-rerun
