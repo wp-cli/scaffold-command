@@ -88,7 +88,6 @@ Feature: Scaffold theme unit tests
       """
       <?php echo __FILE__ . " loaded.\n";
       """
-    # TODO: Hardcoded for GHA, needs to be made more flexible for local setups.
     # This throws a warning for the password provided via command line.
     And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
     And I try `rm -fr /tmp/behat-wordpress-tests-lib`
