@@ -91,7 +91,7 @@ Feature: Scaffold theme unit tests
     # This throws a warning for the password provided via command line.
     And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
 
-	  And I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress {THEME_DIR}/p2child/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
+    And I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress {THEME_DIR}/p2child/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
     Then the return code should be 0
 
     When I run `cd {THEME_DIR}/p2child; WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib phpunit`
