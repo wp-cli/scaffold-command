@@ -130,7 +130,7 @@ recreate_db() {
 	shopt -s nocasematch
 	if [[ $1 =~ ^(y|yes)$ ]]
 	then
-		mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA
+		mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS" "$EXTRA"
 		create_db
 		echo "Recreated the database ($DB_NAME)."
 	else
@@ -140,7 +140,7 @@ recreate_db() {
 }
 
 create_db() {
-	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS" "$EXTRA"
 }
 
 install_db() {
@@ -158,16 +158,16 @@ install_db() {
 
 	if ! [ -z $DB_HOSTNAME ] ; then
 		if [ $(echo $DB_SOCK_OR_PORT | grep -e '^[0-9]\{1,\}$') ]; then
-			EXTRA=" --host=$DB_HOSTNAME --port=$DB_SOCK_OR_PORT --protocol=tcp"
+			EXTRA="--host=$DB_HOSTNAME --port=$DB_SOCK_OR_PORT --protocol=tcp"
 		elif ! [ -z $DB_SOCK_OR_PORT ] ; then
-			EXTRA=" --socket='$DB_SOCK_OR_PORT'"
+			EXTRA="--socket=$DB_SOCK_OR_PORT"
 		elif ! [ -z $DB_HOSTNAME ] ; then
-			EXTRA=" --host=$DB_HOSTNAME --protocol=tcp"
+			EXTRA="--host=$DB_HOSTNAME --protocol=tcp"
 		fi
 	fi
 
 	# create database
-	if [ $(mysql --user="$DB_USER" --password="$DB_PASS"$EXTRA --execute='show databases;' | grep ^$DB_NAME$) ]
+	if [ $(mysql --user="$DB_USER" --password="$DB_PASS" "$EXTRA" --execute='show databases;' | grep ^$DB_NAME$) ]
 	then
 		echo "Reinstalling will delete the existing test database ($DB_NAME)"
 		read -p 'Are you sure you want to proceed? [y/N]: ' DELETE_EXISTING_DB
