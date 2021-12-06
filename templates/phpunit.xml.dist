@@ -10,7 +10,6 @@
 	<testsuites>
 		<testsuite name="wp-tests">
 			<directory prefix="test-" suffix=".php">./tests/</directory>
-			<exclude>./tests/test-sample.php</exclude>
 		</testsuite>
 	</testsuites>
 </phpunit>
