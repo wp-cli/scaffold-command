@@ -11,10 +11,18 @@
 class SampleTest extends WP_UnitTestCase {
 
 	/**
-	 * A single example test.
+	 * A single example test pass.
 	 */
-	public function test_sample() {
+	public function test_sample_pass() {
 		// Replace this with some actual testing code.
 		$this->assertTrue( true );
+	}
+
+	/**
+	 * A single example test error.
+	 */
+	public function test_sample_error() {
+		// Replace this with some actual testing code.
+		$this->assertTrue( false );
 	}
 }
