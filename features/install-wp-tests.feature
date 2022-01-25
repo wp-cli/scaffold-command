@@ -219,7 +219,15 @@ Feature: Scaffold install-wp-tests.sh tests
     Then the return code should be 1
     And STDOUT should contain:
       """
-      Looks like you're using PHPUnit 9.5.8. WordPress requires at least PHPUnit 5.4 and is currently only compatible with PHPUnit up to 7.x.
+      Looks like you're using PHPUnit 9.5.
+      """
+    And STDOUT should contain:
+      """
+      WordPress requires at least PHPUnit 5.
+      """
+    And STDOUT should contain:
+      """
+      and is currently only compatible with PHPUnit up to 7.x.
       """
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
