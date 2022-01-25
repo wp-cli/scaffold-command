@@ -101,10 +101,10 @@ Feature: Scaffold install-wp-tests.sh tests
       wp_cli_test_scaffold
       """
 
-    When I run `mkdir polyfills && composer init --name=test/package --require="yoast/phpunit-polyfills:^1" --no-interaction --working-dir=polyfills`
+    When I run `mkdir polyfills && composer init --name=test/package --require="yoast/phpunit-polyfills:^1" --no-interaction --quiet --working-dir=polyfills`
     Then the return code should be 0
 
-    When I run `composer install --no-interaction --working-dir=polyfills`
+    When I run `composer install --no-interaction --working-dir=polyfills --quiet`
     Then the return code should be 0
 
     When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
