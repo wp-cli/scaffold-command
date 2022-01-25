@@ -14,7 +14,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And the return code should be 1
 
-  @require-php-5.6 @less-than-php-8.0
+  @less-than-php-8.0
   Scenario: Install latest version of WordPress
     Given a WP install
     And a affirmative-response file:
@@ -102,7 +102,13 @@ Feature: Scaffold install-wp-tests.sh tests
       wp_cli_test_scaffold
       """
 
-    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `mkdir polyfills && composer init --name=test/package --require="yoast/phpunit-polyfills:^1" --no-interaction --quiet --working-dir=polyfills`
+    Then the return code should be 0
+
+    When I run `composer install --no-interaction --working-dir=polyfills --quiet`
+    Then the return code should be 0
+
+    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
@@ -215,11 +221,25 @@ Feature: Scaffold install-wp-tests.sh tests
       wp_cli_test_scaffold
       """
 
-    When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `mkdir polyfills && composer init --name=test/package --require="yoast/phpunit-polyfills:^1" --no-interaction --quiet --working-dir=polyfills`
+    Then the return code should be 0
+
+    When I run `composer install --no-interaction --working-dir=polyfills --quiet`
+    Then the return code should be 0
+
+    When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 1
     And STDOUT should contain:
       """
-      Looks like you're using PHPUnit 9.5.8. WordPress requires at least PHPUnit 5.4 and is currently only compatible with PHPUnit up to 7.x.
+      Looks like you're using PHPUnit 9.5.
+      """
+    And STDOUT should contain:
+      """
+      WordPress requires at least PHPUnit 5.
+      """
+    And STDOUT should contain:
+      """
+      and is currently only compatible with PHPUnit up to 7.x.
       """
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
