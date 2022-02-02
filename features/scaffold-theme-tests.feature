@@ -88,13 +88,13 @@ Feature: Scaffold theme unit tests
       """
       <?php echo __FILE__ . " loaded.\n";
       """
-    And I run `MYSQL_PWD=password1 mysql -u wp_cli_test -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
-    And I try `rm -fr /tmp/behat-wordpress-tests-lib`
-    And I try `rm -fr /tmp/behat-wordpress`
-	And I try `WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib WP_CORE_DIR=/tmp/behat-wordpress {THEME_DIR}/p2child/bin/install-wp-tests.sh wp_cli_test_scaffold wp_cli_test password1 localhost latest`
+    # This throws a warning for the password provided via command line.
+    And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+
+    And I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress {THEME_DIR}/p2child/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
     Then the return code should be 0
 
-    When I run `cd {THEME_DIR}/p2child; WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit`
+    When I run `cd {THEME_DIR}/p2child; WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib phpunit`
     Then STDOUT should contain:
       """
       p2child/functions.php loaded.
@@ -108,7 +108,7 @@ Feature: Scaffold theme unit tests
       No tests executed!
       """
 
-    When I run `cd {THEME_DIR}/p2child; WP_MULTISITE=1 WP_TESTS_DIR=/tmp/behat-wordpress-tests-lib phpunit`
+    When I run `cd {THEME_DIR}/p2child; WP_MULTISITE=1 WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib phpunit`
     Then STDOUT should contain:
       """
       p2child/functions.php loaded.
@@ -150,6 +150,18 @@ Feature: Scaffold theme unit tests
     And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
       """
       php71-build
+      """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php72-build
+      """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php73-build
+      """
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
+      """
+      php74-build
       """
 
   Scenario: Scaffold theme tests with Gitlab as the provider
