@@ -344,6 +344,10 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * [--author_uri=<uri>]
 	 * : What to put in the 'Author URI:' header in 'style.css'.
 	 *
+	 * [--description=<Description of theme>]
+	 * : What to put as the 'Theme description' header in 'style.css'.  
+	 * Default: Custom theme: {theme_name}, developed by {author}
+	 *
 	 * [--sassify]
 	 * : Include stylesheets as SASS.
 	 *
@@ -376,6 +380,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'theme_name' => ucfirst( $theme_slug ),
 			'author'     => 'Me',
 			'author_uri' => '',
+			'description'=> "Custom theme: %s, developed by %s"
 		];
 		$data     = wp_parse_args( $assoc_args, $defaults );
 
@@ -393,14 +398,14 @@ class Scaffold_Command extends WP_CLI_Command {
 			die;
 		}
 
-		$theme_description = "Custom theme: {$data['theme_name']}, developed by {$data['author']}";
+		$data['description'] = sprintf( $data['description'], $data['theme_name'], {$data['author'] );
 
 		$body                                  = [];
 		$body['underscoresme_name']            = $data['theme_name'];
 		$body['underscoresme_slug']            = $theme_slug;
 		$body['underscoresme_author']          = $data['author'];
 		$body['underscoresme_author_uri']      = $data['author_uri'];
-		$body['underscoresme_description']     = $theme_description;
+		$body['underscoresme_description']     = $data['description'];
 		$body['underscoresme_generate_submit'] = 'Generate';
 		$body['underscoresme_generate']        = '1';
 		if ( Utils\get_flag_value( $assoc_args, 'sassify' ) ) {
