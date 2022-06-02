@@ -958,12 +958,17 @@ class Scaffold_Command extends WP_CLI_Command {
 	 */
 	private function check_target_directory( $type, $target_dir ) {
 		$parent_dir = dirname( self::canonicalize_path( str_replace( '\\', '/', $target_dir ) ) );
-
-		if ( 'theme' === $type && str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) !== $parent_dir ) {
+		if ( 'theme' === $type && (
+				realpath( str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) ) !== $parent_dir &&
+				str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) !== $parent_dir
+			) ) {
 			return sprintf( 'The target directory \'%1$s\' is not in \'%2$s\'.', $target_dir, WP_CONTENT_DIR . '/themes' );
 		}
 
-		if ( 'plugin' === $type && str_replace( '\\', '/', WP_PLUGIN_DIR ) !== $parent_dir ) {
+		if ( 'plugin' === $type && (
+				realpath( str_replace( '\\', '/', WP_PLUGIN_DIR ) ) !== $parent_dir &&
+				str_replace( '\\', '/', WP_PLUGIN_DIR ) !== $parent_dir
+			) ) {
 			return sprintf( 'The target directory \'%1$s\' is not in \'%2$s\'.', $target_dir, WP_PLUGIN_DIR );
 		}
 
