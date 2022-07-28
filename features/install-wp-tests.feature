@@ -133,7 +133,7 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
-  @require-php-8.0
+  @require-php-8.0 @less-than-wp-5.8
   Scenario: Install latest version of WordPress on PHP 8.0+
     Given a WP install
     And a affirmative-response file:
