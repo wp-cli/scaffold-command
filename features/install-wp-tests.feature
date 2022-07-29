@@ -133,8 +133,8 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
-  @require-php-8.0
-  Scenario: Install latest version of WordPress on PHP 8.0+
+  @require-php-8.0 @less-than-wp-5.8
+  Scenario: Install latest version of WordPress on PHP 8.0+ and WordPress less then 5.8
     Given a WP install
     And a affirmative-response file:
     """
@@ -241,6 +241,125 @@ Feature: Scaffold install-wp-tests.sh tests
       """
       and is currently only compatible with PHPUnit up to 7.x.
       """
+
+    When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
+    Then the return code should be 0
+    And STDERR should contain:
+      """
+      Reinstalling
+      """
+    And STDOUT should contain:
+      """
+      Recreated the database (wp_cli_test_scaffold)
+      """
+
+    When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < negative-response`
+    Then the return code should be 0
+    And STDERR should contain:
+      """
+      Reinstalling
+      """
+    And STDOUT should contain:
+      """
+      Leaving the existing database (wp_cli_test_scaffold) in place
+      """
+
+  @require-php-8.0 @require-wp-5.8
+  Scenario: Install latest version of WordPress on PHP 8.0+ and WordPress above 5.8
+    Given a WP install
+    And a affirmative-response file:
+    """
+    Y
+    """
+    And a negative-response file:
+    """
+    No
+    """
+    And a get-phpunit-phar-url.php file:
+    """
+    <?php
+    $version = 4;
+    if(PHP_VERSION_ID >= 50600) {
+        $version = 5;
+    }
+    if(PHP_VERSION_ID >= 70000) {
+        $version = 6;
+    }
+    if(PHP_VERSION_ID >= 70100) {
+        $version = 7;
+    }
+    if(PHP_VERSION_ID >= 80000) {
+        $version = 9;
+    }
+    echo "https://phar.phpunit.de/phpunit-{$version}.phar";
+    """
+    And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
+    And save STDOUT as {PHPUNIT_PHAR_URL}
+    And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
+    And I run `chmod +x phpunit`
+    And I run `wp plugin path`
+    And save STDOUT as {PLUGIN_DIR}
+    And I run `wp scaffold plugin hello-world`
+    # This throws a warning for the password provided via command line.
+    And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+
+    When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
+    Then the return code should be 0
+    And the {RUN_DIR}/wordpress-tests-lib directory should contain:
+      """
+      data
+      """
+    And the {RUN_DIR}/wordpress-tests-lib directory should contain:
+      """
+      includes
+      """
+    And the {RUN_DIR}/wordpress-tests-lib directory should contain:
+      """
+      wp-tests-config.php
+      """
+    And the {RUN_DIR}/wordpress directory should contain:
+      """
+      index.php
+      license.txt
+      readme.html
+      wp-activate.php
+      wp-admin
+      wp-blog-header.php
+      wp-comments-post.php
+      wp-config-sample.php
+      wp-content
+      wp-cron.php
+      wp-includes
+      wp-links-opml.php
+      wp-load.php
+      wp-login.php
+      wp-mail.php
+      wp-settings.php
+      wp-signup.php
+      wp-trackback.php
+      xmlrpc.php
+      """
+    And the {PLUGIN_DIR}/hello-world/phpunit.xml.dist file should exist
+    And STDERR should contain:
+      """
+      install_test_suite
+      """
+
+    # This throws a warning for the password provided via command line.
+    When I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "SHOW DATABASES"`
+    And STDOUT should contain:
+      """
+      wp_cli_test_scaffold
+      """
+
+    When I run `mkdir polyfills && composer init --name=test/package --require="yoast/phpunit-polyfills:^1" --no-interaction --quiet --working-dir=polyfills`
+    Then the return code should be 0
+
+    When I run `composer install --no-interaction --working-dir=polyfills --quiet`
+    Then the return code should be 0
+
+    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    Then the return code should be 0
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
     Then the return code should be 0
