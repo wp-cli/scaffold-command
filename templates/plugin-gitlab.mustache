@@ -5,13 +5,13 @@ variables:
 
 before_script:
   # Install dependencies
-  
+
   # update the docker
   - apt-get clean
   - apt-get -yqq update
 
   # instll the required packages for the running CI tests
-  - apt-get -yqqf install zip unzip subversion mysql-client libmysqlclient-dev --fix-missing
+  - apt-get -yqqf install zip unzip subversion default-mysql-client default-libmysqlclient-dev --fix-missing
 
   # PHP extensions
   - docker-php-ext-enable mbstring mcrypt mysqli pdo_mysql intl gd zip bz2
@@ -39,7 +39,7 @@ PHPunit:PHP5.6:MySQL:
   script:
   - phpcs
   - phpunit
-  
+
 PHPunit:PHP7.0:MySQL:
   image: tetraweb/php:7.0
   services:
