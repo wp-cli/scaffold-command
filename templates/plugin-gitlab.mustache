@@ -22,7 +22,9 @@ before_script:
   # Install PHPCS and WPCS
   - composer global require "squizlabs/php_codesniffer=*"
   - composer global require "wp-coding-standards/wpcs"
-  - phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+  - composer global require "phpcompatibility/phpcompatibility-wp"
+  - vendor="$HOME/.composer/vendor"
+  - phpcs --config-set installed_paths "$vendor/wp-coding-standards/wpcs,$vendor/phpcompatibility/php-compatibility,$vendor/phpcompatibility/phpcompatibility-paragonie,$vendor/phpcompatibility/phpcompatibility-wp"
 
 PHPunit:PHP5.3:MySQL:
   image: tetraweb/php:5.3
