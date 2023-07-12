@@ -383,6 +383,7 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
+  @require-php-7.0
   Scenario: Install WordPress from trunk
     Given a WP install
     And a get-phpunit-phar-url.php file:
