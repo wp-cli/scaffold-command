@@ -14,7 +14,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And the return code should be 1
 
-  @less-than-php-8.0
+  @less-than-php-8.0 @require-php-7.0
   Scenario: Install latest version of WordPress
     Given a WP install
     And a affirmative-response file:
