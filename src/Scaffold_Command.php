@@ -1085,7 +1085,6 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( ! is_dir( $themes_dir ) ) {
 			wp_mkdir_p( $themes_dir );
 		}
-
 	}
 
 	/**
@@ -1096,7 +1095,6 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( ! is_dir( WP_PLUGIN_DIR ) ) {
 			wp_mkdir_p( WP_PLUGIN_DIR );
 		}
-
 	}
 
 	/**
@@ -1113,7 +1111,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * Localizes the template path.
 	 */
 	private static function mustache_render( $template, $data = [] ) {
-		return Utils\mustache_render( dirname( dirname( __FILE__ ) ) . "/templates/{$template}", $data );
+		return Utils\mustache_render( dirname( __DIR__ ) . "/templates/{$template}", $data );
 	}
 
 	/**
