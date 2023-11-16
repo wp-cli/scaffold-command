@@ -276,7 +276,7 @@ Feature: WordPress code scaffolding
       https://wp-cli.org
       https://wp-cli.org
       n
-      travis
+      circle
       Y
       n
       n
@@ -473,29 +473,19 @@ Feature: WordPress code scaffolding
     When I run `wp scaffold plugin hello-world`
     Then STDOUT should not be empty
     And the {PLUGIN_DIR}/hello-world/readme.txt file should exist
-    And the {PLUGIN_DIR}/hello-world/.travis.yml file should exist
-    And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
+    And the {PLUGIN_DIR}/hello-world/.circleci/config.yml file should exist
+    And the {PLUGIN_DIR}/hello-world/.circleci/config.yml file should contain:
       """
-      matrix:
-        include:
-          - php: 7.4
-            env: WP_VERSION=latest
-          - php: 7.3
-            env: WP_VERSION=latest
-          - php: 7.2
-            env: WP_VERSION=latest
-          - php: 7.1
-            env: WP_VERSION=latest
-          - php: 7.0
-            env: WP_VERSION=latest
-          - php: 5.6
-            env: WP_VERSION=4.5
-          - php: 5.6
-            env: WP_VERSION=latest
-          - php: 5.6
-            env: WP_VERSION=trunk
-          - php: 5.6
-            env: WP_TRAVISCI=phpcs
+      workflows:
+        version: 2
+        main:
+          jobs:
+            - php56-build
+            - php70-build
+            - php71-build
+            - php72-build
+            - php73-build
+            - php74-build
       """
 
   @require-php-5.6 @require-wp-4.6
