@@ -379,7 +379,7 @@ Feature: WordPress code scaffolding
     And the {THEME_DIR}/starter-theme/woocommerce.css file should exist
     And the {THEME_DIR}/starter-theme/inc/woocommerce.php file should exist
 
-  @require-php-5.6 @require-wp-4.6
+  @require-php-5.6 @require-wp-4.6 @require-mysql
   Scenario: Scaffold starter code for a theme and activate it
     Given a WP install
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
