@@ -41,44 +41,29 @@ Feature: Scaffold plugin unit tests
       """
     And the {PLUGIN_DIR}/hello-world/.phpcs.xml.dist file should exist
     And the {PLUGIN_DIR}/hello-world/circle.yml file should not exist
-    And the {PLUGIN_DIR}/hello-world/.circleci directory should not exist
     And the {PLUGIN_DIR}/hello-world/bitbucket-pipelines.yml file should not exist
     And the {PLUGIN_DIR}/hello-world/.gitlab-ci.yml file should not exist
-    And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
+    And the {PLUGIN_DIR}/hello-world/.circleci/config.yml file should contain:
       """
-      script:
-        - |
-          if [[ ! -z "$WP_VERSION" ]] ; then
-            phpunit
-            WP_MULTISITE=1 phpunit
-          fi
-        - |
-          if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-            phpcs
-          fi
+      jobs:
+        php56-build:
+          <<: *php_job
+          docker:
+            - image: circleci/php:5.6
+            - image: *mysql_image
       """
-    And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
+    And the {PLUGIN_DIR}/hello-world/.circleci/config.yml file should contain:
       """
-      matrix:
-        include:
-          - php: 7.4
-            env: WP_VERSION=latest
-          - php: 7.3
-            env: WP_VERSION=latest
-          - php: 7.2
-            env: WP_VERSION=latest
-          - php: 7.1
-            env: WP_VERSION=latest
-          - php: 7.0
-            env: WP_VERSION=latest
-          - php: 5.6
-            env: WP_VERSION=4.5
-          - php: 5.6
-            env: WP_VERSION=latest
-          - php: 5.6
-            env: WP_VERSION=trunk
-          - php: 5.6
-            env: WP_TRAVISCI=phpcs
+      workflows:
+        version: 2
+        main:
+          jobs:
+            - php56-build
+            - php70-build
+            - php71-build
+            - php72-build
+            - php73-build
+            - php74-build
       """
 
     When I run `wp eval "if ( is_executable( '{PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh' ) ) { echo 'executable'; } else { exit( 1 ); }"`
@@ -93,7 +78,6 @@ Feature: Scaffold plugin unit tests
 
     When I run `wp plugin path hello-world --dir`
     Then save STDOUT as {PLUGIN_DIR}
-    And the {PLUGIN_DIR}/.travis.yml file should not exist
     And the {PLUGIN_DIR}/circle.yml file should not exist
     And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
       """
@@ -133,7 +117,6 @@ Feature: Scaffold plugin unit tests
 
     When I run `wp scaffold plugin-tests hello-world --ci=circle`
     Then STDOUT should not be empty
-    And the {PLUGIN_DIR}/.travis.yml file should not exist
     And the {PLUGIN_DIR}/circle.yml file should not exist
     And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
       """
@@ -167,7 +150,6 @@ Feature: Scaffold plugin unit tests
 
     When I run `wp scaffold plugin-tests hello-world --ci=gitlab`
     Then STDOUT should not be empty
-    And the {PLUGIN_DIR}/.travis.yml file should not exist
     And the {PLUGIN_DIR}/.gitlab-ci.yml file should contain:
       """
       MYSQL_DATABASE
@@ -182,7 +164,6 @@ Feature: Scaffold plugin unit tests
 
     When I run `wp scaffold plugin-tests hello-world --ci=bitbucket`
     Then STDOUT should not be empty
-    And the {PLUGIN_DIR}/.travis.yml file should not exist
     And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
       pipelines:

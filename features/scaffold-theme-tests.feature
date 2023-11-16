@@ -38,43 +38,29 @@ Feature: Scaffold theme unit tests
       <exclude>./tests/test-sample.php</exclude>
       """
     And the {THEME_DIR}/p2child/.phpcs.xml.dist file should exist
-    And the {THEME_DIR}/p2child/circle.yml file should not exist
-    And the {THEME_DIR}/p2child/.circleci directory should not exist
     And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should not exist
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should not exist
-    And the {THEME_DIR}/p2child/.travis.yml file should contain:
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
       """
-      script:
-        - |
-          if [[ ! -z "$WP_VERSION" ]] ; then
-            phpunit
-            WP_MULTISITE=1 phpunit
-          fi
-        - |
-          if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-            phpcs
-          fi
+      jobs:
+        php56-build:
+          <<: *php_job
+          docker:
+            - image: circleci/php:5.6
+            - image: *mysql_image
       """
-    And the {THEME_DIR}/p2child/.travis.yml file should contain:
+    And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
       """
-      matrix:
-        include:
-          - php: 7.4
-            env: WP_VERSION=latest
-          - php: 7.3
-            env: WP_VERSION=latest
-          - php: 7.2
-            env: WP_VERSION=latest
-          - php: 7.1
-            env: WP_VERSION=latest
-          - php: 7.0
-            env: WP_VERSION=latest
-          - php: 5.6
-            env: WP_VERSION=latest
-          - php: 5.6
-            env: WP_VERSION=trunk
-          - php: 5.6
-            env: WP_TRAVISCI=phpcs
+      workflows:
+        version: 2
+        main:
+          jobs:
+            - php56-build
+            - php70-build
+            - php71-build
+            - php72-build
+            - php73-build
+            - php74-build
       """
 
     When I run `wp eval "if ( is_executable( '{THEME_DIR}/p2child/bin/install-wp-tests.sh' ) ) { echo 'executable'; } else { exit( 1 ); }"`
@@ -133,7 +119,6 @@ Feature: Scaffold theme unit tests
   Scenario: Scaffold theme tests with Circle as the provider
     When I run `wp scaffold theme-tests p2child --ci=circle`
     Then STDOUT should not be empty
-    And the {THEME_DIR}/p2child/.travis.yml file should not exist
     And the {THEME_DIR}/p2child/circle.yml file should not exist
     And the {THEME_DIR}/p2child/.circleci/config.yml file should contain:
       """
@@ -167,7 +152,6 @@ Feature: Scaffold theme unit tests
   Scenario: Scaffold theme tests with Gitlab as the provider
     When I run `wp scaffold theme-tests p2child --ci=gitlab`
     Then STDOUT should not be empty
-    And the {THEME_DIR}/p2child/.travis.yml file should not exist
     And the {THEME_DIR}/p2child/.gitlab-ci.yml file should contain:
       """
       MYSQL_DATABASE
@@ -176,7 +160,6 @@ Feature: Scaffold theme unit tests
   Scenario: Scaffold theme tests with Bitbucket Pipelines as the provider
     When I run `wp scaffold theme-tests p2child --ci=bitbucket`
     Then STDOUT should not be empty
-    And the {THEME_DIR}/p2child/.travis.yml file should not exist
     And the {THEME_DIR}/p2child/bitbucket-pipelines.yml file should contain:
       """
       pipelines:
