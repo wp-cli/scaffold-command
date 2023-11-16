@@ -498,7 +498,7 @@ Feature: WordPress code scaffolding
       Success: Network enabled the 'Starter-theme' theme.
       """
 
-  @require-php-5.6 @require-wp-4.6
+  @require-php-5.6 @require-wp-4.6 @require-mysql
   Scenario: Scaffold starter code for a theme, but can't unzip theme files
     Given a WP install
     And a misconfigured WP_CONTENT_DIR constant directory
