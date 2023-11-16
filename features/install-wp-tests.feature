@@ -14,7 +14,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And the return code should be 1
 
-  @less-than-php-8.0 @require-php-7.0
+  @less-than-php-8.0 @require-php-7.0 @require-mysql
   Scenario: Install latest version of WordPress
     Given a WP install
     And a affirmative-response file:
@@ -264,7 +264,7 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
-  @require-php-8.0 @require-wp-5.8
+  @require-php-8.0 @require-wp-5.8 @require-mysql
   Scenario: Install latest version of WordPress on PHP 8.0+ and WordPress above 5.8
     Given a WP install
     And a affirmative-response file:
@@ -383,7 +383,7 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
-  @require-php-7.0
+  @require-php-7.0 @require-mysql
   Scenario: Install WordPress from trunk
     Given a WP install
     And a get-phpunit-phar-url.php file:
@@ -485,6 +485,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/wordpress-tests-lib/vendor/yoast/phpunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
+  @require-mysql
   Scenario: Install WordPress 3.7 and phpunit will not run
     Given a WP install
     And I run `wp plugin path`
