@@ -141,7 +141,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$this->scaffold( $args[0], $assoc_args, $defaults, '/taxonomies/', $templates );
 	}
 
-	private function scaffold( $slug, $assoc_args, $defaults, $subdir, $templates ) {
+	protected function scaffold( $slug, $assoc_args, $defaults, $subdir, $templates ) {
 		$wp_filesystem = $this->init_wp_filesystem();
 
 		$control_defaults = [
@@ -527,7 +527,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		}
 	}
 
-	private function get_output_path( $assoc_args, $subdir ) {
+	protected function get_output_path( $assoc_args, $subdir ) {
 		if ( $assoc_args['theme'] ) {
 			$theme = $assoc_args['theme'];
 			if ( is_string( $theme ) ) {
@@ -802,7 +802,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$this->scaffold_plugin_theme_tests( $args, $assoc_args, 'theme' );
 	}
 
-	private function scaffold_plugin_theme_tests( $args, $assoc_args, $type ) {
+	protected function scaffold_plugin_theme_tests( $args, $assoc_args, $type ) {
 		$wp_filesystem = $this->init_wp_filesystem();
 
 		if ( ! empty( $args[0] ) ) {
@@ -922,7 +922,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *
 	 * @return null|string Returns null on success, error message on error.
 	 */
-	private function check_target_directory( $type, $target_dir ) {
+	protected function check_target_directory( $type, $target_dir ) {
 		$parent_dir = dirname( self::canonicalize_path( str_replace( '\\', '/', $target_dir ) ) );
 
 		if ( 'theme' === $type && str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) !== $parent_dir ) {
@@ -997,7 +997,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * @param array $assoc_args
 	 * @return string|null
 	 */
-	private function extract_dashicon( $assoc_args ) {
+	protected function extract_dashicon( $assoc_args ) {
 		$dashicon = Utils\get_flag_value( $assoc_args, 'dashicon' );
 		if ( ! $dashicon ) {
 			return null;
@@ -1009,7 +1009,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * If you're writing your files to your theme directory your textdomain also needs to be the same as your theme.
 	 * Same goes for when plugin is being used.
 	 */
-	private function get_textdomain( $textdomain, $args ) {
+	protected function get_textdomain( $textdomain, $args ) {
 		if ( strlen( $textdomain ) ) {
 			return $textdomain;
 		}
@@ -1042,7 +1042,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * @param  string $word Word to be pluralized.
 	 * @return string
 	 */
-	private function pluralize( $word ) {
+	protected function pluralize( $word ) {
 		return Inflector::pluralize( $word );
 	}
 
@@ -1094,14 +1094,14 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Localizes the template path.
 	 */
-	private static function mustache_render( $template, $data = [] ) {
+	protected static function mustache_render( $template, $data = [] ) {
 		return Utils\mustache_render( dirname( __DIR__ ) . "/templates/{$template}", $data );
 	}
 
 	/**
 	 * Gets the template path based on installation type.
 	 */
-	private static function get_template_path( $template ) {
+	protected static function get_template_path( $template ) {
 		$command_root  = Utils\phar_safe_path( dirname( __DIR__ ) );
 		$template_path = "{$command_root}/templates/{$template}";
 
@@ -1122,7 +1122,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *
 	 * @return string The canonicalized path.
 	 */
-	private static function canonicalize_path( $path ) {
+	protected static function canonicalize_path( $path ) {
 		if ( '' === $path || '/' === $path ) {
 			return $path;
 		}
@@ -1150,7 +1150,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * @param string|bool $theme Theme name or true.
 	 * @return string
 	 */
-	private function get_theme_name( $theme ) {
+	protected function get_theme_name( $theme ) {
 		if ( true === $theme ) {
 			$theme = wp_get_theme()->template;
 		}
