@@ -607,7 +607,6 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * default: circle
 	 * options:
 	 *   - circle
-	 *   - bitbucket
 	 *   - gitlab
 	 *   - github
 	 * ---
@@ -954,6 +953,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			}
 
 			$wp_filesystem->mkdir( dirname( $filename ) );
+
+			// Create multi-level folders.
+			if ( false === $wp_filesystem->exists( dirname( $filename ) ) ) {
+				$wp_filesystem->mkdir( dirname( dirname( $filename ) ) );
+				$wp_filesystem->mkdir( dirname( $filename ) );
+			}
 
 			if ( ! $wp_filesystem->put_contents( $filename, $contents ) ) {
 				WP_CLI::error( "Error creating file: {$filename}" );
