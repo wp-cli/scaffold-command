@@ -238,6 +238,7 @@ The following files are also included unless the `--skip-tests` is used:
 		options:
 		  - circle
 		  - gitlab
+		  - github
 		---
 
 	[--activate]
@@ -297,6 +298,7 @@ variable.
 		  - circle
 		  - gitlab
 		  - bitbucket
+		  - github
 		---
 
 	[--force]
@@ -435,6 +437,7 @@ variable.
 		  - circle
 		  - gitlab
 		  - bitbucket
+		  - github
 		---
 
 	[--force]
