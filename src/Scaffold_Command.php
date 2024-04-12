@@ -608,6 +608,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * options:
 	 *   - circle
 	 *   - gitlab
+	 *   - github
 	 * ---
 	 *
 	 * [--activate]
@@ -733,6 +734,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - circle
 	 *   - gitlab
 	 *   - bitbucket
+	 *   - github
 	 * ---
 	 *
 	 * [--force]
@@ -785,6 +787,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - circle
 	 *   - gitlab
 	 *   - bitbucket
+	 *   - github
 	 * ---
 	 *
 	 * [--force]
@@ -882,6 +885,8 @@ class Scaffold_Command extends WP_CLI_Command {
 			$files_to_create[ "{$target_dir}/.gitlab-ci.yml" ] = self::mustache_render( 'plugin-gitlab.mustache' );
 		} elseif ( 'bitbucket' === $assoc_args['ci'] ) {
 			$files_to_create[ "{$target_dir}/bitbucket-pipelines.yml" ] = self::mustache_render( 'plugin-bitbucket.mustache' );
+		} elseif ( 'github' === $assoc_args['ci'] ) {
+			$files_to_create[ "{$target_dir}/.github/workflows/testing.yml" ] = self::mustache_render( 'plugin-github.mustache' );
 		}
 
 		$files_written = $this->create_files( $files_to_create, $force );
@@ -948,6 +953,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			}
 
 			$wp_filesystem->mkdir( dirname( $filename ) );
+
+			// Create multi-level folders.
+			if ( false === $wp_filesystem->exists( dirname( $filename ) ) ) {
+				$wp_filesystem->mkdir( dirname( dirname( $filename ) ) );
+				$wp_filesystem->mkdir( dirname( $filename ) );
+			}
 
 			if ( ! $wp_filesystem->put_contents( $filename, $contents ) ) {
 				WP_CLI::error( "Error creating file: {$filename}" );
