@@ -869,9 +869,29 @@ class Scaffold_Command extends WP_CLI_Command {
 		$wp_versions_to_test[] = 'latest';
 		$wp_versions_to_test[] = 'trunk';
 
+		$main_file = '';
+
+		if ( 'plugin' === $type ) {
+			$all_plugins = get_plugins();
+
+			if ( ! empty( $all_plugins ) ) {
+				$filtered = array_filter(
+					array_keys( $all_plugins ),
+					static function ( $item ) use ( $slug ) {
+						return ( false !== strpos( $item, "{$slug}/" ) );
+					}
+				);
+
+				if ( ! empty( $filtered ) ) {
+					$main_file = basename( reset( $filtered ) );
+				}
+			}
+		}
+
 		$template_data = [
-			"{$type}_slug"    => $slug,
-			"{$type}_package" => $package,
+			"{$type}_slug"      => $slug,
+			"{$type}_package"   => $package,
+			"{$type}_main_file" => $main_file,
 		];
 
 		$force           = Utils\get_flag_value( $assoc_args, 'force' );
