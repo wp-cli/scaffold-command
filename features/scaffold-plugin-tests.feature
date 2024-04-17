@@ -284,3 +284,28 @@ Feature: Scaffold plugin unit tests
       """
       bootstrap.php
       """
+
+  Scenario: Scaffold plugin tests with custom main file
+    Given a WP install
+    And a wp-content/plugins/foo/bar.php file:
+      """
+      <?php
+      /**
+       * Plugin Name:     Foo
+       * Plugin URI:      https://example.com
+       * Description:     Foo desctiption
+       * Author:          John Doe
+       * Author URI:      https://example.com
+       * Text Domain:     foo
+       * Domain Path:     /languages
+       * Version:         0.1.0
+       *
+       * @package  Foo
+       */
+      """
+
+    When I run `wp scaffold plugin-tests foo`
+    Then the wp-content/plugins/foo/tests/bootstrap.php file should contain:
+      """
+      require dirname( dirname( __FILE__ ) ) . '/bar.php';
+      """

@@ -869,9 +869,13 @@ class Scaffold_Command extends WP_CLI_Command {
 		$wp_versions_to_test[] = 'latest';
 		$wp_versions_to_test[] = 'trunk';
 
-		$main_file = '';
+		$main_file = "{$slug}.php";
 
 		if ( 'plugin' === $type ) {
+			if ( ! function_exists( 'get_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
 			$all_plugins = get_plugins();
 
 			if ( ! empty( $all_plugins ) ) {
