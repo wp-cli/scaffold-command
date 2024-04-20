@@ -5,7 +5,7 @@ Feature: WordPress block code scaffolding
     Given I run `wp scaffold plugin movies`
     And I run `wp plugin path movies --dir`
     And save STDOUT as {PLUGIN_DIR}
-    Given I try `wp theme install twentytwelve --activate --force`
+    Given I run `wp theme install twentytwelve --activate --force`
     And I run `wp theme path twentytwelve --dir`
     And save STDOUT as {THEME_DIR}
 
