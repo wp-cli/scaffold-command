@@ -5,8 +5,8 @@ Feature: WordPress block code scaffolding
     Given I run `wp scaffold plugin movies`
     And I run `wp plugin path movies --dir`
     And save STDOUT as {PLUGIN_DIR}
-    Given I run `wp theme install p2 --activate`
-    And I run `wp theme path p2 --dir`
+    Given I run `wp theme install twentytwelve --activate --force`
+    And I run `wp theme path twentytwelve --dir`
     And save STDOUT as {THEME_DIR}
 
 
@@ -154,7 +154,7 @@ Feature: WordPress block code scaffolding
       """
 
   Scenario: Scaffold a block for a specific theme
-    When I run `wp scaffold block intouchables --theme=p2`
+    When I run `wp scaffold block intouchables --theme=twentytwelve`
     Then the {THEME_DIR}/blocks/intouchables.php file should exist
     And the {THEME_DIR}/blocks/intouchables/index.js file should exist
     And the {THEME_DIR}/blocks/intouchables/editor.css file should exist
@@ -166,7 +166,7 @@ Feature: WordPress block code scaffolding
 
   Scenario: Plugin- or theme-specific functions are only used in the correct context
     When I run `wp scaffold block plugin-block --plugin=movies`
-    And I run `wp scaffold block theme-block --theme=p2`
+    And I run `wp scaffold block theme-block --theme=twentytwelve`
     Then the {PLUGIN_DIR}/blocks/plugin-block.php file should contain:
       """
       plugins_url
