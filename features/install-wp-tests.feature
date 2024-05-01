@@ -10,7 +10,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I try `/usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh`
     Then STDOUT should contain:
       """
-      usage:
+      Usage:
       """
     And the return code should be 1
 
@@ -18,31 +18,31 @@ Feature: Scaffold install-wp-tests.sh tests
   Scenario: Install latest version of WordPress
     Given a WP install
     And a affirmative-response file:
-    """
-    Y
-    """
+      """
+      Y
+      """
     And a negative-response file:
-    """
-    No
-    """
+      """
+      No
+      """
     And a get-phpunit-phar-url.php file:
-    """
-    <?php
-    $version = 4;
-    if(PHP_VERSION_ID >= 50600) {
-        $version = 5;
-    }
-    if(PHP_VERSION_ID >= 70000) {
-        $version = 6;
-    }
-    if(PHP_VERSION_ID >= 70100) {
-        $version = 7;
-    }
-    if(PHP_VERSION_ID >= 80000) {
-        $version = 9;
-    }
-    echo "https://phar.phpunit.de/phpunit-{$version}.phar";
-    """
+      """
+      <?php
+      $version = 4;
+      if(PHP_VERSION_ID >= 50600) {
+      $version = 5;
+      }
+      if(PHP_VERSION_ID >= 70000) {
+      $version = 6;
+      }
+      if(PHP_VERSION_ID >= 70100) {
+      $version = 7;
+      }
+      if(PHP_VERSION_ID >= 80000) {
+      $version = 9;
+      }
+      echo "https://phar.phpunit.de/phpunit-{$version}.phar";
+      """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
@@ -133,35 +133,46 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
+    When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh --recreate-db wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
+    Then the return code should be 0
+    And STDERR should contain:
+      """
+      Reinstalling
+      """
+    And STDOUT should contain:
+      """
+      Recreated the database (wp_cli_test_scaffold)
+      """
+
   @require-php-8.0 @less-than-wp-5.8
   Scenario: Install latest version of WordPress on PHP 8.0+ and WordPress less then 5.8
     Given a WP install
     And a affirmative-response file:
-    """
-    Y
-    """
+      """
+      Y
+      """
     And a negative-response file:
-    """
-    No
-    """
+      """
+      No
+      """
     And a get-phpunit-phar-url.php file:
-    """
-    <?php
-    $version = 4;
-    if(PHP_VERSION_ID >= 50600) {
-        $version = 5;
-    }
-    if(PHP_VERSION_ID >= 70000) {
-        $version = 6;
-    }
-    if(PHP_VERSION_ID >= 70100) {
-        $version = 7;
-    }
-    if(PHP_VERSION_ID >= 80000) {
-        $version = 9;
-    }
-    echo "https://phar.phpunit.de/phpunit-{$version}.phar";
-    """
+      """
+      <?php
+      $version = 4;
+      if(PHP_VERSION_ID >= 50600) {
+      $version = 5;
+      }
+      if(PHP_VERSION_ID >= 70000) {
+      $version = 6;
+      }
+      if(PHP_VERSION_ID >= 70100) {
+      $version = 7;
+      }
+      if(PHP_VERSION_ID >= 80000) {
+      $version = 9;
+      }
+      echo "https://phar.phpunit.de/phpunit-{$version}.phar";
+      """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
@@ -268,31 +279,31 @@ Feature: Scaffold install-wp-tests.sh tests
   Scenario: Install latest version of WordPress on PHP 8.0+ and WordPress above 5.8
     Given a WP install
     And a affirmative-response file:
-    """
-    Y
-    """
+      """
+      Y
+      """
     And a negative-response file:
-    """
-    No
-    """
+      """
+      No
+      """
     And a get-phpunit-phar-url.php file:
-    """
-    <?php
-    $version = 4;
-    if(PHP_VERSION_ID >= 50600) {
-        $version = 5;
-    }
-    if(PHP_VERSION_ID >= 70000) {
-        $version = 6;
-    }
-    if(PHP_VERSION_ID >= 70100) {
-        $version = 7;
-    }
-    if(PHP_VERSION_ID >= 80000) {
-        $version = 9;
-    }
-    echo "https://phar.phpunit.de/phpunit-{$version}.phar";
-    """
+      """
+      <?php
+      $version = 4;
+      if(PHP_VERSION_ID >= 50600) {
+      $version = 5;
+      }
+      if(PHP_VERSION_ID >= 70000) {
+      $version = 6;
+      }
+      if(PHP_VERSION_ID >= 70100) {
+      $version = 7;
+      }
+      if(PHP_VERSION_ID >= 80000) {
+      $version = 9;
+      }
+      echo "https://phar.phpunit.de/phpunit-{$version}.phar";
+      """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
@@ -387,23 +398,23 @@ Feature: Scaffold install-wp-tests.sh tests
   Scenario: Install WordPress from trunk
     Given a WP install
     And a get-phpunit-phar-url.php file:
-    """
-    <?php
-    $version = 4;
-    if(PHP_VERSION_ID >= 50600) {
-        $version = 5;
-    }
-    if(PHP_VERSION_ID >= 70000) {
-        $version = 6;
-    }
-    if(PHP_VERSION_ID >= 70100) {
-        $version = 7;
-    }
-    if(PHP_VERSION_ID >= 80000) {
-        $version = 9;
-    }
-    echo "https://phar.phpunit.de/phpunit-{$version}.phar";
-    """
+      """
+      <?php
+      $version = 4;
+      if(PHP_VERSION_ID >= 50600) {
+      $version = 5;
+      }
+      if(PHP_VERSION_ID >= 70000) {
+      $version = 6;
+      }
+      if(PHP_VERSION_ID >= 70100) {
+      $version = 7;
+      }
+      if(PHP_VERSION_ID >= 80000) {
+      $version = 9;
+      }
+      echo "https://phar.phpunit.de/phpunit-{$version}.phar";
+      """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
