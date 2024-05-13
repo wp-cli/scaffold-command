@@ -6,62 +6,55 @@ variables:
 before_script:
   # Install dependencies
 
-  # update the docker
-  - apt-get clean
+  # Update the docker
   - apt-get -yqq update
-
-  # instll the required packages for the running CI tests
   - apt-get -yqqf install zip unzip subversion default-mysql-client default-libmysqlclient-dev --fix-missing
 
   # PHP extensions
-  - docker-php-ext-enable mbstring mcrypt mysqli pdo_mysql intl gd zip bz2
+  - docker-php-ext-install -j$(nproc) mysqli pdo_mysql
 
-  # Set up WordPress tests
+  # Setup WordPress tests
   - bash bin/install-wp-tests.sh wordpress_tests root mysql mysql latest true
 
+  # Install Composer
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  - php -r "unlink('composer-setup.php');"
+  - export PATH="$PATH:$HOME/.composer/vendor/bin"
+
+  # Install PHPUnit
+  - PHPUNIT_VERSION=9.6.19
+  - curl -o /usr/local/bin/phpunit "https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar" && chmod +x /usr/local/bin/phpunit
+  - composer global require yoast/phpunit-polyfills
+  - export WP_TESTS_PHPUNIT_POLYFILLS_PATH="$HOME/.composer/vendor/yoast/phpunit-polyfills"
+  - phpunit --version
+
   # Install PHPCS and WPCS
-  - composer global require "squizlabs/php_codesniffer=*"
+  - composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
   - composer global require "wp-coding-standards/wpcs"
   - composer global require "phpcompatibility/phpcompatibility-wp"
-  - vendor="$HOME/.composer/vendor"
-  - phpcs --config-set installed_paths "$vendor/wp-coding-standards/wpcs,$vendor/phpcompatibility/php-compatibility,$vendor/phpcompatibility/phpcompatibility-paragonie,$vendor/phpcompatibility/phpcompatibility-wp"
+  - phpcs --version
 
-PHPunit:PHP5.3:MySQL:
-  image: tetraweb/php:5.3
+PHPunit:PHP7.4:MySQL:
+  image: php:7.4-bullseye
   services:
-    - mysql:5.6
+    - mysql:5.7
   script:
   - phpcs
   - phpunit
 
-PHPunit:PHP5.6:MySQL:
-  image: tetraweb/php:5.6
+PHPunit:PHP8.0:MySQL:
+  image: php:8.0-bullseye
   services:
-    - mysql:5.6
+    - mysql:5.7
   script:
   - phpcs
   - phpunit
 
-PHPunit:PHP7.0:MySQL:
-  image: tetraweb/php:7.0
+PHPunit:PHP8.2:MySQL:
+  image: php:8.2-bullseye
   services:
-    - mysql:5.6
-  script:
-  - phpcs
-  - phpunit
-
-PHPunit:PHP7.1:MySQL:
-  image: tetraweb/php:7.1
-  services:
-    - mysql:5.6
-  script:
-  - phpcs
-  - phpunit
-
-PHPunit:PHP7.2:MySQL:
-  image: tetraweb/php:7.2
-  services:
-    - mysql:5.6
+    - mysql:5.7
   script:
   - phpcs
   - phpunit
