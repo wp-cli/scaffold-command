@@ -670,8 +670,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$files_to_create = [
 			$plugin_path                  => self::mustache_render( 'plugin.mustache', $data ),
 			$plugin_readme_path           => self::mustache_render( 'plugin-readme.mustache', $data ),
-			"{$plugin_dir}/package.json"  => self::mustache_render( 'plugin-packages.mustache', $data ),
-			"{$plugin_dir}/Gruntfile.js"  => self::mustache_render( 'plugin-gruntfile.mustache', $data ),
+			"{$plugin_dir}/composer.json" => self::mustache_render( 'plugin-composer.mustache', $data ),
 			"{$plugin_dir}/.gitignore"    => self::mustache_render( 'plugin-gitignore.mustache', $data ),
 			"{$plugin_dir}/.distignore"   => self::mustache_render( 'plugin-distignore.mustache', $data ),
 			"{$plugin_dir}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),
