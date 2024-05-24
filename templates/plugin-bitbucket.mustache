@@ -1,129 +1,124 @@
 pipelines:
   default:
     - step:
-        image: php:5.6
-        name: "PHP 5.6"
+        image: php:7.4
+        name: "PHP 7.4"
         script:
           # Install Dependencies
-          - docker-php-ext-install mysqli
-          - apt-get update && apt-get install -y subversion --no-install-recommends
+          - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
 
-          # Install PHPCS
-          - curl -o /usr/local/bin/phpcs -fSL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x /usr/local/bin/phpcs
-          - phpcs --version
+          # PHP extensions
+          - docker-php-ext-install -j$(nproc) mysqli pdo_mysql zip
 
-          # Install WordPress Coding Standards
-          - WPCS_VERSION=0.14.1
-          - curl -o wpcs.tar.gz -fSL "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/${WPCS_VERSION}.tar.gz"
-          - mkdir -p /var/wpcs && tar -xzf wpcs.tar.gz --directory /var/wpcs --strip-components 1 && rm wpcs.tar.gz
-          - phpcs --config-set show_progress 1 && phpcs --config-set colors 1 && phpcs --config-set installed_paths /var/wpcs
+          # Setup WordPress tests
+          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
 
-          ## Run PHPCS
-          - phpcs
+          # Install Composer
+          - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+          - php -r "unlink('composer-setup.php');"
+          - export PATH="$PATH:$HOME/.composer/vendor/bin"
+          - export COMPOSER_ALLOW_SUPERUSER=1
 
           # Install PHPUnit
-          - PHPUNIT_VERSION=5.7.27
+          - PHPUNIT_VERSION=9.6.19
           - curl -o /usr/local/bin/phpunit "https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar" && chmod +x /usr/local/bin/phpunit
+          - composer global require yoast/phpunit-polyfills
+          - export WP_TESTS_PHPUNIT_POLYFILLS_PATH="$HOME/.composer/vendor/yoast/phpunit-polyfills"
           - phpunit --version
 
-          ## Run PHPUnit
-          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+          # Install PHPCS and WPCS
+          - composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          - composer global require "wp-coding-standards/wpcs"
+          - composer global require "phpcompatibility/phpcompatibility-wp"
+          - phpcs --version
+
+          # Run PHPCS
+          - phpcs
+
+          # Run PHPUnit
           - phpunit
         services:
           - database
 
     - step:
-        image: php:7.0
-        name: "PHP 7.0"
+        image: php:8.0
+        name: "PHP 8.0"
         script:
           # Install Dependencies
-          - docker-php-ext-install mysqli
-          - apt-get update && apt-get install -y subversion --no-install-recommends
+          - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
 
-          # Install PHPCS
-          - curl -o /usr/local/bin/phpcs -fSL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x /usr/local/bin/phpcs
-          - phpcs --version
+          # PHP extensions
+          - docker-php-ext-install -j$(nproc) mysqli pdo_mysql zip
 
-          # Install WordPress Coding Standards
-          - WPCS_VERSION=0.14.1
-          - curl -o wpcs.tar.gz -fSL "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/${WPCS_VERSION}.tar.gz"
-          - mkdir -p /var/wpcs && tar -xzf wpcs.tar.gz --directory /var/wpcs --strip-components 1 && rm wpcs.tar.gz
-          - phpcs --config-set show_progress 1 && phpcs --config-set colors 1 && phpcs --config-set installed_paths /var/wpcs
+          # Setup WordPress tests
+          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
 
-          ## Run PHPCS
-          - phpcs
+          # Install Composer
+          - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+          - php -r "unlink('composer-setup.php');"
+          - export PATH="$PATH:$HOME/.composer/vendor/bin"
+          - export COMPOSER_ALLOW_SUPERUSER=1
 
           # Install PHPUnit
-          - PHPUNIT_VERSION=6.5.6
+          - PHPUNIT_VERSION=9.6.19
           - curl -o /usr/local/bin/phpunit "https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar" && chmod +x /usr/local/bin/phpunit
+          - composer global require yoast/phpunit-polyfills
+          - export WP_TESTS_PHPUNIT_POLYFILLS_PATH="$HOME/.composer/vendor/yoast/phpunit-polyfills"
           - phpunit --version
 
-          ## Run PHPUnit
-          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+          # Install PHPCS and WPCS
+          - composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          - composer global require "wp-coding-standards/wpcs"
+          - composer global require "phpcompatibility/phpcompatibility-wp"
+          - phpcs --version
+
+          # Run PHPCS
+          - phpcs
+
+          # Run PHPUnit
           - phpunit
         services:
           - database
 
     - step:
-        image: php:7.1
-        name: "PHP 7.1"
+        image: php:8.2
+        name: "PHP 8.2"
         script:
           # Install Dependencies
-          - docker-php-ext-install mysqli
-          - apt-get update && apt-get install -y subversion --no-install-recommends
+          - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
 
-          # Install PHPCS
-          - curl -o /usr/local/bin/phpcs -fSL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x /usr/local/bin/phpcs
-          - phpcs --version
+          # PHP extensions
+          - docker-php-ext-install -j$(nproc) mysqli pdo_mysql zip
 
-          # Install WordPress Coding Standards
-          - WPCS_VERSION=0.14.1
-          - curl -o wpcs.tar.gz -fSL "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/${WPCS_VERSION}.tar.gz"
-          - mkdir -p /var/wpcs && tar -xzf wpcs.tar.gz --directory /var/wpcs --strip-components 1 && rm wpcs.tar.gz
-          - phpcs --config-set show_progress 1 && phpcs --config-set colors 1 && phpcs --config-set installed_paths /var/wpcs
+          # Setup WordPress tests
+          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
 
-          ## Run PHPCS
-          - phpcs
+          # Install Composer
+          - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+          - php -r "unlink('composer-setup.php');"
+          - export PATH="$PATH:$HOME/.composer/vendor/bin"
+          - export COMPOSER_ALLOW_SUPERUSER=1
 
           # Install PHPUnit
-          - PHPUNIT_VERSION=6.5.6
+          - PHPUNIT_VERSION=9.6.19
           - curl -o /usr/local/bin/phpunit "https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar" && chmod +x /usr/local/bin/phpunit
+          - composer global require yoast/phpunit-polyfills
+          - export WP_TESTS_PHPUNIT_POLYFILLS_PATH="$HOME/.composer/vendor/yoast/phpunit-polyfills"
           - phpunit --version
 
-          ## Run PHPUnit
-          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
-          - phpunit
-        services:
-          - database
-
-    - step:
-        image: php:7.2
-        name: "PHP 7.2"
-        script:
-          # Install Dependencies
-          - docker-php-ext-install mysqli
-          - apt-get update && apt-get install -y subversion --no-install-recommends
-
-          # Install PHPCS
-          - curl -o /usr/local/bin/phpcs -fSL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x /usr/local/bin/phpcs
+          # Install PHPCS and WPCS
+          - composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          - composer global require "wp-coding-standards/wpcs"
+          - composer global require "phpcompatibility/phpcompatibility-wp"
           - phpcs --version
 
-          # Install WordPress Coding Standards
-          - WPCS_VERSION=0.14.1
-          - curl -o wpcs.tar.gz -fSL "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/${WPCS_VERSION}.tar.gz"
-          - mkdir -p /var/wpcs && tar -xzf wpcs.tar.gz --directory /var/wpcs --strip-components 1 && rm wpcs.tar.gz
-          - phpcs --config-set show_progress 1 && phpcs --config-set colors 1 && phpcs --config-set installed_paths /var/wpcs
-
-          ## Run PHPCS
+          # Run PHPCS
           - phpcs
 
-          # Install PHPUnit
-          - PHPUNIT_VERSION=6.5.6
-          - curl -o /usr/local/bin/phpunit "https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar" && chmod +x /usr/local/bin/phpunit
-          - phpunit --version
-
-          ## Run PHPUnit
-          - bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+          # Run PHPUnit
           - phpunit
         services:
           - database

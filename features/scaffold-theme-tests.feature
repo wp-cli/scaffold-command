@@ -168,42 +168,29 @@ Feature: Scaffold theme unit tests
     And the {THEME_DIR}/t12child/bitbucket-pipelines.yml file should contain:
       """
           - step:
-              image: php:5.6
-              name: "PHP 5.6"
+              image: php:7.4
+              name: "PHP 7.4"
               script:
                 # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
+                - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
       """
     And the {THEME_DIR}/t12child/bitbucket-pipelines.yml file should contain:
       """
           - step:
-              image: php:7.0
-              name: "PHP 7.0"
+              image: php:8.0
+              name: "PHP 8.0"
               script:
                 # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
+                - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
       """
     And the {THEME_DIR}/t12child/bitbucket-pipelines.yml file should contain:
       """
           - step:
-              image: php:7.1
-              name: "PHP 7.1"
+              image: php:8.2
+              name: "PHP 8.2"
               script:
                 # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
-      """
-    And the {THEME_DIR}/t12child/bitbucket-pipelines.yml file should contain:
-      """
-          - step:
-              image: php:7.2
-              name: "PHP 7.2"
-              script:
-                # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
+                - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
       """
     And the {THEME_DIR}/t12child/bitbucket-pipelines.yml file should contain:
       """
