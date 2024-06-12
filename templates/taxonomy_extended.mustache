@@ -1,4 +1,9 @@
 <?php
+/**
+ * Custom taxonomy
+ *
+ * @package {{prefix}}
+ */
 
 /**
  * Registers the `{{machine_name}}` taxonomy,
@@ -18,7 +23,7 @@ add_action( 'init', '{{prefix}}_init' );
  */
 function {{prefix}}_updated_messages( $messages ) {
 
-	$messages['{{slug}}'] = [
+	$messages['{{slug}}'] = array(
 		0 => '', // Unused. Messages start at index 1.
 		1 => __( '{{label_ucfirst}} added.', '{{textdomain}}' ),
 		2 => __( '{{label_ucfirst}} deleted.', '{{textdomain}}' ),
@@ -26,7 +31,7 @@ function {{prefix}}_updated_messages( $messages ) {
 		4 => __( '{{label_ucfirst}} not added.', '{{textdomain}}' ),
 		5 => __( '{{label_ucfirst}} not updated.', '{{textdomain}}' ),
 		6 => __( '{{label_plural_ucfirst}} deleted.', '{{textdomain}}' ),
-	];
+	);
 
 	return $messages;
 }
