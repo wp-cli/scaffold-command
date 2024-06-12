@@ -19,7 +19,7 @@ Feature: Scaffold a custom taxonomy
       """
     And STDOUT should contain:
       """
-      $messages['fungus'] = [
+      $messages['fungus'] = array(
       """
     And STDOUT should contain:
       """
