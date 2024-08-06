@@ -608,6 +608,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * options:
 	 *   - circle
 	 *   - gitlab
+	 *   - bitbucket
 	 *   - github
 	 * ---
 	 *

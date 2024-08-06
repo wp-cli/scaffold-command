@@ -309,3 +309,16 @@ Feature: Scaffold plugin unit tests
       """
       require dirname( dirname( __FILE__ ) ) . '/bar.php';
       """
+
+  Scenario: Accept bitbucket as valid CI in plugin scaffold
+    Given a WP install
+    When I run `wp plugin path`
+    Then save STDOUT as {PLUGIN_DIR}
+
+    When I run `wp scaffold plugin hello-world --ci=bitbucket`
+    Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/hello-world/.editorconfig file should exist
+    And the {PLUGIN_DIR}/hello-world/hello-world.php file should exist
+    And the {PLUGIN_DIR}/hello-world/readme.txt file should exist
+    And the {PLUGIN_DIR}/hello-world/bitbucket-pipelines.yml file should exist
+    And the {PLUGIN_DIR}/hello-world/tests directory should exist
