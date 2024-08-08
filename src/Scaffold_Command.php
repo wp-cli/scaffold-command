@@ -492,10 +492,10 @@ class Scaffold_Command extends WP_CLI_Command {
 			'theme_uri'  => '',
 		];
 
-		$data                               = wp_parse_args( $assoc_args, $defaults );
-		$data['slug']                       = $theme_slug;
-		$data['parent_theme_function_safe'] = str_replace( [ ' ', '-' ], '_', $data['parent_theme'] );
-		$data['description']                = ucfirst( $data['parent_theme'] ) . ' child theme.';
+		$data                = wp_parse_args( $assoc_args, $defaults );
+		$data['slug']        = $theme_slug;
+		$data['prefix_safe'] = str_replace( [ ' ', '-' ], '_', $theme_slug );
+		$data['description'] = ucfirst( $data['parent_theme'] ) . ' child theme.';
 
 		$theme_dir = WP_CONTENT_DIR . "/themes/{$theme_slug}";
 
