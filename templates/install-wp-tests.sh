@@ -17,7 +17,6 @@ TMPDIR=$(echo $TMPDIR | sed -e "s/\/$//")
 WP_TESTS_DIR=${WP_TESTS_DIR-$TMPDIR/wordpress-tests-lib}
 WP_CORE_DIR=${WP_CORE_DIR-$TMPDIR/wordpress}
 
-# Function to download files using curl or wget
 download() {
     if [ `which curl` ]; then
         curl -s "$1" > "$2";
@@ -30,15 +29,17 @@ download() {
 }
 
 # Check if svn is installed
-if ! command -v svn &> /dev/null; then
-    echo "Error: svn is not installed. Please install svn to proceed."
-    exit 1
-fi
+check_svn_installed() {
+    if ! command -v svn > /dev/null; then
+        echo "Error: svn is not installed. Please install svn and try again."
+        exit 1
+    fi
+}
 
-# Set WP_TESTS_TAG based on WP_VERSION
 if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\-(beta|RC)[0-9]+$ ]]; then
 	WP_BRANCH=${WP_VERSION%\-*}
 	WP_TESTS_TAG="branches/$WP_BRANCH"
+
 elif [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+$ ]]; then
 	WP_TESTS_TAG="branches/$WP_VERSION"
 elif [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
@@ -51,8 +52,9 @@ elif [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
 elif [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 	WP_TESTS_TAG="trunk"
 else
-	# Download latest version if no specific version is provided
+	# http serves a single offer, whereas https serves multiple. we only want one
 	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
+	grep '[0-9]+\.[0-9]+(\.[0-9]+)?' /tmp/wp-latest.json
 	LATEST_VERSION=$(grep -o '"version":"[^"]*' /tmp/wp-latest.json | sed 's/"version":"//')
 	if [[ -z "$LATEST_VERSION" ]]; then
 		echo "Latest WordPress version could not be found"
@@ -60,10 +62,8 @@ else
 	fi
 	WP_TESTS_TAG="tags/$LATEST_VERSION"
 fi
-
 set -ex
 
-# Install WordPress core
 install_wp() {
 
 	if [ -d $WP_CORE_DIR ]; then
@@ -75,16 +75,20 @@ install_wp() {
 	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 		mkdir -p $TMPDIR/wordpress-trunk
 		rm -rf $TMPDIR/wordpress-trunk/*
+        check_svn_installed
 		svn export --quiet https://core.svn.wordpress.org/trunk $TMPDIR/wordpress-trunk/wordpress
 		mv $TMPDIR/wordpress-trunk/wordpress/* $WP_CORE_DIR
 	else
 		if [ $WP_VERSION == 'latest' ]; then
 			local ARCHIVE_NAME='latest'
 		elif [[ $WP_VERSION =~ [0-9]+\.[0-9]+ ]]; then
+			# https serves multiple offers, whereas http serves single.
 			download https://api.wordpress.org/core/version-check/1.7/ $TMPDIR/wp-latest.json
 			if [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0] ]]; then
+				# version x.x.0 means the first release of the major version, so strip off the .0 and download version x.x
 				LATEST_VERSION=${WP_VERSION%??}
 			else
+				# otherwise, scan the releases and get the most up to date minor version of the major release
 				local VERSION_ESCAPED=`echo $WP_VERSION | sed 's/\./\\\\./g'`
 				LATEST_VERSION=$(grep -o '"version":"'$VERSION_ESCAPED'[^"]*' $TMPDIR/wp-latest.json | sed 's/"version":"//' | head -1)
 			fi
@@ -103,7 +107,6 @@ install_wp() {
 	download https://raw.githubusercontent.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
 }
 
-# Install the WordPress test suite
 install_test_suite() {
 	# portable in-place argument for both GNU sed and Mac OSX sed
 	if [[ $(uname -s) == 'Darwin' ]]; then
@@ -117,13 +120,14 @@ install_test_suite() {
 		# set up testing suite
 		mkdir -p $WP_TESTS_DIR
 		rm -rf $WP_TESTS_DIR/{includes,data}
+        check_svn_installed
 		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
 		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
 	fi
 
-	# Configure wp-tests-config.php
 	if [ ! -f wp-tests-config.php ]; then
 		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
+		# remove all forward slashes in the end
 		WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
 		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s:__DIR__ . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
@@ -132,9 +136,9 @@ install_test_suite() {
 		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR"/wp-tests-config.php
 	fi
+
 }
 
-# Recreate the database if needed
 recreate_db() {
 	shopt -s nocasematch
 	if [[ $1 =~ ^(y|yes)$ ]]
@@ -148,12 +152,10 @@ recreate_db() {
 	shopt -u nocasematch
 }
 
-# Create the database
 create_db() {
 	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 }
 
-# Install the test database
 install_db() {
 
 	if [ ${SKIP_DB_CREATE} = "true" ]; then
@@ -187,7 +189,6 @@ install_db() {
 	fi
 }
 
-# Run the installation functions
 install_wp
 install_test_suite
 install_db
