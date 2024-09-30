@@ -209,8 +209,7 @@ Feature: WordPress code scaffolding
     And the {PLUGIN_DIR}/hello-world/.editorconfig file should exist
     And the {PLUGIN_DIR}/hello-world/hello-world.php file should exist
     And the {PLUGIN_DIR}/hello-world/readme.txt file should exist
-    And the {PLUGIN_DIR}/hello-world/package.json file should exist
-    And the {PLUGIN_DIR}/hello-world/Gruntfile.js file should exist
+    And the {PLUGIN_DIR}/hello-world/composer.json file should exist
     And the {PLUGIN_DIR}/hello-world/.gitignore file should contain:
       """
       .DS_Store
@@ -219,6 +218,7 @@ Feature: WordPress code scaffolding
       Thumbs.db
       wp-cli.local.yml
       node_modules/
+      vendor/
       """
     And the {PLUGIN_DIR}/hello-world/.distignore file should contain:
       """
@@ -254,14 +254,10 @@ Feature: WordPress code scaffolding
       Tested up to: {WP_VERSION}
       """
 
-    When I run `cat {PLUGIN_DIR}/hello-world/package.json`
-    Then STDOUT should be JSON containing:
+    When I run `cat {PLUGIN_DIR}/hello-world/composer.json`
+    Then STDOUT should contain:
       """
-      {"author":"Hello World Author"}
-      """
-    And STDOUT should be JSON containing:
-      """
-      {"version":"0.1.0"}
+      wp-cli/i18n-command
       """
 
   Scenario: Scaffold a plugin by prompting
