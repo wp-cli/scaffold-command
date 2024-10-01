@@ -178,7 +178,23 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		if ( ! $control_args['raw'] ) {
 			$vars['machine_name'] = $machine_name;
-			$vars['output']       = $raw_output;
+			$vars['output']       = rtrim( $raw_output );
+
+			$target_slug = '';
+
+			if ( false !== $control_args['theme'] ) {
+				$target_slug = $control_args['theme'];
+			} elseif ( false !== $control_args['plugin'] ) {
+				$target_slug = $control_args['plugin'];
+			}
+
+			$target_name = ( $target_slug ) ? $this->generate_machine_name( $target_slug ) : '';
+
+			if ( empty( $target_name ) ) {
+				$target_name = $machine_name;
+			}
+
+			$vars['prefix'] = $target_name;
 
 			$final_output = self::mustache_render( $extended_template, $vars );
 		} else {
