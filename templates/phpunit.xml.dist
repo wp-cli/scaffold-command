@@ -4,8 +4,9 @@
 	backupGlobals="false"
 	colors="true"
 	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertDeprecationsToExceptions="true"
 	>
 	<testsuites>
 		<testsuite name="testing">
