@@ -1,8 +1,40 @@
 #!/usr/bin/env bash
 
-if [ $# -lt 3 ]; then
-	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]"
-	exit 1
+# Function to display usage instructions
+display_usage() {
+    echo "Usage: $0 [options] <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]"
+    echo "Options:"
+    echo "  --recreate-db   Recreate the database"
+    echo "  --help          Displays this help message"
+}
+
+RECREATE_DB=0
+
+# Parse command-line arguments
+for arg in "$@"
+do
+	case $arg in
+		--recreate-db)
+			RECREATE_DB=1
+			shift
+			;;
+		--help)
+			SHOW_HELP=1
+			shift
+			;;
+	esac
+done
+
+if [[ "$SHOW_HELP" -eq 1 ]]
+then
+	display_help
+	exit 0
+fi
+
+# Check if required arguments are provided
+if [[ $# -lt 3 ]]; then
+    display_usage
+    exit 1
 fi
 
 DB_NAME=$1
@@ -181,8 +213,13 @@ install_db() {
 	# create database
 	if [ $(mysql --user="$DB_USER" --password="$DB_PASS"$EXTRA --execute='show databases;' | grep ^$DB_NAME$) ]
 	then
-		echo "Reinstalling will delete the existing test database ($DB_NAME)"
-		read -p 'Are you sure you want to proceed? [y/N]: ' DELETE_EXISTING_DB
+		if [[ "$RECREATE_DB" -eq 1 ]]
+		then
+			DELETE_EXISTING_DB='y'
+		else
+			echo "Reinstalling will delete the existing test database ($DB_NAME)"
+			read -p 'Are you sure you want to proceed? [y/N]: ' DELETE_EXISTING_DB
+		fi
 		recreate_db $DELETE_EXISTING_DB
 	else
 		create_db
