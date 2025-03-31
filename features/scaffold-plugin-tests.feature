@@ -172,42 +172,29 @@ Feature: Scaffold plugin unit tests
     And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
           - step:
-              image: php:5.6
-              name: "PHP 5.6"
+              image: php:7.4
+              name: "PHP 7.4"
               script:
                 # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
+                - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
       """
     And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
           - step:
-              image: php:7.0
-              name: "PHP 7.0"
+              image: php:8.0
+              name: "PHP 8.0"
               script:
                 # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
+                - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
       """
     And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
           - step:
-              image: php:7.1
-              name: "PHP 7.1"
+              image: php:8.2
+              name: "PHP 8.2"
               script:
                 # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
-      """
-    And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
-      """
-          - step:
-              image: php:7.2
-              name: "PHP 7.2"
-              script:
-                # Install Dependencies
-                - docker-php-ext-install mysqli
-                - apt-get update && apt-get install -y subversion --no-install-recommends
+                - apt-get update && apt-get install -y subversion git zip libzip-dev --no-install-recommends
       """
     And the {PLUGIN_DIR}/bitbucket-pipelines.yml file should contain:
       """
@@ -309,3 +296,16 @@ Feature: Scaffold plugin unit tests
       """
       require dirname( dirname( __FILE__ ) ) . '/bar.php';
       """
+
+  Scenario: Accept bitbucket as valid CI in plugin scaffold
+    Given a WP install
+    When I run `wp plugin path`
+    Then save STDOUT as {PLUGIN_DIR}
+
+    When I run `wp scaffold plugin hello-world --ci=bitbucket`
+    Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/hello-world/.editorconfig file should exist
+    And the {PLUGIN_DIR}/hello-world/hello-world.php file should exist
+    And the {PLUGIN_DIR}/hello-world/readme.txt file should exist
+    And the {PLUGIN_DIR}/hello-world/bitbucket-pipelines.yml file should exist
+    And the {PLUGIN_DIR}/hello-world/tests directory should exist

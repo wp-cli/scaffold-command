@@ -508,10 +508,10 @@ class Scaffold_Command extends WP_CLI_Command {
 			'theme_uri'  => '',
 		];
 
-		$data                               = wp_parse_args( $assoc_args, $defaults );
-		$data['slug']                       = $theme_slug;
-		$data['parent_theme_function_safe'] = str_replace( [ ' ', '-' ], '_', $data['parent_theme'] );
-		$data['description']                = ucfirst( $data['parent_theme'] ) . ' child theme.';
+		$data                = wp_parse_args( $assoc_args, $defaults );
+		$data['slug']        = $theme_slug;
+		$data['prefix_safe'] = str_replace( [ ' ', '-' ], '_', $theme_slug );
+		$data['description'] = ucfirst( $data['parent_theme'] ) . ' child theme.';
 
 		$theme_dir = WP_CONTENT_DIR . "/themes/{$theme_slug}";
 
@@ -624,6 +624,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * options:
 	 *   - circle
 	 *   - gitlab
+	 *   - bitbucket
 	 *   - github
 	 * ---
 	 *
@@ -686,8 +687,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$files_to_create = [
 			$plugin_path                  => self::mustache_render( 'plugin.mustache', $data ),
 			$plugin_readme_path           => self::mustache_render( 'plugin-readme.mustache', $data ),
-			"{$plugin_dir}/package.json"  => self::mustache_render( 'plugin-packages.mustache', $data ),
-			"{$plugin_dir}/Gruntfile.js"  => self::mustache_render( 'plugin-gruntfile.mustache', $data ),
+			"{$plugin_dir}/composer.json" => self::mustache_render( 'plugin-composer.mustache', $data ),
 			"{$plugin_dir}/.gitignore"    => self::mustache_render( 'plugin-gitignore.mustache', $data ),
 			"{$plugin_dir}/.distignore"   => self::mustache_render( 'plugin-distignore.mustache', $data ),
 			"{$plugin_dir}/.editorconfig" => file_get_contents( self::get_template_path( '.editorconfig' ) ),

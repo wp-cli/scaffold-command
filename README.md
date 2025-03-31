@@ -238,6 +238,7 @@ The following files are also included unless the `--skip-tests` is used:
 		options:
 		  - circle
 		  - gitlab
+		  - bitbucket
 		  - github
 		---
 
