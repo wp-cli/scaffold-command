@@ -3,7 +3,7 @@ Feature: WordPress code scaffolding
   @theme
   Scenario: Scaffold a child theme
     Given a WP install
-    Given I run `wp theme path`
+    And I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
     When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --theme_name=Zombieland --author=Tallahassee --author_uri=https://wp-cli.org --theme_uri=http://www.zombieland.com`
@@ -17,7 +17,7 @@ Feature: WordPress code scaffolding
 
   Scenario: Scaffold a child theme with only --parent_theme parameter
     Given a WP install
-    Given I run `wp theme path`
+    And I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
     When I run `wp scaffold child-theme hello-world --parent_theme=simple-life`
@@ -77,7 +77,7 @@ Feature: WordPress code scaffolding
   @tax @cpt
   Scenario: Scaffold a Custom Taxonomy and Custom Post Type and write it to active theme
     Given a WP install
-    Given I run `wp eval 'echo STYLESHEETPATH;'`
+    And I run `wp eval 'echo STYLESHEETPATH;'`
     And save STDOUT as {STYLESHEETPATH}
 
     When I run `wp scaffold taxonomy zombie-speed --theme`
@@ -128,13 +128,13 @@ Feature: WordPress code scaffolding
     Given a WP install
     When I run `wp scaffold taxonomy zombie-speed --label="Speed"`
     Then STDOUT should contain:
-        """
-        __( 'Speeds'
-        """
+      """
+      __( 'Speeds'
+      """
     And STDOUT should contain:
-        """
-        _x( 'Speed', 'taxonomy general name',
-        """
+      """
+      _x( 'Speed', 'taxonomy general name',
+      """
 
   # Test for all flags but --label, --theme, --plugin and --raw
   @cpt
@@ -198,9 +198,9 @@ Feature: WordPress code scaffolding
 
   Scenario: Scaffold a plugin
     Given a WP install
-    Given I run `wp plugin path`
+    And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
-    Given I run `wp core version`
+    And I run `wp core version`
     And save STDOUT as {WP_VERSION}
 
     When I run `wp scaffold plugin hello-world --plugin_author="Hello World Author"`
@@ -334,7 +334,7 @@ Feature: WordPress code scaffolding
   @require-php-5.6 @require-wp-4.6
   Scenario: Scaffold starter code for a theme
     Given a WP install
-    Given I run `wp theme path`
+    And I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
@@ -349,7 +349,7 @@ Feature: WordPress code scaffolding
   @require-php-5.6 @require-wp-4.6
   Scenario: Scaffold starter code for a theme with sass
     Given a WP install
-    Given I run `wp theme path`
+    And I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
@@ -363,7 +363,7 @@ Feature: WordPress code scaffolding
   @require-php-5.6 @require-wp-4.6
   Scenario: Scaffold starter code for a WooCommerce theme
     Given a WP install
-    Given I run `wp theme path`
+    And I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
@@ -431,9 +431,9 @@ Feature: WordPress code scaffolding
     And the wp-content/mu-plugins/custom-plugin/tests directory should exist
     And the wp-content/mu-plugins/custom-plugin/tests/bootstrap.php file should exist
     And the wp-content/mu-plugins/custom-plugin/tests/bootstrap.php file should contain:
-    """
-    require dirname( dirname( __FILE__ ) ) . '/custom-plugin.php';
-    """
+      """
+      require dirname( dirname( __FILE__ ) ) . '/custom-plugin.php';
+      """
 
   Scenario: Scaffold tests for a plugin with a different slug than plugin directory
     Given a WP install
@@ -455,9 +455,9 @@ Feature: WordPress code scaffolding
     And the wp-content/mu-plugins/custom-plugin2/tests directory should exist
     And the wp-content/mu-plugins/custom-plugin2/tests/bootstrap.php file should exist
     And the wp-content/mu-plugins/custom-plugin2/tests/bootstrap.php file should contain:
-    """
-    require dirname( dirname( __FILE__ ) ) . '/custom-plugin-slug.php';
-    """
+      """
+      require dirname( dirname( __FILE__ ) ) . '/custom-plugin-slug.php';
+      """
 
   Scenario: Scaffold tests parses plugin readme.txt
     Given a WP install
@@ -500,9 +500,9 @@ Feature: WordPress code scaffolding
     And a misconfigured WP_CONTENT_DIR constant directory
     When I try `wp scaffold _s starter-theme`
     Then STDERR should contain:
-    """
-    Error: Could not decompress your theme files
-    """
+      """
+      Error: Could not decompress your theme files
+      """
     And the return code should be 1
 
   Scenario: Overwrite existing files
@@ -510,13 +510,13 @@ Feature: WordPress code scaffolding
     When I run `wp scaffold plugin test`
     And I try `wp scaffold plugin test --force`
     Then STDERR should contain:
-    """
-    already exists
-    """
+      """
+      already exists
+      """
     And STDOUT should contain:
-    """
-    Replacing
-    """
+      """
+      Replacing
+      """
     And the return code should be 0
 
   Scenario: Scaffold tests for invalid plugin directory
