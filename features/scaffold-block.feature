@@ -2,13 +2,12 @@ Feature: WordPress block code scaffolding
 
   Background:
     Given a WP install
-    Given I run `wp scaffold plugin movies`
+    And I run `wp scaffold plugin movies`
     And I run `wp plugin path movies --dir`
     And save STDOUT as {PLUGIN_DIR}
-    Given I run `wp theme install twentytwelve --activate --force`
+    And I run `wp theme install twentytwelve --activate --force`
     And I run `wp theme path twentytwelve --dir`
     And save STDOUT as {THEME_DIR}
-
 
   Scenario: Scaffold a block with an invalid slug
     When I try `wp scaffold block The_Godfather`
