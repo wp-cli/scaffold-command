@@ -875,7 +875,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$wp_versions_to_test = [];
 		// Parse plugin readme.txt
 		if ( file_exists( "{$target_dir}/readme.txt" ) ) {
-			$readme_content = file_get_contents( "{$target_dir}/readme.txt" );
+			$readme_content = (string) file_get_contents( "{$target_dir}/readme.txt" );
 
 			preg_match( '/Requires at least\:(.*)\n/m', $readme_content, $matches );
 			if ( isset( $matches[1] ) && $matches[1] ) {
@@ -1045,7 +1045,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Extracts dashicon name when provided or return null otherwise.
 	 *
-	 * @param array $assoc_args
+	 * @param array{dashicon?: string} $assoc_args
 	 * @return string|null
 	 */
 	private function extract_dashicon( $assoc_args ) {

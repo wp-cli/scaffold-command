@@ -231,7 +231,7 @@ Feature: WordPress code scaffolding
       """
     And the {PLUGIN_DIR}/hello-world/.phpcs.xml.dist file should contain:
       """
-      	<config name="testVersion" value="5.6-"/>
+      	<config name="testVersion" value="7.2-"/>
       """
     And the {PLUGIN_DIR}/hello-world/hello-world.php file should contain:
       """
