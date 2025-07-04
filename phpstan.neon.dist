@@ -1,0 +1,13 @@
+parameters:
+  level: 9
+  paths:
+    - src
+    - scaffold-command.php
+  scanDirectories:
+    - vendor/wp-cli/wp-cli/php
+  scanFiles:
+    - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+  treatPhpDocTypesAsCertain: false
+  ignoreErrors:
+    - identifier: missingType.parameter
+    - identifier: missingType.return
