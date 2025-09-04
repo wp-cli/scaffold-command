@@ -209,12 +209,20 @@ Feature: Scaffold plugin unit tests
 
   Scenario: Scaffold plugin tests with invalid slug
     Given a WP install
-    Then the {RUN_DIR}/wp-content/plugins/hello.php file should exist
+    And a wp-content/plugins/foo.php file:
+      """
+      <?php
+      /**
+       * Plugin Name: Foo
+       * Description: Foo plugin
+       */
+      """
+    Then the {RUN_DIR}/wp-content/plugins/foo.php file should exist
 
-    When I try `wp scaffold plugin-tests hello`
+    When I try `wp scaffold plugin-tests foo`
     Then STDERR should be:
       """
-      Error: Invalid plugin slug specified. No such target directory '{RUN_DIR}/wp-content/plugins/hello'.
+      Error: Invalid plugin slug specified. No such target directory '{RUN_DIR}/wp-content/plugins/foo'.
       """
     And the return code should be 1
 
