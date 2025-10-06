@@ -30,6 +30,40 @@ download() {
     fi
 }
 
+check_for_updates() {
+	local remote_url="https://raw.githubusercontent.com/wp-cli/scaffold-command/main/templates/install-wp-tests.sh"
+	local tmp_script="$TMPDIR/install-wp-tests.sh.latest"
+
+	download "$remote_url" "$tmp_script"
+
+	if [ ! -f "$tmp_script" ]; then
+		echo "Warning: Could not download the latest version of the script for update check."
+		return
+	fi
+
+	local local_hash=""
+	local remote_hash=""
+
+	if command -v shasum > /dev/null; then
+		local_hash=$(shasum -a 256 "$0" | awk '{print $1}')
+		remote_hash=$(shasum -a 256 "$tmp_script" | awk '{print $1}')
+	elif command -v sha256sum > /dev/null; then
+		local_hash=$(sha256sum "$0" | awk '{print $1}')
+		remote_hash=$(sha256sum "$tmp_script" | awk '{print $1}')
+	else
+		echo "Warning: Could not find shasum or sha256sum to check for script updates."
+		rm "$tmp_script"
+		return
+	fi
+
+	rm "$tmp_script"
+
+	if [ "$local_hash" != "$remote_hash" ]; then
+		echo "Warning: A newer version of this script is available at $remote_url"
+	fi
+}
+check_for_updates
+
 if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\-(beta|RC)[0-9]+$ ]]; then
 	WP_BRANCH=${WP_VERSION%\-*}
 	WP_TESTS_TAG="branches/$WP_BRANCH"
