@@ -30,14 +30,6 @@ download() {
     fi
 }
 
-# Check if svn is installed
-check_svn_installed() {
-    if ! command -v svn > /dev/null; then
-        echo "Error: svn is not installed. Please install svn and try again."
-        exit 1
-    fi
-}
-
 if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\-(beta|RC)[0-9]+$ ]]; then
 	WP_BRANCH=${WP_VERSION%\-*}
 	WP_TESTS_TAG="branches/$WP_BRANCH"
@@ -76,10 +68,7 @@ install_wp() {
 	mkdir -p $WP_CORE_DIR
 
 	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
-		mkdir -p $TMPDIR/wordpress-trunk
-        check_svn_installed
-		svn export --quiet https://core.svn.wordpress.org/trunk $TMPDIR/wordpress-trunk/wordpress
-		mv $TMPDIR/wordpress-trunk/wordpress/* $WP_CORE_DIR
+		download https://github.com/WordPress/wordpress-develop/archive/refs/heads/master.tar.gz $WP_CORE_DIR
 	else
 		if [ $WP_VERSION == 'latest' ]; then
 			local ARCHIVE_NAME='latest'
@@ -120,13 +109,35 @@ install_test_suite() {
 		# set up testing suite
 		rm -rf $WP_TESTS_DIR
 		mkdir -p $WP_TESTS_DIR
-        check_svn_installed
-		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
-		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
+
+		if [[ $WP_TESTS_TAG == 'trunk' ]]; then
+			ref=master
+			archive_url="https://github.com/WordPress/wordpress-develop/archive/refs/heads/${ref}.tar.gz"
+		elif [[ $WP_TESTS_TAG == branches/* ]]; then
+			ref=${WP_TESTS_TAG#branches/}
+			archive_url="https://github.com/WordPress/wordpress-develop/archive/refs/heads/${ref}.tar.gz"
+		else
+			ref=${WP_TESTS_TAG#tags/}
+			archive_url="https://github.com/WordPress/wordpress-develop/archive/refs/tags/${ref}.tar.gz"
+		fi
+
+		download ${archive_url} $TMPDIR/wordpress-develop.tar.gz
+		tar -zxmf $TMPDIR/wordpress-develop.tar.gz -C $TMPDIR
+		mv $TMPDIR/wordpress-develop-${ref}/tests/phpunit/includes $WP_TESTS_DIR/
+		mv $TMPDIR/wordpress-develop-${ref}/tests/phpunit/data $WP_TESTS_DIR/
+		rm -rf $TMPDIR/wordpress-develop-${ref}
+		rm $TMPDIR/wordpress-develop.tar.gz
 	fi
 
 	if [ ! -f wp-tests-config.php ]; then
-		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
+		if [[ $WP_TESTS_TAG == 'trunk' ]]; then
+			ref=master
+		elif [[ $WP_TESTS_TAG == branches/* ]]; then
+			ref=${WP_TESTS_TAG#branches/}
+		else
+			ref=${WP_TESTS_TAG#tags/}
+		fi
+		download https://raw.githubusercontent.com/WordPress/wordpress-develop/${ref}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
 		# remove all forward slashes in the end
 		WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
 		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
