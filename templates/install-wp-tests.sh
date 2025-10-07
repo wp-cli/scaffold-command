@@ -148,7 +148,7 @@ install_test_suite() {
 		mkdir -p $WP_TESTS_DIR
 
 		if [[ $WP_TESTS_TAG == 'trunk' ]]; then
-			ref=master
+			ref=trunk
 			archive_url="https://github.com/WordPress/wordpress-develop/archive/refs/heads/${ref}.tar.gz"
 		elif [[ $WP_TESTS_TAG == branches/* ]]; then
 			ref=${WP_TESTS_TAG#branches/}
