@@ -104,7 +104,8 @@ install_wp() {
 	mkdir -p $WP_CORE_DIR
 
 	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
-		download https://github.com/WordPress/wordpress-develop/archive/refs/heads/master.tar.gz $WP_CORE_DIR
+		download https://github.com/WordPress/wordpress-develop/archive/refs/heads/master.tar.gz $TMPDIR/wordpress.tar.gz
+		tar --strip-components=1 -zxmf $TMPDIR/wordpress.tar.gz -C $WP_CORE_DIR
 	else
 		if [ $WP_VERSION == 'latest' ]; then
 			local ARCHIVE_NAME='latest'
