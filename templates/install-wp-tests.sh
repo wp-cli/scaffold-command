@@ -165,7 +165,7 @@ install_test_suite() {
 		rm $TMPDIR/wordpress-develop.tar.gz
 	fi
 
-	if [ ! -f wp-tests-config.php ]; then
+	if [ ! -f "$WP_TESTS_DIR"/wp-tests-config.php ]; then
 		if [[ $WP_TESTS_TAG == 'trunk' ]]; then
 			ref=master
 		elif [[ $WP_TESTS_TAG == branches/* ]]; then
