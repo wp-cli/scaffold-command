@@ -98,6 +98,8 @@ else
 	WP_TESTS_TAG="tags/$LATEST_VERSION"
 fi
 
+set -ex
+
 install_wp() {
 
 	if [ -f $WP_CORE_FILE ]; then
