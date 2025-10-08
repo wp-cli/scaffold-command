@@ -10,7 +10,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I try `/usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh`
     Then STDOUT should contain:
       """
-      usage:
+      Usage:
       """
     And the return code should be 1
 
