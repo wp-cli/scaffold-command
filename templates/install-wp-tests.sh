@@ -3,14 +3,14 @@
 # See https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
 
 # Set up colors for output
-RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
-CYAN=$(tput setaf 6)
-RESET=$(tput sgr0)
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+CYAN="\033[0;36m"
+RESET="\033[0m"
 
 if [ $# -lt 3 ]; then
-	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]"
+	echo -e "${YELLOW}Usage:${RESET} $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]"
 	exit 1
 fi
 
@@ -34,7 +34,7 @@ download() {
     elif [ `which wget` ]; then
         wget -nv -O "$2" "$1"
     else
-        echo "${RED}Error: Neither curl nor wget is installed.${RESET}"
+        echo -e "${RED}Error: Neither curl nor wget is installed.${RESET}"
         exit 1
     fi
 }
@@ -46,7 +46,7 @@ check_for_updates() {
 	download "$remote_url" "$tmp_script"
 
 	if [ ! -f "$tmp_script" ]; then
-		echo "${YELLOW}Warning: Could not download the latest version of the script for update check.${RESET}"
+		echo -e "${YELLOW}Warning: Could not download the latest version of the script for update check.${RESET}"
 		return
 	fi
 
@@ -60,7 +60,7 @@ check_for_updates() {
 		local_hash=$(sha256sum "$0" | awk '{print $1}')
 		remote_hash=$(sha256sum "$tmp_script" | awk '{print $1}')
 	else
-		echo "${YELLOW}Warning: Could not find shasum or sha256sum to check for script updates.${RESET}"
+		echo -e "${YELLOW}Warning: Could not find shasum or sha256sum to check for script updates.${RESET}"
 		rm "$tmp_script"
 		return
 	fi
@@ -68,7 +68,7 @@ check_for_updates() {
 	rm "$tmp_script"
 
 	if [ "$local_hash" != "$remote_hash" ]; then
-		echo "${YELLOW}Warning: A newer version of this script is available at $remote_url${RESET}"
+		echo -e "${YELLOW}Warning: A newer version of this script is available at $remote_url${RESET}"
 	fi
 }
 check_for_updates
@@ -92,21 +92,20 @@ else
 	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
 	LATEST_VERSION=$(grep -oE '"version":"[^"]*' /tmp/wp-latest.json | head -n 1 | sed 's/"version":"//')
 	if [[ -z "$LATEST_VERSION" ]]; then
-		echo "${RED}Error: Latest WordPress version could not be found.${RESET}"
+		echo -e "${RED}Error: Latest WordPress version could not be found.${RESET}"
 		exit 1
 	fi
 	WP_TESTS_TAG="tags/$LATEST_VERSION"
 fi
-set -ex
 
 install_wp() {
 
 	if [ -f $WP_CORE_FILE ]; then
-		echo "${CYAN}WordPress is already installed.${RESET}"
+		echo -e "${CYAN}WordPress is already installed.${RESET}"
 		return;
 	fi
 
-	echo "${CYAN}Installing WordPress...${RESET}"
+	echo -e "${CYAN}Installing WordPress...${RESET}"
 
 	rm -rf $WP_CORE_DIR
 	mkdir -p $WP_CORE_DIR
@@ -139,7 +138,7 @@ install_wp() {
 		download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  $TMPDIR/wordpress.tar.gz
 		tar --strip-components=1 -zxmf $TMPDIR/wordpress.tar.gz -C $WP_CORE_DIR
 	fi
-	echo "${GREEN}WordPress installed successfully.${RESET}"
+	echo -e "${GREEN}WordPress installed successfully.${RESET}"
 }
 
 install_test_suite() {
@@ -152,7 +151,7 @@ install_test_suite() {
 
 	# set up testing suite if it doesn't yet exist or only partially exists
 	if [ ! -f $WP_TESTS_FILE ]; then
-		echo "${CYAN}Installing test suite...${RESET}"
+		echo -e "${CYAN}Installing test suite...${RESET}"
 		# set up testing suite
 		rm -rf $WP_TESTS_DIR
 		mkdir -p $WP_TESTS_DIR
@@ -174,13 +173,13 @@ install_test_suite() {
 		mv $TMPDIR/wordpress-develop-${ref}/tests/phpunit/data $WP_TESTS_DIR/
 		rm -rf $TMPDIR/wordpress-develop-${ref}
 		rm $TMPDIR/wordpress-develop.tar.gz
-		echo "${GREEN}Test suite installed.${RESET}"
+		echo -e "${GREEN}Test suite installed.${RESET}"
 	else
-		echo "${CYAN}Test suite is already installed.${RESET}"
+		echo -e "${CYAN}Test suite is already installed.${RESET}"
 	fi
 
 	if [ ! -f "$WP_TESTS_DIR"/wp-tests-config.php ]; then
-		echo "${CYAN}Configuring test suite...${RESET}"
+		echo -e "${CYAN}Configuring test suite...${RESET}"
 		if [[ $WP_TESTS_TAG == 'trunk' ]]; then
 			ref=master
 		elif [[ $WP_TESTS_TAG == branches/* ]]; then
@@ -196,9 +195,9 @@ install_test_suite() {
 		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR"/wp-tests-config.php
-		echo "${GREEN}Test suite configured.${RESET}"
+		echo -e "${GREEN}Test suite configured.${RESET}"
 	else
-		echo "${CYAN}Test suite is already configured.${RESET}"
+		echo -e "${CYAN}Test suite is already configured.${RESET}"
 	fi
 
 }
@@ -207,16 +206,16 @@ recreate_db() {
 	shopt -s nocasematch
 	if [[ $1 =~ ^(y|yes)$ ]]
 	then
-		echo "${CYAN}Recreating the database ($DB_NAME)...${RESET}"
+		echo -e "${CYAN}Recreating the database ($DB_NAME)...${RESET}"
 		if [ `which mariadb-admin` ]; then
 			mariadb-admin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA
 		else
 			mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA
 		fi
 		create_db
-		echo "${GREEN}Database ($DB_NAME) recreated.${RESET}"
+		echo -e "${GREEN}Database ($DB_NAME) recreated.${RESET}"
 	else
-		echo "${YELLOW}Leaving the existing database ($DB_NAME) in place.${RESET}"
+		echo -e "${YELLOW}Leaving the existing database ($DB_NAME) in place.${RESET}"
 	fi
 	shopt -u nocasematch
 }
@@ -232,7 +231,7 @@ create_db() {
 install_db() {
 
 	if [ ${SKIP_DB_CREATE} = "true" ]; then
-		echo "${YELLOW}Skipping database creation.${RESET}"
+		echo -e "${YELLOW}Skipping database creation.${RESET}"
 		return 0
 	fi
 
@@ -260,17 +259,17 @@ install_db() {
 	fi
 	if [ $($DB_CLIENT --user="$DB_USER" --password="$DB_PASS"$EXTRA --execute='show databases;' | grep ^$DB_NAME$) ]
 	then
-		echo "${YELLOW}Reinstalling will delete the existing test database ($DB_NAME)${RESET}"
+		echo -e "${YELLOW}Reinstalling will delete the existing test database ($DB_NAME)${RESET}"
 		read -p 'Are you sure you want to proceed? [y/N]: ' DELETE_EXISTING_DB
 		recreate_db $DELETE_EXISTING_DB
 	else
-		echo "${CYAN}Creating database ($DB_NAME)...${RESET}"
+		echo -e "${CYAN}Creating database ($DB_NAME)...${RESET}"
 		create_db
-		echo "${GREEN}Database ($DB_NAME) created.${RESET}"
+		echo -e "${GREEN}Database ($DB_NAME) created.${RESET}"
 	fi
 }
 
 install_wp
 install_test_suite
 install_db
-echo "${GREEN}Done.${RESET}"
+echo -e "${GREEN}Done.${RESET}"
