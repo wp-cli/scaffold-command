@@ -119,7 +119,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And STDOUT should contain:
       """
-      Recreated the database (wp_cli_test_scaffold)
+      Database (wp_cli_test_scaffold) recreated.
       """
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < negative-response`
@@ -250,7 +250,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And STDOUT should contain:
       """
-      Recreated the database (wp_cli_test_scaffold)
+      Database (wp_cli_test_scaffold) recreated.
       """
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < negative-response`
@@ -369,7 +369,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And STDOUT should contain:
       """
-      Recreated the database (wp_cli_test_scaffold)
+      Database (wp_cli_test_scaffold) recreated.
       """
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < negative-response`
