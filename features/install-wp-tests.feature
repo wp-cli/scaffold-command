@@ -264,7 +264,8 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
-  @require-php-8.0 @require-wp-5.8 @require-mysql
+  # Excluding PHP 8.5 because PHPUnit 9 causes some warnings.
+  @require-php-8.0 @require-wp-5.8 @require-mysql @less-than-php-8.5
   Scenario: Install latest version of WordPress on PHP 8.0+ and WordPress above 5.8
     Given a WP install
     And a affirmative-response file:
@@ -383,7 +384,8 @@ Feature: Scaffold install-wp-tests.sh tests
       Leaving the existing database (wp_cli_test_scaffold) in place
       """
 
-  @require-php-7.2 @require-mysql
+  # Excluding PHP 8.5 because PHPUnit 9 causes some warnings.
+  @require-php-7.2 @require-mysql @less-than-php-8.5
   Scenario: Install WordPress from trunk
     Given a WP install
     And a get-phpunit-phar-url.php file:
