@@ -219,6 +219,20 @@ Feature: Scaffold theme unit tests
       """
     And the return code should be 1
 
+    When I try `wp scaffold theme-tests t12child/`
+    Then STDERR should be:
+      """
+      Error: Invalid theme slug specified. The slug cannot end with a slash.
+      """
+    And the return code should be 1
+
+    When I try `wp scaffold theme-tests t12child\\`
+    Then STDERR should be:
+      """
+      Error: Invalid theme slug specified. The slug cannot end with a slash.
+      """
+    And the return code should be 1
+
   Scenario: Scaffold theme tests with invalid directory
     When I try `wp scaffold theme-tests twentytwelve --dir=non-existent-dir`
     Then STDERR should be:

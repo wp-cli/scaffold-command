@@ -829,6 +829,10 @@ class Scaffold_Command extends WP_CLI_Command {
 			if ( in_array( $slug, [ '.', '..' ], true ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
 			}
+			// Reject slugs ending with slashes to prevent corrupted bootstrap.php files.
+			if ( '/' === substr( $slug, -1 ) || '\\' === substr( $slug, -1 ) ) {
+				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot end with a slash." );
+			}
 			if ( 'theme' === $type ) {
 				$theme = wp_get_theme( $slug );
 				if ( $theme->exists() ) {

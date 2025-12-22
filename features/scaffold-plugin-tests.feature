@@ -240,6 +240,20 @@ Feature: Scaffold plugin unit tests
       """
     And the return code should be 1
 
+    When I try `wp scaffold plugin-tests my-plugin/`
+    Then STDERR should be:
+      """
+      Error: Invalid plugin slug specified. The slug cannot end with a slash.
+      """
+    And the return code should be 1
+
+    When I try `wp scaffold plugin-tests my-plugin\\`
+    Then STDERR should be:
+      """
+      Error: Invalid plugin slug specified. The slug cannot end with a slash.
+      """
+    And the return code should be 1
+
   Scenario: Scaffold plugin tests with invalid directory
     Given a WP install
     And I run `wp scaffold plugin hello-world --skip-tests`
