@@ -830,7 +830,7 @@ class Scaffold_Command extends WP_CLI_Command {
 				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
 			}
 			// Validate slug contains only alphanumeric characters and dashes.
-			if ( ! preg_match( '/^[a-zA-Z0-9\-]+$/', $slug ) ) {
+			if ( ! preg_match( '/^[a-zA-Z0-9-]+$/', $slug ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. The slug can only contain alphanumeric characters and dashes." );
 			}
 			if ( 'theme' === $type ) {
