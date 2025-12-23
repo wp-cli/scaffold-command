@@ -31,7 +31,7 @@ Feature: WordPress block code scaffolding
       """
 
   Scenario: Scaffold a block for an invalid plugin slug
-    When I run `wp scaffold plugin plugin.name.with.dots`
+    When I try `wp scaffold plugin plugin.name.with.dots`
     And I try `wp scaffold block some-block --plugin=plugin.name.with.dots`
     Then STDERR should contain:
       """
