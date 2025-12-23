@@ -215,21 +215,28 @@ Feature: Scaffold theme unit tests
     When I try `wp scaffold theme-tests ../`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified. The target directory '{RUN_DIR}/wp-content/themes/../' is not in '{RUN_DIR}/wp-content/themes'.
+      Error: Invalid theme slug specified. The slug can only contain alphanumeric characters and dashes.
       """
     And the return code should be 1
 
     When I try `wp scaffold theme-tests t12child/`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified. The slug cannot end with a slash.
+      Error: Invalid theme slug specified. The slug can only contain alphanumeric characters and dashes.
       """
     And the return code should be 1
 
     When I try `wp scaffold theme-tests t12child\\`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified. The slug cannot end with a slash.
+      Error: Invalid theme slug specified. The slug can only contain alphanumeric characters and dashes.
+      """
+    And the return code should be 1
+
+    When I try `wp scaffold theme-tests t12_child`
+    Then STDERR should be:
+      """
+      Error: Invalid theme slug specified. The slug can only contain alphanumeric characters and dashes.
       """
     And the return code should be 1
 
