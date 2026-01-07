@@ -11,6 +11,9 @@ Feature: Lint scaffolded code
     And the {PLUGIN_DIR}/test-plugin/.phpcs.xml.dist file should exist
 
     # Install coding standards in the scaffolded plugin
+    When I run `composer config --working-dir={PLUGIN_DIR}/test-plugin allow-plugins.dealerdirect/phpcodesniffer-composer-installer true`
+    Then the return code should be 0
+
     When I run `composer require --dev --working-dir={PLUGIN_DIR}/test-plugin dealerdirect/phpcodesniffer-composer-installer wp-coding-standards/wpcs --no-interaction --quiet`
     Then the return code should be 0
 
@@ -31,6 +34,9 @@ Feature: Lint scaffolded code
     Then the return code should be 0
 
     # Install coding standards
+    When I run `composer config --working-dir={PLUGIN_DIR}/lint-tester allow-plugins.dealerdirect/phpcodesniffer-composer-installer true`
+    Then the return code should be 0
+
     When I run `composer require --dev --working-dir={PLUGIN_DIR}/lint-tester dealerdirect/phpcodesniffer-composer-installer wp-coding-standards/wpcs --no-interaction --quiet`
     Then the return code should be 0
 
@@ -56,6 +62,9 @@ Feature: Lint scaffolded code
     Then the return code should be 0
 
     # Install coding standards
+    When I run `composer config --working-dir={PLUGIN_DIR}/lint-tester allow-plugins.dealerdirect/phpcodesniffer-composer-installer true`
+    Then the return code should be 0
+
     When I run `composer require --dev --working-dir={PLUGIN_DIR}/lint-tester dealerdirect/phpcodesniffer-composer-installer wp-coding-standards/wpcs --no-interaction --quiet`
     Then the return code should be 0
 
@@ -80,6 +89,9 @@ Feature: Lint scaffolded code
     And the {PLUGIN_DIR}/test-plugin/tests/test-sample.php file should exist
 
     # Install coding standards in the scaffolded plugin
+    When I run `composer config --working-dir={PLUGIN_DIR}/test-plugin allow-plugins.dealerdirect/phpcodesniffer-composer-installer true`
+    Then the return code should be 0
+
     When I run `composer require --dev --working-dir={PLUGIN_DIR}/test-plugin dealerdirect/phpcodesniffer-composer-installer wp-coding-standards/wpcs --no-interaction --quiet`
     Then the return code should be 0
 
@@ -100,6 +112,9 @@ Feature: Lint scaffolded code
     Then the return code should be 0
 
     # Install coding standards
+    When I run `composer config --working-dir={PLUGIN_DIR}/lint-tester allow-plugins.dealerdirect/phpcodesniffer-composer-installer true`
+    Then the return code should be 0
+
     When I run `composer require --dev --working-dir={PLUGIN_DIR}/lint-tester dealerdirect/phpcodesniffer-composer-installer wp-coding-standards/wpcs --no-interaction --quiet`
     Then the return code should be 0
 
@@ -119,6 +134,9 @@ Feature: Lint scaffolded code
     And save STDOUT as {PLUGIN_DIR}
 
     # Install coding standards in the scaffolded plugin
+    When I run `composer config --working-dir={PLUGIN_DIR} allow-plugins.dealerdirect/phpcodesniffer-composer-installer true`
+    Then the return code should be 0
+
     When I run `composer require --dev --working-dir={PLUGIN_DIR} dealerdirect/phpcodesniffer-composer-installer wp-coding-standards/wpcs --no-interaction --quiet`
     Then the return code should be 0
 
