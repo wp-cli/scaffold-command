@@ -22,7 +22,6 @@ Feature: Lint scaffolded code
     And the {PLUGIN_DIR}/test-plugin/test-plugin.php file should exist
     And the {PLUGIN_DIR}/test-plugin/.phpcs.xml.dist file should exist
 
-    # Run phpcs on the main plugin file
     When I run `{PLUGIN_DIR}/phpcs-helper/vendor/bin/phpcs --standard=WordPress {PLUGIN_DIR}/test-plugin/test-plugin.php`
     Then the return code should be 0
 
@@ -31,12 +30,10 @@ Feature: Lint scaffolded code
     And I run `wp eval 'echo STYLESHEETPATH;'`
     And save STDOUT as {STYLESHEETPATH}
 
-    # Scaffold post-type
-    When I run `wp scaffold post-type movie --theme`
+    And I run `wp scaffold post-type movie --theme`
     Then STDOUT should not be empty
     And the {STYLESHEETPATH}/post-types/movie.php file should exist
 
-    # Run phpcs on the scaffolded post-type
     When I run `{PLUGIN_DIR}/phpcs-helper/vendor/bin/phpcs --standard=WordPress {STYLESHEETPATH}/post-types/movie.php`
     Then the return code should be 0
 
@@ -45,12 +42,10 @@ Feature: Lint scaffolded code
     And I run `wp eval 'echo STYLESHEETPATH;'`
     And save STDOUT as {STYLESHEETPATH}
 
-    # Scaffold taxonomy
-    When I run `wp scaffold taxonomy genre --theme`
+    And I run `wp scaffold taxonomy genre --theme`
     Then STDOUT should not be empty
     And the {STYLESHEETPATH}/taxonomies/genre.php file should exist
 
-    # Run phpcs on the scaffolded taxonomy
     When I run `{PLUGIN_DIR}/phpcs-helper/vendor/bin/phpcs --standard=WordPress {STYLESHEETPATH}/taxonomies/genre.php`
     Then the return code should be 0
 
@@ -70,12 +65,10 @@ Feature: Lint scaffolded code
     And I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
-    # Scaffold child theme
-    When I run `wp scaffold child-theme test-child --parent_theme=twentytwentyone`
+    And I run `wp scaffold child-theme test-child --parent_theme=twentytwentyone`
     Then STDOUT should not be empty
     And the {THEME_DIR}/test-child/functions.php file should exist
 
-    # Run phpcs on the child theme functions.php
     When I run `{PLUGIN_DIR}/phpcs-helper/vendor/bin/phpcs --standard=WordPress {THEME_DIR}/test-child/functions.php`
     Then the return code should be 0
 
@@ -84,11 +77,9 @@ Feature: Lint scaffolded code
     And I run `wp plugin path movies --dir`
     And save STDOUT as {MOVIES_DIR}
 
-    # Scaffold block
-    When I run `wp scaffold block the-green-mile --plugin=movies`
+    And I run `wp scaffold block the-green-mile --plugin=movies`
     Then STDOUT should not be empty
     And the {MOVIES_DIR}/blocks/the-green-mile.php file should exist
 
-    # Run phpcs on the scaffolded block
     When I run `{PLUGIN_DIR}/phpcs-helper/vendor/bin/phpcs --standard=WordPress {MOVIES_DIR}/blocks/the-green-mile.php`
     Then the return code should be 0
