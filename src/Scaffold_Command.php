@@ -182,7 +182,9 @@ class Scaffold_Command extends WP_CLI_Command {
 
 			$target_slug = '';
 
-			if ( false !== $control_args['theme'] ) {
+			if ( true === $control_args['theme'] ) {
+				$target_slug = get_stylesheet();
+			} elseif ( false !== $control_args['theme'] ) {
 				$target_slug = $control_args['theme'];
 			} elseif ( false !== $control_args['plugin'] ) {
 				$target_slug = $control_args['plugin'];
