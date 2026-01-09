@@ -432,7 +432,7 @@ Feature: WordPress code scaffolding
     And the wp-content/mu-plugins/custom-plugin/tests/bootstrap.php file should exist
     And the wp-content/mu-plugins/custom-plugin/tests/bootstrap.php file should contain:
       """
-      require dirname( dirname( __FILE__ ) ) . '/custom-plugin.php';
+      require dirname( __DIR__ ) . '/custom-plugin.php';
       """
 
   Scenario: Scaffold tests for a plugin with a different slug than plugin directory
@@ -456,7 +456,7 @@ Feature: WordPress code scaffolding
     And the wp-content/mu-plugins/custom-plugin2/tests/bootstrap.php file should exist
     And the wp-content/mu-plugins/custom-plugin2/tests/bootstrap.php file should contain:
       """
-      require dirname( dirname( __FILE__ ) ) . '/custom-plugin-slug.php';
+      require dirname( __DIR__ ) . '/custom-plugin-slug.php';
       """
 
   Scenario: Scaffold tests parses plugin readme.txt
