@@ -18,7 +18,7 @@ function {{machine_name}}_block_init() {
 		return;
 	}
 	{{#plugin}}
-	$dir = dirname( __FILE__ );
+	$dir = __DIR__;
 	{{/plugin}}
 	{{#theme}}
 	$dir = get_stylesheet_directory() . '/blocks';
@@ -38,7 +38,8 @@ function {{machine_name}}_block_init() {
 			'wp-i18n',
 			'wp-element',
 		],
-		filemtime( "{$dir}/{$index_js}" )
+		filemtime( "{$dir}/{$index_js}" ),
+		false
 	);
 
 	$editor_css = '{{slug}}/editor.css';
@@ -67,11 +68,14 @@ function {{machine_name}}_block_init() {
 		filemtime( "{$dir}/{$style_css}" )
 	);
 
-	register_block_type( '{{namespace}}/{{slug}}', [
-		'editor_script' => '{{slug}}-block-editor',
-		'editor_style'  => '{{slug}}-block-editor',
-		'style'         => '{{slug}}-block',
-	] );
+	register_block_type(
+		'{{namespace}}/{{slug}}',
+		[
+			'editor_script' => '{{slug}}-block-editor',
+			'editor_style'  => '{{slug}}-block-editor',
+			'style'         => '{{slug}}-block',
+		]
+	);
 }
 
 add_action( 'init', '{{machine_name}}_block_init' );
