@@ -829,9 +829,9 @@ class Scaffold_Command extends WP_CLI_Command {
 			if ( in_array( $slug, [ '.', '..' ], true ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
 			}
-			// Validate slug contains only alphanumeric characters and dashes.
-			if ( ! preg_match( '/^[a-zA-Z0-9-]+$/', $slug ) ) {
-				WP_CLI::error( "Invalid {$type} slug specified. The slug can only contain alphanumeric characters and dashes." );
+			// Validate slug contains only alphanumeric characters, underscores, and dashes.
+			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $slug ) ) {
+				WP_CLI::error( "Invalid {$type} slug specified. The slug can only contain alphanumeric characters, underscores, and dashes." );
 			}
 			if ( 'theme' === $type ) {
 				$theme = wp_get_theme( $slug );
