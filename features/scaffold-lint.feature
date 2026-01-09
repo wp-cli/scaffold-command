@@ -26,7 +26,7 @@ Feature: Lint scaffolded code
     Then the return code should be 0
 
   Scenario: Scaffold post-type and lint it
-    When I run `wp theme install twentytwentyone --activate`
+    When I run `wp theme install twentytwentyone --force --activate`
     And I run `wp eval 'echo STYLESHEETPATH;'`
     And save STDOUT as {STYLESHEETPATH}
 
@@ -38,7 +38,7 @@ Feature: Lint scaffolded code
     Then the return code should be 0
 
   Scenario: Scaffold taxonomy and lint it
-    When I run `wp theme install twentytwentyone --activate`
+    When I run `wp theme install twentytwentyone --force --activate`
     And I run `wp eval 'echo STYLESHEETPATH;'`
     And save STDOUT as {STYLESHEETPATH}
 
@@ -61,7 +61,7 @@ Feature: Lint scaffolded code
     Then the return code should be 0
 
   Scenario: Scaffold child theme and lint it
-    When I run `wp theme install twentytwentyone --activate`
+    When I run `wp theme install twentytwentyone --force --activate`
     And I run `wp theme path`
     And save STDOUT as {THEME_DIR}
 
