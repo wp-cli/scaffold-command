@@ -30,9 +30,11 @@ WP_CORE_FILE="$WP_CORE_DIR"/wp-settings.php
 
 download() {
     if [ `which curl` ]; then
-        curl -L -s "$1" > "$2";
+        curl -L -s "$1" > "$2"
+        return $?
     elif [ `which wget` ]; then
         wget -nv -O "$2" "$1"
+        return $?
     else
         echo -e "${RED}Error: Neither curl nor wget is installed.${RESET}"
         exit 1
@@ -43,10 +45,14 @@ check_for_updates() {
 	local remote_url="https://raw.githubusercontent.com/wp-cli/scaffold-command/main/templates/install-wp-tests.sh"
 	local tmp_script="$TMPDIR/install-wp-tests.sh.latest"
 
-	download "$remote_url" "$tmp_script"
+	if ! download "$remote_url" "$tmp_script"; then
+		echo -e "${YELLOW}Warning: Failed to download the latest version of the script for update check.${RESET}"
+		return
+	fi
 
-	if [ ! -f "$tmp_script" ]; then
-		echo -e "${YELLOW}Warning: Could not download the latest version of the script for update check.${RESET}"
+	if [ ! -f "$tmp_script" ] || [ ! -s "$tmp_script" ]; then
+		echo -e "${YELLOW}Warning: Downloaded script is missing or empty, cannot check for updates.${RESET}"
+		rm -f "$tmp_script"
 		return
 	fi
 
