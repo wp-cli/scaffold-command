@@ -236,7 +236,7 @@ Feature: Scaffold plugin unit tests
     When I try `wp scaffold plugin-tests ../`
     Then STDERR should be:
       """
-      Error: Invalid plugin slug specified. The slug can only contain alphanumeric characters and dashes.
+      Error: Invalid plugin slug specified. The slug can only contain alphanumeric characters, underscores, and dashes.
       """
     And the return code should be 1
 
