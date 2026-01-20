@@ -29,9 +29,9 @@ WP_CORE_DIR=${WP_CORE_DIR-$TMPDIR/wordpress}
 WP_CORE_FILE="$WP_CORE_DIR"/wp-settings.php
 
 download() {
-    if [ `which curl` ]; then
+    if command -v curl > /dev/null 2>&1; then
         curl -L -s "$1" > "$2";
-    elif [ `which wget` ]; then
+    elif command -v wget > /dev/null 2>&1; then
         wget -nv -O "$2" "$1"
     else
         echo -e "${RED}Error: Neither curl nor wget is installed.${RESET}"
@@ -235,7 +235,7 @@ recreate_db() {
 	if [[ $1 =~ ^(y|yes)$ ]]
 	then
 		echo -e "${CYAN}Recreating the database ($DB_NAME)...${RESET}"
-		if [ `which mariadb-admin` ]; then
+		if command -v mariadb-admin > /dev/null 2>&1; then
 			mariadb-admin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA
 		else
 			mysqladmin drop $DB_NAME -f --user="$DB_USER" --password="$DB_PASS"$EXTRA
@@ -249,7 +249,7 @@ recreate_db() {
 }
 
 create_db() {
-	if [ `which mariadb-admin` ]; then
+	if command -v mariadb-admin > /dev/null 2>&1; then
 		mariadb-admin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 	else
 		mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
@@ -280,7 +280,7 @@ install_db() {
 	fi
 
 	# create database
-	if [ `which mariadb` ]; then
+	if command -v mariadb > /dev/null 2>&1; then
 		local DB_CLIENT='mariadb'
 	else
 		local DB_CLIENT='mysql'
