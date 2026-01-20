@@ -21,7 +21,7 @@ Feature: Scaffold plugin unit tests
       """
     And the {PLUGIN_DIR}/hello-world/tests/bootstrap.php file should contain:
       """
-      require dirname( dirname( __FILE__ ) ) . '/hello-world.php';
+      require dirname( __DIR__ ) . '/hello-world.php';
       """
     And the {PLUGIN_DIR}/hello-world/tests/bootstrap.php file should contain:
       """
@@ -302,7 +302,7 @@ Feature: Scaffold plugin unit tests
     When I run `wp scaffold plugin-tests foo`
     Then the wp-content/plugins/foo/tests/bootstrap.php file should contain:
       """
-      require dirname( dirname( __FILE__ ) ) . '/bar.php';
+      require dirname( __DIR__ ) . '/bar.php';
       """
 
   Scenario: Accept bitbucket as valid CI in plugin scaffold
