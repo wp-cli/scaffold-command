@@ -169,6 +169,11 @@ install_test_suite() {
 			archive_url="https://github.com/WordPress/wordpress-develop/archive/refs/tags/${ref}.tar.gz"
 		fi
 
+		if [ -z "$ref" ]; then
+			echo -e "${RED}Error:${RESET} Unable to determine git reference from WP_TESTS_TAG: $WP_TESTS_TAG"
+			exit 1
+		fi
+
 		download "${archive_url}" "$TMPDIR/wordpress-develop.tar.gz"
 
 		# Validate that the tarball was downloaded correctly before extracting
@@ -201,6 +206,12 @@ install_test_suite() {
 		else
 			ref=${WP_TESTS_TAG#tags/}
 		fi
+
+		if [ -z "$ref" ]; then
+			echo -e "${RED}Error:${RESET} Unable to determine git reference from WP_TESTS_TAG: $WP_TESTS_TAG"
+			exit 1
+		fi
+
 		download https://raw.githubusercontent.com/WordPress/wordpress-develop/${ref}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
 		# remove all forward slashes in the end
 		WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
