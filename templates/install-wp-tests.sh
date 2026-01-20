@@ -71,7 +71,10 @@ check_for_updates() {
 		echo -e "${YELLOW}Warning: A newer version of this script is available at $remote_url${RESET}"
 	fi
 }
-check_for_updates
+# Allow disabling the update check by setting WP_INSTALL_TESTS_SKIP_UPDATE_CHECK=true in the environment.
+if [ "${WP_INSTALL_TESTS_SKIP_UPDATE_CHECK:-false}" != "true" ]; then
+	check_for_updates
+fi
 
 if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\-(beta|RC)[0-9]+$ ]]; then
 	WP_BRANCH=${WP_VERSION%\-*}
