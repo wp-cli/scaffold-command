@@ -169,12 +169,24 @@ install_test_suite() {
 			archive_url="https://github.com/WordPress/wordpress-develop/archive/refs/tags/${ref}.tar.gz"
 		fi
 
-		download ${archive_url} $TMPDIR/wordpress-develop.tar.gz
-		tar -zxmf $TMPDIR/wordpress-develop.tar.gz -C $TMPDIR
-		mv $TMPDIR/wordpress-develop-${ref}/tests/phpunit/includes $WP_TESTS_DIR/
-		mv $TMPDIR/wordpress-develop-${ref}/tests/phpunit/data $WP_TESTS_DIR/
-		rm -rf $TMPDIR/wordpress-develop-${ref}
-		rm $TMPDIR/wordpress-develop.tar.gz
+		download "${archive_url}" "$TMPDIR/wordpress-develop.tar.gz"
+
+		# Validate that the tarball was downloaded correctly before extracting
+		if [ ! -s "$TMPDIR/wordpress-develop.tar.gz" ]; then
+			echo -e "${RED}Error:${RESET} Downloaded test suite archive is missing or empty: $TMPDIR/wordpress-develop.tar.gz"
+			exit 1
+		fi
+
+		if ! tar -tzf "$TMPDIR/wordpress-develop.tar.gz" >/dev/null 2>&1; then
+			echo -e "${RED}Error:${RESET} Downloaded test suite archive is not a valid tar.gz file: $TMPDIR/wordpress-develop.tar.gz"
+			exit 1
+		fi
+
+		tar -zxmf "$TMPDIR/wordpress-develop.tar.gz" -C "$TMPDIR"
+		mv "$TMPDIR/wordpress-develop-${ref}/tests/phpunit/includes" "$WP_TESTS_DIR"/
+		mv "$TMPDIR/wordpress-develop-${ref}/tests/phpunit/data" "$WP_TESTS_DIR"/
+		rm -rf "$TMPDIR/wordpress-develop-${ref}"
+		rm "$TMPDIR/wordpress-develop.tar.gz"
 		echo -e "${GREEN}Test suite installed.${RESET}"
 	else
 		echo -e "${CYAN}Test suite is already installed.${RESET}"
