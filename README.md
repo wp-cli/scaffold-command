@@ -44,6 +44,8 @@ Generates starter code for a theme based on _s.
 wp scaffold underscores <slug> [--activate] [--enable-network] [--theme_name=<title>] [--author=<full-name>] [--author_uri=<uri>] [--sassify] [--woocommerce] [--force]
 ~~~
 
+**Alias:** `_s`
+
 See the [Underscores website](https://underscores.me/) for more details.
 
 **OPTIONS**
@@ -321,6 +323,8 @@ Generates PHP code for registering a custom post type.
 wp scaffold post-type <slug> [--label=<label>] [--textdomain=<textdomain>] [--dashicon=<dashicon>] [--theme] [--plugin=<plugin>] [--raw] [--force]
 ~~~
 
+**Alias:** `cpt`
+
 **OPTIONS**
 
 	<slug>
@@ -363,6 +367,8 @@ Generates PHP code for registering a custom taxonomy.
 ~~~
 wp scaffold taxonomy <slug> [--post_types=<post-types>] [--label=<label>] [--textdomain=<textdomain>] [--theme] [--plugin=<plugin>] [--raw] [--force]
 ~~~
+
+**Alias:** `tax`
 
 **OPTIONS**
 
