@@ -288,7 +288,7 @@ Feature: Scaffold plugin unit tests
       /**
        * Plugin Name:     Foo
        * Plugin URI:      https://example.com
-       * Description:     Foo desctiption
+       * Description:     Foo description
        * Author:          John Doe
        * Author URI:      https://example.com
        * Text Domain:     foo
