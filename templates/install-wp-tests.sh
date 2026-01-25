@@ -104,6 +104,10 @@ else
 		echo -e "${RED}Error: Latest WordPress version could not be found.${RESET}"
 		exit 1
 	fi
+	# The version-check endpoint returns major.minor (e.g., 6.9), but GitHub tags include the patch version (e.g., 6.9.0)
+	if [[ $LATEST_VERSION =~ ^[0-9]+\.[0-9]+$ ]]; then
+		LATEST_VERSION="${LATEST_VERSION}.0"
+	fi
 	WP_TESTS_TAG="tags/$LATEST_VERSION"
 fi
 
