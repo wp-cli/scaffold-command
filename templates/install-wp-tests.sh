@@ -213,7 +213,7 @@ install_test_suite() {
 	if [ ! -f "$WP_TESTS_DIR"/wp-tests-config.php ]; then
 		echo -e "${CYAN}Configuring test suite...${RESET}"
 		if [[ $WP_TESTS_TAG == 'trunk' ]]; then
-			ref=master
+			ref=trunk
 		elif [[ $WP_TESTS_TAG == branches/* ]]; then
 			ref=${WP_TESTS_TAG#branches/}
 		else
