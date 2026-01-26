@@ -236,7 +236,21 @@ Feature: Scaffold plugin unit tests
     When I try `wp scaffold plugin-tests ../`
     Then STDERR should be:
       """
-      Error: Invalid plugin slug specified. The target directory '{RUN_DIR}/wp-content/plugins/../' is not in '{RUN_DIR}/wp-content/plugins'.
+      Error: Invalid plugin slug specified. The slug can only contain alphanumeric characters, underscores, and dashes.
+      """
+    And the return code should be 1
+
+    When I try `wp scaffold plugin-tests my-plugin/`
+    Then STDERR should be:
+      """
+      Error: Invalid plugin slug specified. The slug can only contain alphanumeric characters, underscores, and dashes.
+      """
+    And the return code should be 1
+
+    When I try `wp scaffold plugin-tests my-plugin\\`
+    Then STDERR should be:
+      """
+      Error: Invalid plugin slug specified. The slug can only contain alphanumeric characters, underscores, and dashes.
       """
     And the return code should be 1
 
