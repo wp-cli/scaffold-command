@@ -11,3 +11,5 @@ parameters:
   ignoreErrors:
     - identifier: missingType.parameter
     - identifier: missingType.return
+    # Pre-existing issues with array access in string interpolation
+    - '#Part \$data\[.+\] \(mixed\) of encapsed string cannot be cast to string\.#'

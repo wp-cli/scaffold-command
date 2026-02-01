@@ -364,7 +364,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	public function underscores( $args, $assoc_args ) {
 
 		$theme_slug = $args[0];
-		$theme_path = WP_CONTENT_DIR . '/themes';
+		$theme_path = $this->get_content_dir() . '/themes';
 		$url        = 'https://underscores.me';
 		$timeout    = 30;
 
@@ -377,7 +377,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			'author'     => 'Me',
 			'author_uri' => '',
 		];
-		$data     = wp_parse_args( $assoc_args, $defaults );
+		$data     = $this->parse_args( $assoc_args, $defaults );
 
 		$_s_theme_path = "$theme_path/$data[theme_name]";
 
@@ -510,12 +510,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			'theme_uri'  => '',
 		];
 
-		$data                = wp_parse_args( $assoc_args, $defaults );
+		$data                = $this->parse_args( $assoc_args, $defaults );
 		$data['slug']        = $theme_slug;
 		$data['prefix_safe'] = str_replace( [ ' ', '-' ], '_', $theme_slug );
 		$data['description'] = ucfirst( $data['parent_theme'] ) . ' child theme.';
 
-		$theme_dir = WP_CONTENT_DIR . "/themes/{$theme_slug}";
+		$theme_dir = $this->get_content_dir() . "/themes/{$theme_slug}";
 
 		$error_msg = $this->check_target_directory( 'theme', $theme_dir );
 		if ( ! empty( $error_msg ) ) {
@@ -558,7 +558,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			}
 		} elseif ( $assoc_args['plugin'] ) {
 			$plugin = $assoc_args['plugin'];
-			$path   = WP_PLUGIN_DIR . "/{$plugin}";
+			$path   = $this->get_plugin_dir() . "/{$plugin}";
 			if ( ! is_dir( $path ) ) {
 				WP_CLI::error( "Can't find '{$plugin}' plugin." );
 			}
@@ -662,9 +662,9 @@ class Scaffold_Command extends WP_CLI_Command {
 			'plugin_author'       => 'YOUR NAME HERE',
 			'plugin_author_uri'   => 'YOUR SITE HERE',
 			'plugin_uri'          => 'PLUGIN SITE HERE',
-			'plugin_tested_up_to' => get_bloginfo( 'version' ),
+			'plugin_tested_up_to' => $this->get_wp_version(),
 		];
-		$data     = wp_parse_args( $assoc_args, $defaults );
+		$data     = $this->parse_args( $assoc_args, $defaults );
 
 		$data['textdomain'] = $plugin_slug;
 
@@ -674,7 +674,7 @@ class Scaffold_Command extends WP_CLI_Command {
 			}
 			$plugin_dir = "{$assoc_args['dir']}/{$plugin_slug}";
 		} else {
-			$plugin_dir = WP_PLUGIN_DIR . "/{$plugin_slug}";
+			$plugin_dir = $this->get_plugin_dir() . "/{$plugin_slug}";
 			$this->maybe_create_plugins_dir();
 
 			$error_msg = $this->check_target_directory( 'plugin', $plugin_dir );
@@ -832,14 +832,19 @@ class Scaffold_Command extends WP_CLI_Command {
 				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
 			}
 			if ( 'theme' === $type ) {
-				$theme = wp_get_theme( $slug );
-				if ( $theme->exists() ) {
-					$target_dir = $theme->get_stylesheet_directory();
+				if ( function_exists( 'wp_get_theme' ) ) {
+					$theme = wp_get_theme( $slug );
+					if ( $theme->exists() ) {
+						$target_dir = $theme->get_stylesheet_directory();
+					} else {
+						WP_CLI::error( "Invalid {$type} slug specified. The theme '{$slug}' does not exist." );
+					}
 				} else {
-					WP_CLI::error( "Invalid {$type} slug specified. The theme '{$slug}' does not exist." );
+					// Fallback when WordPress is not loaded.
+					$target_dir = $this->get_content_dir() . "/themes/{$slug}";
 				}
 			} else {
-				$target_dir = WP_PLUGIN_DIR . "/{$slug}";
+				$target_dir = $this->get_plugin_dir() . "/{$slug}";
 			}
 			if ( empty( $assoc_args['dir'] ) && ! is_dir( $target_dir ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. No such target directory '{$target_dir}'." );
@@ -972,12 +977,18 @@ class Scaffold_Command extends WP_CLI_Command {
 	private function check_target_directory( $type, $target_dir ) {
 		$parent_dir = dirname( self::canonicalize_path( str_replace( '\\', '/', $target_dir ) ) );
 
-		if ( 'theme' === $type && str_replace( '\\', '/', WP_CONTENT_DIR . '/themes' ) !== $parent_dir ) {
-			return sprintf( 'The target directory \'%1$s\' is not in \'%2$s\'.', $target_dir, WP_CONTENT_DIR . '/themes' );
+		if ( 'theme' === $type ) {
+			$themes_dir = str_replace( '\\', '/', $this->get_content_dir() . '/themes' );
+			if ( defined( 'WP_CONTENT_DIR' ) && $themes_dir !== $parent_dir ) {
+				return sprintf( 'The target directory \'%1$s\' is not in \'%2$s\'.', $target_dir, $themes_dir );
+			}
 		}
 
-		if ( 'plugin' === $type && str_replace( '\\', '/', WP_PLUGIN_DIR ) !== $parent_dir ) {
-			return sprintf( 'The target directory \'%1$s\' is not in \'%2$s\'.', $target_dir, WP_PLUGIN_DIR );
+		if ( 'plugin' === $type ) {
+			$plugin_dir = str_replace( '\\', '/', $this->get_plugin_dir() );
+			if ( defined( 'WP_PLUGIN_DIR' ) && $plugin_dir !== $parent_dir ) {
+				return sprintf( 'The target directory \'%1$s\' is not in \'%2$s\'.', $target_dir, $plugin_dir );
+			}
 		}
 
 		// Success.
@@ -1128,20 +1139,111 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * Creates the plugins directory if it doesn't already exist.
 	 */
 	protected function maybe_create_plugins_dir() {
-
-		if ( ! is_dir( WP_PLUGIN_DIR ) ) {
-			wp_mkdir_p( WP_PLUGIN_DIR );
+		$plugin_dir = $this->get_plugin_dir();
+		if ( ! is_dir( $plugin_dir ) ) {
+			if ( function_exists( 'wp_mkdir_p' ) ) {
+				wp_mkdir_p( $plugin_dir );
+			} else {
+				// Fallback when WordPress is not loaded.
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
+				mkdir( $plugin_dir, 0755, true );
+			}
 		}
 	}
 
 	/**
-	 * Initializes WP_Filesystem.
+	 * Initializes WP_Filesystem or returns a fallback filesystem wrapper.
+	 *
+	 * When WordPress is available, uses WP_Filesystem for proper permissions/security.
+	 * When WordPress is not available, returns a fallback wrapper using native PHP functions.
+	 *
+	 * @return \WP_Filesystem_Base|Scaffold_Filesystem_Fallback Filesystem handler object.
 	 */
 	protected function init_wp_filesystem() {
-		global $wp_filesystem;
-		WP_Filesystem();
+		// Check if WordPress filesystem functions are available.
+		if ( function_exists( 'WP_Filesystem' ) ) {
+			global $wp_filesystem;
+			WP_Filesystem();
+			return $wp_filesystem;
+		}
 
-		return $wp_filesystem;
+		// Return a fallback filesystem wrapper using native PHP functions.
+		return $this->get_fallback_filesystem();
+	}
+
+	/**
+	 * Gets a fallback filesystem wrapper when WordPress is not available.
+	 *
+	 * Provides a compatible interface with WP_Filesystem using native PHP functions.
+	 *
+	 * @return Scaffold_Filesystem_Fallback Filesystem wrapper object.
+	 */
+	protected function get_fallback_filesystem() {
+		return new Scaffold_Filesystem_Fallback();
+	}
+
+	/**
+	 * Gets the plugin directory path with fallback.
+	 *
+	 * @param string|null $base_dir Optional base directory to use as fallback.
+	 * @return string Plugin directory path.
+	 */
+	protected function get_plugin_dir( $base_dir = null ) {
+		if ( defined( 'WP_PLUGIN_DIR' ) ) {
+			return WP_PLUGIN_DIR;
+		}
+		// Fallback when WordPress is not loaded.
+		if ( null !== $base_dir ) {
+			return $base_dir;
+		}
+		// Default fallback to current directory.
+		$cwd = getcwd();
+		return false !== $cwd ? $cwd : '.';
+	}
+
+	/**
+	 * Gets the content directory path with fallback.
+	 *
+	 * @return string Content directory path.
+	 */
+	protected function get_content_dir() {
+		if ( defined( 'WP_CONTENT_DIR' ) ) {
+			return WP_CONTENT_DIR;
+		}
+		// Fallback when WordPress is not loaded.
+		if ( defined( 'ABSPATH' ) ) {
+			return ABSPATH . 'wp-content';
+		}
+		$cwd = getcwd();
+		return false !== $cwd ? $cwd : '.';
+	}
+
+	/**
+	 * Parses arguments with defaults, compatible with wp_parse_args.
+	 *
+	 * @param array<string,mixed> $args     Arguments to parse.
+	 * @param array<string,mixed> $defaults Default values.
+	 * @return array<string,mixed> Merged array of arguments with defaults.
+	 */
+	protected function parse_args( $args, $defaults ) {
+		if ( function_exists( 'wp_parse_args' ) ) {
+			return wp_parse_args( $args, $defaults );
+		}
+		// Fallback implementation.
+		return array_merge( $defaults, $args );
+	}
+
+	/**
+	 * Gets WordPress version with fallback.
+	 *
+	 * @return string WordPress version or fallback value.
+	 */
+	protected function get_wp_version() {
+		if ( function_exists( 'get_bloginfo' ) ) {
+			return get_bloginfo( 'version' );
+		}
+		// Fallback to a recent stable version.
+		return '6.4';
 	}
 
 	/**
@@ -1205,7 +1307,11 @@ class Scaffold_Command extends WP_CLI_Command {
 	 */
 	private function get_theme_name( $theme ) {
 		if ( true === $theme ) {
-			$theme = wp_get_theme()->template;
+			if ( function_exists( 'wp_get_theme' ) ) {
+				$theme = wp_get_theme()->template;
+			} else {
+				WP_CLI::error( 'Cannot determine active theme without WordPress being loaded. Please specify the theme explicitly.' );
+			}
 		}
 		return strtolower( $theme );
 	}
