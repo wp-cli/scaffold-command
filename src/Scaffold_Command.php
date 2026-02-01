@@ -644,6 +644,8 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *     $ wp scaffold plugin sample-plugin
 	 *     Success: Created plugin files.
 	 *     Success: Created test files.
+	 *
+	 * @when before_wp_load
 	 */
 	public function plugin( $args, $assoc_args ) {
 		$plugin_slug    = $args[0];
@@ -765,6 +767,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *     Success: Created test files.
 	 *
 	 * @subcommand plugin-tests
+	 * @when before_wp_load
 	 */
 	public function plugin_tests( $args, $assoc_args ) {
 		$this->scaffold_plugin_theme_tests( $args, $assoc_args, 'plugin' );
@@ -895,22 +898,24 @@ class Scaffold_Command extends WP_CLI_Command {
 		$main_file = "{$slug}.php";
 
 		if ( 'plugin' === $type ) {
-			if ( ! function_exists( 'get_plugins' ) ) {
+			if ( ! function_exists( 'get_plugins' ) && defined( 'ABSPATH' ) && file_exists( ABSPATH . 'wp-admin/includes/plugin.php' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 
-			$all_plugins = get_plugins();
+			if ( function_exists( 'get_plugins' ) ) {
+				$all_plugins = get_plugins();
 
-			if ( ! empty( $all_plugins ) ) {
-				$filtered = array_filter(
-					array_keys( $all_plugins ),
-					static function ( $item ) use ( $slug ) {
-						return ( false !== strpos( $item, "{$slug}/" ) );
+				if ( ! empty( $all_plugins ) ) {
+					$filtered = array_filter(
+						array_keys( $all_plugins ),
+						static function ( $item ) use ( $slug ) {
+							return ( false !== strpos( $item, "{$slug}/" ) );
+						}
+					);
+
+					if ( ! empty( $filtered ) ) {
+						$main_file = basename( reset( $filtered ) );
 					}
-				);
-
-				if ( ! empty( $filtered ) ) {
-					$main_file = basename( reset( $filtered ) );
 				}
 			}
 		}
