@@ -26,6 +26,12 @@ use WP_CLI\Inflector;
 class Scaffold_Command extends WP_CLI_Command {
 
 	/**
+	 * Fallback WordPress version to use when WordPress is not loaded.
+	 * This should be updated periodically to reflect a recent stable version.
+	 */
+	const FALLBACK_WP_VERSION = '6.4';
+
+	/**
 	 * Generates PHP code for registering a custom post type.
 	 *
 	 * ## OPTIONS
@@ -898,9 +904,7 @@ class Scaffold_Command extends WP_CLI_Command {
 		$main_file = "{$slug}.php";
 
 		if ( 'plugin' === $type ) {
-			if ( ! function_exists( 'get_plugins' ) && defined( 'ABSPATH' ) && file_exists( ABSPATH . 'wp-admin/includes/plugin.php' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/plugin.php';
-			}
+			$this->maybe_load_plugin_functions();
 
 			if ( function_exists( 'get_plugins' ) ) {
 				$all_plugins = get_plugins();
@@ -1150,9 +1154,22 @@ class Scaffold_Command extends WP_CLI_Command {
 				wp_mkdir_p( $plugin_dir );
 			} else {
 				// Fallback when WordPress is not loaded.
+				// Uses 0755 to match WordPress's default directory permissions.
 				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
 				mkdir( $plugin_dir, 0755, true );
 			}
+		}
+	}
+
+	/**
+	 * Loads WordPress plugin functions if available.
+	 *
+	 * Attempts to load the WordPress plugin.php file which contains get_plugins()
+	 * and other plugin-related functions. Silently fails if WordPress is not available.
+	 */
+	protected function maybe_load_plugin_functions() {
+		if ( ! function_exists( 'get_plugins' ) && defined( 'ABSPATH' ) && file_exists( ABSPATH . 'wp-admin/includes/plugin.php' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 	}
 
@@ -1226,6 +1243,10 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Parses arguments with defaults, compatible with wp_parse_args.
 	 *
+	 * Note: The fallback implementation uses array_merge which only works
+	 * with array arguments. WP-CLI always passes associative arrays to
+	 * $assoc_args, so this limitation is acceptable.
+	 *
 	 * @param array<string,mixed> $args     Arguments to parse.
 	 * @param array<string,mixed> $defaults Default values.
 	 * @return array<string,mixed> Merged array of arguments with defaults.
@@ -1234,7 +1255,8 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( function_exists( 'wp_parse_args' ) ) {
 			return wp_parse_args( $args, $defaults );
 		}
-		// Fallback implementation.
+		// Fallback implementation for when WordPress is not loaded.
+		// array_merge produces same result as wp_parse_args for arrays.
 		return array_merge( $defaults, $args );
 	}
 
@@ -1247,8 +1269,8 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( function_exists( 'get_bloginfo' ) ) {
 			return get_bloginfo( 'version' );
 		}
-		// Fallback to a recent stable version.
-		return '6.4';
+		// Fallback to a recent stable version when WordPress is not loaded.
+		return self::FALLBACK_WP_VERSION;
 	}
 
 	/**

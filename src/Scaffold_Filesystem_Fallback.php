@@ -8,6 +8,12 @@
 class Scaffold_Filesystem_Fallback {
 
 	/**
+	 * Default directory permission mode.
+	 * Uses 0755 to match WordPress's wp_mkdir_p() default.
+	 */
+	const DIR_MODE = 0755;
+
+	/**
 	 * Creates a directory.
 	 *
 	 * @param string $path Directory path.
@@ -18,7 +24,7 @@ class Scaffold_Filesystem_Fallback {
 			return true;
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
-		return mkdir( $path, 0755, true );
+		return mkdir( $path, self::DIR_MODE, true );
 	}
 
 	/**
