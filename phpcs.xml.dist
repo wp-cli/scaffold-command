@@ -54,6 +54,7 @@
 	<!-- Exclude existing classes from the prefix rule as it would break BC to prefix them now. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound">
 		<exclude-pattern>*/src/Scaffold_Command\.php$</exclude-pattern>
+		<exclude-pattern>*/src/Scaffold_Filesystem_Fallback\.php$</exclude-pattern>
 	</rule>
 
 </ruleset>

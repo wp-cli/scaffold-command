@@ -528,3 +528,21 @@ Feature: WordPress code scaffolding
       Error: Invalid plugin slug specified.
       """
     And the return code should be 1
+
+  Scenario: Scaffold plugin without WordPress loaded
+    Given an empty directory
+    And WP files
+
+    When I run `wp scaffold plugin my-plugin --dir=.`
+    Then STDOUT should not be empty
+    And the my-plugin/my-plugin.php file should exist
+    And the my-plugin/readme.txt file should exist
+    And the my-plugin/.editorconfig file should exist
+    And the my-plugin/my-plugin.php file should contain:
+      """
+      * Plugin Name:     My Plugin
+      """
+    And the my-plugin/my-plugin.php file should contain:
+      """
+      * Tested up to:    6.4
+      """

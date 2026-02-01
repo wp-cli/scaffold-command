@@ -317,3 +317,41 @@ Feature: Scaffold plugin unit tests
     And the {PLUGIN_DIR}/hello-world/readme.txt file should exist
     And the {PLUGIN_DIR}/hello-world/bitbucket-pipelines.yml file should exist
     And the {PLUGIN_DIR}/hello-world/tests directory should exist
+
+  Scenario: Scaffold plugin tests without WordPress loaded
+    Given an empty directory
+    And WP files
+
+    When I run `mkdir -p my-plugin`
+    When I run `wp scaffold plugin-tests my-plugin --dir=my-plugin`
+    Then STDOUT should not be empty
+    And the my-plugin/tests directory should contain:
+      """
+      bootstrap.php
+      test-sample.php
+      """
+    And the my-plugin/tests/bootstrap.php file should contain:
+      """
+      require dirname( __DIR__ ) . '/my-plugin.php';
+      """
+    And the my-plugin/tests/bootstrap.php file should contain:
+      """
+      * @package My_Plugin
+      """
+    And the my-plugin/tests/test-sample.php file should contain:
+      """
+      * @package My_Plugin
+      """
+    And the my-plugin/bin directory should contain:
+      """
+      install-wp-tests.sh
+      """
+    And the my-plugin/phpunit.xml.dist file should contain:
+      """
+      <exclude>./tests/test-sample.php</exclude>
+      """
+    And the my-plugin/.phpcs.xml.dist file should exist
+    And the my-plugin/.circleci/config.yml file should contain:
+      """
+      workflows:
+      """
