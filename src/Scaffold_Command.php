@@ -539,16 +539,24 @@ class Scaffold_Command extends WP_CLI_Command {
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
-			// Refresh theme cache to ensure the newly created theme is recognized.
-			delete_site_transient( 'theme_roots' );
-			search_theme_directories( true );
+			$this->refresh_theme_cache();
 			WP_CLI::run_command( [ 'theme', 'activate', $theme_slug ] );
 		} elseif ( Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
-			// Refresh theme cache to ensure the newly created theme is recognized.
-			delete_site_transient( 'theme_roots' );
-			search_theme_directories( true );
+			$this->refresh_theme_cache();
 			WP_CLI::run_command( [ 'theme', 'enable', $theme_slug ], [ 'network' => true ] );
 		}
+	}
+
+	/**
+	 * Refreshes WordPress theme cache.
+	 *
+	 * Clears the theme_roots transient and rebuilds the theme directory cache.
+	 * This ensures newly created themes are recognized by WordPress before
+	 * attempting to activate or enable them.
+	 */
+	private function refresh_theme_cache() {
+		delete_site_transient( 'theme_roots' );
+		search_theme_directories( true );
 	}
 
 	private function get_output_path( $assoc_args, $subdir ) {
