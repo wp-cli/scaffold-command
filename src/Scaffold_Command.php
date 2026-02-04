@@ -550,11 +550,12 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Refreshes WordPress theme cache.
 	 *
-	 * Clears the theme_roots transient, object cache, and rebuilds the theme
-	 * directory cache. This ensures newly created themes are recognized by
-	 * WordPress before attempting to activate or enable them.
+	 * Clears PHP's filesystem cache, WordPress theme_roots transient, object cache,
+	 * and rebuilds the theme directory cache. This ensures newly created themes are
+	 * recognized by WordPress before attempting to activate or enable them.
 	 */
 	private function refresh_theme_cache() {
+		clearstatcache();
 		delete_site_transient( 'theme_roots' );
 		wp_cache_delete( 'themes', 'themes' );
 		search_theme_directories( true );
