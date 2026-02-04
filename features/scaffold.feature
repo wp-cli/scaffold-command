@@ -80,7 +80,7 @@ Feature: WordPress code scaffolding
     When I run `wp theme list --fields=name,status --format=csv`
     Then STDOUT should contain:
       """
-      First Run Name,active
+      first-run,active
       """
 
     # Now delete the theme and create it again to test the fix for the caching issue
