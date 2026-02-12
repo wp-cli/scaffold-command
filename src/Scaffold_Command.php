@@ -828,8 +828,12 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		if ( ! empty( $args[0] ) ) {
 			$slug = $args[0];
+			// Validate slug contains only alphanumeric characters, underscores, and dashes.
 			if ( in_array( $slug, [ '.', '..' ], true ) ) {
 				WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
+			}
+			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $slug ) ) {
+				WP_CLI::error( "Invalid {$type} slug specified. The slug can only contain alphanumeric characters, underscores, and dashes." );
 			}
 			if ( 'theme' === $type ) {
 				$theme = wp_get_theme( $slug );
@@ -858,6 +862,13 @@ class Scaffold_Command extends WP_CLI_Command {
 			}
 			if ( empty( $slug ) ) {
 				$slug = Utils\basename( $target_dir );
+				// Validate derived slug as well.
+				if ( in_array( $slug, [ '.', '..' ], true ) ) {
+					WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
+				}
+				if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $slug ) ) {
+					WP_CLI::error( "Invalid {$type} slug specified. The slug can only contain alphanumeric characters, underscores, and dashes." );
+				}
 			}
 		}
 
