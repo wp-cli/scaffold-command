@@ -1211,7 +1211,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	/**
 	 * Gets an active theme's name when true provided or the same name otherwise.
 	 *
-	 * @param string|bool $theme Theme name or true.
+	 * @param string|true $theme Theme name or true.
 	 * @return string
 	 */
 	private function get_theme_name( $theme ) {
