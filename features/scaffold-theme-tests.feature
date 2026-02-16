@@ -8,7 +8,7 @@ Feature: Scaffold theme unit tests
     When I run `wp theme path`
     Then save STDOUT as {THEME_DIR}
 
-  @require-php-7.0 @less-than-php-7.2 @require-mysql
+  @require-php-7.0 @require-mysql
   Scenario: Scaffold theme tests
     When I run `wp scaffold theme-tests t12child`
     Then STDOUT should not be empty
@@ -215,7 +215,21 @@ Feature: Scaffold theme unit tests
     When I try `wp scaffold theme-tests ../`
     Then STDERR should be:
       """
-      Error: Invalid theme slug specified. The target directory '{RUN_DIR}/wp-content/themes/../' is not in '{RUN_DIR}/wp-content/themes'.
+      Error: Invalid theme slug specified. The slug can only contain alphanumeric characters, underscores, and dashes.
+      """
+    And the return code should be 1
+
+    When I try `wp scaffold theme-tests t12child/`
+    Then STDERR should be:
+      """
+      Error: Invalid theme slug specified. The slug can only contain alphanumeric characters, underscores, and dashes.
+      """
+    And the return code should be 1
+
+    When I try `wp scaffold theme-tests t12child\\`
+    Then STDERR should be:
+      """
+      Error: Invalid theme slug specified. The slug can only contain alphanumeric characters, underscores, and dashes.
       """
     And the return code should be 1
 
