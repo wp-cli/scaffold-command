@@ -539,10 +539,10 @@ class Scaffold_Command extends WP_CLI_Command {
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
-			$this->refresh_theme_cache();
+			$this->refresh_theme_cache( $theme_slug );
 			WP_CLI::run_command( [ 'theme', 'activate', $theme_slug ] );
 		} elseif ( Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
-			$this->refresh_theme_cache();
+			$this->refresh_theme_cache( $theme_slug );
 			WP_CLI::run_command( [ 'theme', 'enable', $theme_slug ], [ 'network' => true ] );
 		}
 	}
@@ -551,13 +551,25 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * Refreshes WordPress theme cache.
 	 *
 	 * Clears PHP's filesystem cache, WordPress theme_roots transient, object cache,
-	 * and rebuilds the theme directory cache. This ensures newly created themes are
-	 * recognized by WordPress before attempting to activate or enable them.
+	 * individual theme caches, and rebuilds the theme directory cache. This ensures
+	 * newly created themes are recognized by WordPress before attempting to activate
+	 * or enable them.
+	 *
+	 * @param string $theme_slug The theme slug to clear individual caches for.
 	 */
-	private function refresh_theme_cache() {
+	private function refresh_theme_cache( $theme_slug ) {
 		clearstatcache();
 		delete_site_transient( 'theme_roots' );
 		wp_cache_delete( 'themes', 'themes' );
+
+		// Clear individual theme caches to prevent "missing theme" objects.
+		// This is especially important when a theme was previously deleted and is being recreated.
+		$theme_root = get_theme_root( $theme_slug );
+		$cache_hash = md5( $theme_root . '/' . $theme_slug );
+		foreach ( [ 'theme', 'screenshot', 'headers', 'page_templates' ] as $key ) {
+			wp_cache_delete( $key . '-' . $cache_hash, 'themes' );
+		}
+
 		search_theme_directories( true );
 	}
 
