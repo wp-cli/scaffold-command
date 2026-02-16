@@ -58,6 +58,44 @@ Feature: WordPress code scaffolding
       Success: Network enabled the 'Zombieland' theme.
       """
 
+  Scenario: Scaffold a child theme and activate it with different slug and name
+    Given a WP install
+
+    When I run `wp theme install twentytwentyone --force`
+    Then STDOUT should not be empty
+
+    And I run `wp theme path`
+    And save STDOUT as {THEME_DIR}
+
+    When I run `wp scaffold child-theme first-run --parent_theme=twentytwentyone --theme_name="First Run Name" --activate`
+    Then STDOUT should contain:
+      """
+      Success: Created '{THEME_DIR}/first-run'.
+      """
+    And STDOUT should contain:
+      """
+      Success: Switched to 'First Run Name' theme.
+      """
+
+    When I run `wp theme list --fields=name,status --format=csv`
+    Then STDOUT should contain:
+      """
+      first-run,active
+      """
+
+    # Now delete the theme and create it again to test the fix for the caching issue
+    When I run `rm -rf {THEME_DIR}/first-run`
+    And I run `wp theme activate twentytwentyone`
+    And I run `wp scaffold child-theme first-run --parent_theme=twentytwentyone --theme_name="First Run Name" --activate`
+    Then STDOUT should contain:
+      """
+      Success: Created '{THEME_DIR}/first-run'.
+      """
+    And STDOUT should contain:
+      """
+      Success: Switched to 'First Run Name' theme.
+      """
+
   Scenario: Scaffold a child theme with invalid slug
     Given a WP install
     When I try `wp scaffold child-theme . --parent_theme=simple-life`
