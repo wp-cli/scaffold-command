@@ -9,6 +9,14 @@ Feature: WordPress code scaffolding
     When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --theme_name=Zombieland --author=Tallahassee --author_uri=https://wp-cli.org --theme_uri=http://www.zombieland.com`
     Then the {THEME_DIR}/zombieland/style.css file should exist
     And the {THEME_DIR}/zombieland/functions.php file should exist
+    And the {THEME_DIR}/zombieland/functions.php file should contain:
+      """
+      wp_style_add_data( 'umbrella-style', 'rtl', 'replace' );
+      """
+    And the {THEME_DIR}/zombieland/functions.php file should contain:
+      """
+      wp_style_add_data( 'zombieland-style', 'rtl', 'replace' );
+      """
     And STDOUT should be:
       """
       Success: Created '{THEME_DIR}/zombieland'.
