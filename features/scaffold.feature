@@ -11,7 +11,7 @@ Feature: WordPress code scaffolding
     And the {THEME_DIR}/zombieland/functions.php file should exist
     And the {THEME_DIR}/zombieland/functions.php file should contain:
       """
-      wp_style_add_data( 'zombieland-style', 'rtl', 'replace' );
+      wp_style_add_data( 'zombieland-style', 'rtl', 'add' );
       """
     And STDOUT should be:
       """
