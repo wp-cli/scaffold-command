@@ -539,8 +539,10 @@ class Scaffold_Command extends WP_CLI_Command {
 		$this->log_whether_files_written( $files_written, $skip_message, $success_message );
 
 		if ( Utils\get_flag_value( $assoc_args, 'activate' ) ) {
+			wp_get_theme( $theme_slug )->cache_delete();
 			WP_CLI::run_command( [ 'theme', 'activate', $theme_slug ] );
 		} elseif ( Utils\get_flag_value( $assoc_args, 'enable-network' ) ) {
+			wp_get_theme( $theme_slug )->cache_delete();
 			WP_CLI::run_command( [ 'theme', 'enable', $theme_slug ], [ 'network' => true ] );
 		}
 	}
