@@ -1,6 +1,7 @@
 <?php
 
 use WP_CLI\Utils;
+use WP_CLI\Path;
 use WP_CLI\Inflector;
 
 /**
@@ -863,7 +864,7 @@ class Scaffold_Command extends WP_CLI_Command {
 				WP_CLI::error( "Invalid {$type} directory specified. No such directory '{$target_dir}'." );
 			}
 			if ( empty( $slug ) ) {
-				$slug = Utils\basename( $target_dir );
+				$slug = Path::basename( $target_dir );
 				// Validate derived slug as well.
 				if ( in_array( $slug, [ '.', '..' ], true ) ) {
 					WP_CLI::error( "Invalid {$type} slug specified. The slug cannot be '.' or '..'." );
@@ -1168,7 +1169,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * Gets the template path based on installation type.
 	 */
 	private static function get_template_path( $template ) {
-		$command_root  = Utils\phar_safe_path( dirname( __DIR__ ) );
+		$command_root  = Path::phar_safe( dirname( __DIR__ ) );
 		$template_path = "{$command_root}/templates/{$template}";
 
 		if ( ! file_exists( $template_path ) ) {
