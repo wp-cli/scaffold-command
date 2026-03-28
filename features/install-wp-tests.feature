@@ -46,7 +46,6 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
-    And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -108,7 +107,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I run `composer install --no-interaction --working-dir=polyfills --quiet`
     Then the return code should be 0
 
-    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills php phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
@@ -165,7 +164,6 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
-    And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -227,7 +225,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I run `composer install --no-interaction --working-dir=polyfills --quiet`
     Then the return code should be 0
 
-    When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills php phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 1
     And STDOUT should contain:
       """
@@ -296,7 +294,6 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
-    And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -358,7 +355,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I run `composer install --no-interaction --working-dir=polyfills --quiet`
     Then the return code should be 0
 
-    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/polyfills/vendor/yoast/phpunit-polyfills php phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
     When I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress /usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest < affirmative-response`
@@ -407,7 +404,6 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
-    And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -482,7 +478,7 @@ Feature: Scaffold install-wp-tests.sh tests
     When I run `composer install --no-interaction --quiet --working-dir={RUN_DIR}/wordpress-tests-lib`
     Then the return code should be 0
 
-    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/wordpress-tests-lib/vendor/yoast/phpunit-polyfills ./phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
+    When I run `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_TESTS_PHPUNIT_POLYFILLS_PATH={RUN_DIR}/wordpress-tests-lib/vendor/yoast/phpunit-polyfills php phpunit -c {PLUGIN_DIR}/hello-world/phpunit.xml.dist`
     Then the return code should be 0
 
   @require-mysql
