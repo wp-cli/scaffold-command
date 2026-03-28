@@ -45,7 +45,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
-    And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
+    And I run `curl -sS -L --fail -o phpunit {PHPUNIT_PHAR_URL}`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -163,7 +163,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
-    And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
+    And I run `curl -sS --fail -L -o phpunit {PHPUNIT_PHAR_URL}`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -293,7 +293,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
-    And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
+    And I run `curl -sS -L --fail -o phpunit {PHPUNIT_PHAR_URL}`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
@@ -403,7 +403,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
-    And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
+    And I run `curl -sS -f -L -o phpunit {PHPUNIT_PHAR_URL}`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
