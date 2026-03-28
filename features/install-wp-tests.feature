@@ -45,7 +45,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
-    And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
+    And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
     And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
@@ -164,7 +164,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
-    And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
+    And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
     And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
@@ -295,7 +295,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
-    And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
+    And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
     And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
@@ -406,7 +406,7 @@ Feature: Scaffold install-wp-tests.sh tests
       """
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
-    And I run `wget -q -O phpunit {PHPUNIT_PHAR_URL}`
+    And I run `curl -sS -L -o phpunit {PHPUNIT_PHAR_URL}`
     And I run `chmod +x phpunit`
     And I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
