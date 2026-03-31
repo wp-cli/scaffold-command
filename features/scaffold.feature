@@ -116,6 +116,23 @@ Feature: WordPress code scaffolding
       """
     And the return code should be 1
 
+  @theme
+  Scenario: Scaffold a child theme with dots in the slug
+    Given a WP install
+    And I run `wp theme path`
+    And save STDOUT as {THEME_DIR}
+
+    When I run `wp scaffold child-theme my-theme-2.0.1 --parent_theme=umbrella`
+    Then the {THEME_DIR}/my-theme-2.0.1/functions.php file should exist
+    And the {THEME_DIR}/my-theme-2.0.1/functions.php file should contain:
+      """
+      function my_theme_2_0_1_parent_theme_enqueue_styles()
+      """
+    And the {THEME_DIR}/my-theme-2.0.1/functions.php file should contain:
+      """
+      add_action( 'wp_enqueue_scripts', 'my_theme_2_0_1_parent_theme_enqueue_styles' );
+      """
+
   @tax @cpt
   Scenario: Scaffold a Custom Taxonomy and Custom Post Type and write it to active theme
     Given a WP install

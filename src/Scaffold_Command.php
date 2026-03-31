@@ -513,7 +513,7 @@ class Scaffold_Command extends WP_CLI_Command {
 
 		$data                = wp_parse_args( $assoc_args, $defaults );
 		$data['slug']        = $theme_slug;
-		$data['prefix_safe'] = str_replace( [ ' ', '-' ], '_', $theme_slug );
+		$data['prefix_safe'] = preg_replace( '/[^a-zA-Z0-9_]/', '_', $theme_slug );
 		$data['description'] = ucfirst( $data['parent_theme'] ) . ' child theme.';
 
 		$theme_dir = WP_CONTENT_DIR . "/themes/{$theme_slug}";
