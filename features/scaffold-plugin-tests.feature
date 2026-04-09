@@ -1,5 +1,7 @@
 Feature: Scaffold plugin unit tests
 
+  # TODO: Fix this on Windows. Fails because is_executable() fails for .sh files.
+  @skip-windows
   Scenario: Scaffold plugin tests
     Given a WP install
     When I run `wp plugin path`
@@ -220,10 +222,7 @@ Feature: Scaffold plugin unit tests
     Then the {RUN_DIR}/wp-content/plugins/foo.php file should exist
 
     When I try `wp scaffold plugin-tests foo`
-    Then STDERR should be:
-      """
-      Error: Invalid plugin slug specified. No such target directory '{RUN_DIR}/wp-content/plugins/foo'.
-      """
+    Then STDERR should match #Error: Invalid plugin slug specified\. No such target directory '.*wp-content/plugins/foo'\.#
     And the return code should be 1
 
     When I try `wp scaffold plugin-tests .`
@@ -271,10 +270,7 @@ Feature: Scaffold plugin unit tests
     When I run `rm -rf {PLUGIN_DIR} && touch {PLUGIN_DIR}`
     Then the return code should be 0
     When I try `wp scaffold plugin-tests hello-world`
-    Then STDERR should be:
-      """
-      Error: Invalid plugin slug specified. No such target directory '{PLUGIN_DIR}'.
-      """
+    Then STDERR should match #Error: Invalid plugin slug specified\. No such target directory '.*hello-world'\.#
     And the return code should be 1
 
   Scenario: Scaffold plugin tests with a symbolic link

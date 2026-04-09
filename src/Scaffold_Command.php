@@ -1008,6 +1008,8 @@ class Scaffold_Command extends WP_CLI_Command {
 				continue;
 			}
 
+			$contents = str_replace( "\r\n", "\n", $contents );
+
 			$wp_filesystem->mkdir( dirname( $filename ) );
 
 			// Create multi-level folders.

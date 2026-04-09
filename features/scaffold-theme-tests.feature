@@ -256,6 +256,8 @@ Feature: Scaffold theme unit tests
     When I run `rm -f {THEME_DIR}/twentytwelve && mv -f {THEME_DIR}/hide-twentytwelve {THEME_DIR}/twentytwelve`
     Then the return code should be 0
 
+  # TODO: Fix this on Windows. Fails because unlink fails on directories.
+  @skip-windows
   Scenario: Scaffold theme tests with a symbolic link
     # Temporarily move the whole theme dir and create a symbolic link to it.
     When I run `mv -f {THEME_DIR} {RUN_DIR}/alt-themes && ln -s {RUN_DIR}/alt-themes {THEME_DIR}`
