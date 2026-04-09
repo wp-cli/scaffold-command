@@ -1,6 +1,8 @@
 # Note: You need to execute the mysql command `GRANT ALL PRIVILEGES ON wp_cli_test_scaffold.* TO "wp_cli_test"@"localhost" IDENTIFIED BY "{DB_PASSWORD}";` for these tests to work locally.
 Feature: Scaffold install-wp-tests.sh tests
 
+  # TODO: Fix this on Windows. Fails because /usr/bin/env bash is not available.
+  @skip-windows
   Scenario: Help should be displayed
     Given a WP install
     And I run `wp plugin path`

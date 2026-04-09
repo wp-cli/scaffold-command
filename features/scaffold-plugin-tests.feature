@@ -1,5 +1,7 @@
 Feature: Scaffold plugin unit tests
 
+  # TODO: Fix this on Windows. Fails because is_executable() fails for .sh files.
+  @skip-windows
   Scenario: Scaffold plugin tests
     Given a WP install
     When I run `wp plugin path`
