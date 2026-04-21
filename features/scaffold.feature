@@ -117,6 +117,16 @@ Feature: WordPress code scaffolding
     And the return code should be 1
 
   @theme
+  Scenario: Scaffold a child theme with a relative --path argument containing '..'
+    Given a WP install in 'subdir'
+    And I run `wp --path=.. theme path` from 'subdir/wp-content'
+    And save STDOUT as {THEME_DIR}
+
+    When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --path=..` from 'subdir/wp-content'
+    Then the {THEME_DIR}/zombieland/style.css file should exist
+    And the {THEME_DIR}/zombieland/functions.php file should exist
+
+  @theme
   Scenario: Scaffold a child theme with dots in the slug
     Given a WP install
     And I run `wp theme path`
