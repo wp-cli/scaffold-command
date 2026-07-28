@@ -893,9 +893,11 @@ class Scaffold_Command extends WP_CLI_Command {
 		if ( file_exists( "{$target_dir}/readme.txt" ) ) {
 			$readme_content = (string) file_get_contents( "{$target_dir}/readme.txt" );
 
-			preg_match( '/Requires at least\:(.*)\n/m', $readme_content, $matches );
-			if ( isset( $matches[1] ) && $matches[1] ) {
-				$wp_versions_to_test[] = trim( $matches[1] );
+			if ( preg_match( '/Requires at least\:(.*)(?:\r?\n|$)/i', $readme_content, $matches ) ) {
+				$version = trim( $matches[1] );
+				if ( preg_match( '/^[0-9]+(?:\.[0-9]+)*(?:-[a-zA-Z0-9.]+)?$/', $version ) ) {
+					$wp_versions_to_test[] = $version;
+				}
 			}
 		}
 		$wp_versions_to_test[] = 'latest';
