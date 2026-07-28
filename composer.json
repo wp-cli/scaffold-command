@@ -43,7 +43,12 @@
             "scaffold post-type",
             "scaffold taxonomy",
             "scaffold theme-tests"
-        ]
+        ],
+        "readme": {
+            "package_description": {
+                "post": ".readme-partials/disclaimer.md"
+            }
+        }
     },
     "autoload": {
         "classmap": [
