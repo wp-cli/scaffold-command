@@ -353,18 +353,18 @@ Feature: WordPress code scaffolding
     And the wp-content/plugins/hello-world/readme.txt file should exist
     And the wp-content/plugins/hello-world/tests directory should exist
 
-    When I run `wp plugin status hello-world`
+    When I run `wp plugin get hello-world --fields=title,status,description`
     Then STDOUT should contain:
       """
-      Status: Active
+      active
       """
     And STDOUT should contain:
       """
-      Name: Hello World
+      Hello World
       """
     And STDOUT should contain:
       """
-      Description: An awesome introductory plugin for WordPress
+      An awesome introductory plugin for WordPress
       """
 
   Scenario: Scaffold a plugin and activate it
