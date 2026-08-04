@@ -143,6 +143,31 @@ Feature: Scaffold plugin unit tests
                   SKIP_DB_CREATE=true
       """
 
+  Scenario: Scaffold plugin tests ignore invalid version in readme.txt
+    Given a WP install
+    And I run `wp scaffold plugin hello-world --skip-tests`
+
+    When I run `wp plugin path hello-world --dir`
+    Then save STDOUT as {PLUGIN_DIR}
+
+    Given a {PLUGIN_DIR}/readme.txt file:
+      """
+      === Hello World ===
+      Requires at least: 6.4; echo exploit #
+      Tested up to: 6.4
+      """
+
+    When I run `wp scaffold plugin-tests hello-world --ci=circle`
+    Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/.circleci/config.yml file should not contain:
+      """
+      6.4; echo exploit #
+      """
+    And the {PLUGIN_DIR}/.circleci/config.yml file should contain:
+      """
+                  bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest $SKIP_DB_CREATE
+      """
+
   Scenario: Scaffold plugin tests with Gitlab as the provider
     Given a WP install
     And I run `wp scaffold plugin hello-world --skip-tests`
