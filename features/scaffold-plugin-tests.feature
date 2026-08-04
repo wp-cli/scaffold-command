@@ -143,7 +143,7 @@ Feature: Scaffold plugin unit tests
                   SKIP_DB_CREATE=true
       """
 
-  Scenario: Scaffold plugin tests ignores invalid version in readme.txt
+  Scenario: Scaffold plugin tests ignore invalid version in readme.txt
     Given a WP install
     And I run `wp scaffold plugin hello-world --skip-tests`
 
