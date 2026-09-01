@@ -64,6 +64,7 @@
         "behat": "run-behat-tests",
         "behat-rerun": "rerun-behat-tests",
         "lint": "run-linter-tests",
+        "lint-gherkin": "run-gherkin-lint-tests",
         "phpcs": "run-phpcs-tests",
         "phpstan": "run-phpstan-tests",
         "phpcbf": "run-phpcbf-cleanup",
@@ -71,6 +72,7 @@
         "prepare-tests": "install-package-tests",
         "test": [
             "@lint",
+            "@lint-gherkin",
             "@phpcs",
             "@phpstan",
             "@phpunit",
