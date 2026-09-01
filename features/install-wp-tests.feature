@@ -31,16 +31,16 @@ Feature: Scaffold install-wp-tests.sh tests
       """
       <?php
       $version = 4;
-      if(PHP_VERSION_ID >= 50600) {
+      if ( PHP_VERSION_ID >= 50600 ) {
           $version = 5;
       }
-      if(PHP_VERSION_ID >= 70000) {
+      if ( PHP_VERSION_ID >= 70000 ) {
           $version = 6;
       }
-      if(PHP_VERSION_ID >= 70100) {
+      if ( PHP_VERSION_ID >= 70100 ) {
           $version = 7;
       }
-      if(PHP_VERSION_ID >= 80000) {
+      if ( PHP_VERSION_ID >= 80000 ) {
           $version = 9;
       }
       echo "https://phar.phpunit.de/phpunit-{$version}.phar";
@@ -149,16 +149,16 @@ Feature: Scaffold install-wp-tests.sh tests
       """
       <?php
       $version = 4;
-      if(PHP_VERSION_ID >= 50600) {
+      if ( PHP_VERSION_ID >= 50600 ) {
           $version = 5;
       }
-      if(PHP_VERSION_ID >= 70000) {
+      if ( PHP_VERSION_ID >= 70000 ) {
           $version = 6;
       }
-      if(PHP_VERSION_ID >= 70100) {
+      if ( PHP_VERSION_ID >= 70100 ) {
           $version = 7;
       }
-      if(PHP_VERSION_ID >= 80000) {
+      if ( PHP_VERSION_ID >= 80000 ) {
           $version = 9;
       }
       echo "https://phar.phpunit.de/phpunit-{$version}.phar";
@@ -279,16 +279,16 @@ Feature: Scaffold install-wp-tests.sh tests
       """
       <?php
       $version = 4;
-      if(PHP_VERSION_ID >= 50600) {
+      if ( PHP_VERSION_ID >= 50600 ) {
           $version = 5;
       }
-      if(PHP_VERSION_ID >= 70000) {
+      if ( PHP_VERSION_ID >= 70000 ) {
           $version = 6;
       }
-      if(PHP_VERSION_ID >= 70100) {
+      if ( PHP_VERSION_ID >= 70100 ) {
           $version = 7;
       }
-      if(PHP_VERSION_ID >= 80000) {
+      if ( PHP_VERSION_ID >= 80000 ) {
           $version = 9;
       }
       echo "https://phar.phpunit.de/phpunit-{$version}.phar";
@@ -389,16 +389,16 @@ Feature: Scaffold install-wp-tests.sh tests
       """
       <?php
       $version = 4;
-      if(PHP_VERSION_ID >= 50600) {
+      if ( PHP_VERSION_ID >= 50600 ) {
           $version = 5;
       }
-      if(PHP_VERSION_ID >= 70000) {
+      if ( PHP_VERSION_ID >= 70000 ) {
           $version = 6;
       }
-      if(PHP_VERSION_ID >= 70100) {
+      if ( PHP_VERSION_ID >= 70100 ) {
           $version = 7;
       }
-      if(PHP_VERSION_ID >= 80000) {
+      if ( PHP_VERSION_ID >= 80000 ) {
           $version = 9;
       }
       echo "https://phar.phpunit.de/phpunit-{$version}.phar";
