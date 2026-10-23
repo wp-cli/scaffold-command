@@ -412,15 +412,15 @@ class Scaffold_Command extends WP_CLI_Command {
 			$body['underscoresme_woocommerce'] = 1;
 		}
 
-		$tmpfname  = wp_tempnam( $url );
-		$post_args = [
+		$tmpfname     = wp_tempnam( $url );
+		$request_args = [
 			'timeout'  => $timeout,
-			'body'     => $body,
 			'stream'   => true,
 			'filename' => $tmpfname,
 		];
 
-		$response = wp_remote_post( $url, $post_args );
+		// underscores.me rejects POST requests, but accepts the same form fields as query args.
+		$response = wp_remote_get( add_query_arg( urlencode_deep( $body ), $url ), $request_args );
 
 		if ( is_wp_error( $response ) ) {
 			WP_CLI::error( $response );
