@@ -5,9 +5,6 @@ Feature: Scaffold theme unit tests
     And I try `wp theme install twentytwelve --force`
     And I run `wp scaffold child-theme t12child --parent_theme=twentytwelve`
 
-    When I run `wp theme path`
-    Then save STDOUT as {THEME_DIR}
-
   @require-php-7.4 @require-mysql
   Scenario: Scaffold theme tests
     When I run `wp scaffold theme-tests t12child`

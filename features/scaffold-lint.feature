@@ -2,8 +2,6 @@ Feature: Lint scaffolded code
 
   Background:
     Given a WP install
-    And I run `wp plugin path`
-    And save STDOUT as {PLUGIN_DIR}
 
     # Create a helper plugin to install phpcs once for all scenarios
     When I run `wp scaffold plugin phpcs-helper --skip-tests`
@@ -62,8 +60,6 @@ Feature: Lint scaffolded code
 
   Scenario: Scaffold child theme and lint it
     When I run `wp theme install twentytwentyone --force --activate`
-    And I run `wp theme path`
-    And save STDOUT as {THEME_DIR}
 
     And I run `wp scaffold child-theme test-child --parent_theme=twentytwentyone`
     Then STDOUT should not be empty
