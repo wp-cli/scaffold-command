@@ -5,8 +5,6 @@ Feature: Scaffold install-wp-tests.sh tests
   @skip-windows
   Scenario: Help should be displayed
     Given a WP install
-    And I run `wp plugin path`
-    And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
 
     When I try `/usr/bin/env bash {PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh`
@@ -48,8 +46,6 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `curl -sS -L --fail -o phpunit {PHPUNIT_PHAR_URL}`
-    And I run `wp plugin path`
-    And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
     # This throws a warning for the password provided via command line.
     And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
@@ -166,8 +162,6 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `curl -sS --fail -L -o phpunit {PHPUNIT_PHAR_URL}`
-    And I run `wp plugin path`
-    And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
     # This throws a warning for the password provided via command line.
     And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
@@ -296,8 +290,6 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `curl -sS -L --fail -o phpunit {PHPUNIT_PHAR_URL}`
-    And I run `wp plugin path`
-    And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
     # This throws a warning for the password provided via command line.
     And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
@@ -406,8 +398,6 @@ Feature: Scaffold install-wp-tests.sh tests
     And I run `wp eval-file get-phpunit-phar-url.php --skip-wordpress`
     And save STDOUT as {PHPUNIT_PHAR_URL}
     And I run `curl -sS -f -L -o phpunit {PHPUNIT_PHAR_URL}`
-    And I run `wp plugin path`
-    And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
     # This throws a warning for the password provided via command line.
     And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
@@ -486,8 +476,6 @@ Feature: Scaffold install-wp-tests.sh tests
   @require-mysql
   Scenario: Install WordPress 3.7 and phpunit will not run
     Given a WP install
-    And I run `wp plugin path`
-    And save STDOUT as {PLUGIN_DIR}
     And I run `wp scaffold plugin hello-world`
     # This throws a warning for the password provided via command line.
     And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
