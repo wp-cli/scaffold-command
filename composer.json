@@ -16,7 +16,7 @@
     },
     "require-dev": {
         "wp-cli/extension-command": "^1.2 || ^2 || ^3",
-        "wp-cli/wp-cli-tests": "^5"
+        "wp-cli/wp-cli-tests": "dev-cached-extension-installs as 5.3.99"
     },
     "config": {
         "process-timeout": 7200,
