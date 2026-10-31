@@ -16,7 +16,7 @@
     },
     "require-dev": {
         "wp-cli/extension-command": "^1.2 || ^2 || ^3",
-        "wp-cli/wp-cli-tests": "dev-ci/parallel-integration#97797bbc5dd40d88842afa901f4cd66bc102ddaa as 5.1.99"
+        "wp-cli/wp-cli-tests": "dev-ci/parallel-integration#04a78ab9833119b5af984ea4d17a2153ae69547f as 5.1.99"
     },
     "config": {
         "process-timeout": 7200,
