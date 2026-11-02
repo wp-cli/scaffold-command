@@ -4,8 +4,6 @@ Feature: Scaffold plugin unit tests
   @skip-windows
   Scenario: Scaffold plugin tests
     Given a WP install
-    When I run `wp plugin path`
-    Then save STDOUT as {PLUGIN_DIR}
 
     When I run `wp scaffold plugin hello-world --skip-tests`
     Then STDOUT should not be empty
@@ -342,8 +340,6 @@ Feature: Scaffold plugin unit tests
 
   Scenario: Accept bitbucket as valid CI in plugin scaffold
     Given a WP install
-    When I run `wp plugin path`
-    Then save STDOUT as {PLUGIN_DIR}
 
     When I run `wp scaffold plugin hello-world --ci=bitbucket`
     Then STDOUT should not be empty
