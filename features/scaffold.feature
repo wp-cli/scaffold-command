@@ -3,8 +3,6 @@ Feature: WordPress code scaffolding
   @theme
   Scenario: Scaffold a child theme
     Given a WP install
-    And I run `wp theme path`
-    And save STDOUT as {THEME_DIR}
 
     When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --theme_name=Zombieland --author=Tallahassee --author_uri=https://wp-cli.org --theme_uri=http://www.zombieland.com`
     Then the {THEME_DIR}/zombieland/style.css file should exist
@@ -21,8 +19,6 @@ Feature: WordPress code scaffolding
 
   Scenario: Scaffold a child theme with only --parent_theme parameter
     Given a WP install
-    And I run `wp theme path`
-    And save STDOUT as {THEME_DIR}
 
     When I run `wp scaffold child-theme hello-world --parent_theme=simple-life`
     Then STDOUT should not be empty
@@ -67,9 +63,6 @@ Feature: WordPress code scaffolding
 
     When I run `wp theme install twentytwentyone --force`
     Then STDOUT should not be empty
-
-    And I run `wp theme path`
-    And save STDOUT as {THEME_DIR}
 
     When I run `wp scaffold child-theme first-run --parent_theme=twentytwentyone --theme_name="First Run Name" --activate`
     Then STDOUT should contain:
@@ -129,8 +122,6 @@ Feature: WordPress code scaffolding
   @theme
   Scenario: Scaffold a child theme with dots in the slug
     Given a WP install
-    And I run `wp theme path`
-    And save STDOUT as {THEME_DIR}
 
     When I run `wp scaffold child-theme my-theme-2.0.1 --parent_theme=umbrella`
     Then the {THEME_DIR}/my-theme-2.0.1/functions.php file should exist
@@ -267,8 +258,6 @@ Feature: WordPress code scaffolding
 
   Scenario: Scaffold a plugin
     Given a WP install
-    And I run `wp plugin path`
-    And save STDOUT as {PLUGIN_DIR}
     And I run `wp core version`
     And save STDOUT as {WP_VERSION}
 
@@ -403,8 +392,6 @@ Feature: WordPress code scaffolding
   @require-php-5.6 @require-wp-4.6
   Scenario: Scaffold starter code for a theme
     Given a WP install
-    And I run `wp theme path`
-    And save STDOUT as {THEME_DIR}
 
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
     When I try `wp scaffold _s starter-theme`
@@ -418,8 +405,6 @@ Feature: WordPress code scaffolding
   @require-php-5.6 @require-wp-4.6
   Scenario: Scaffold starter code for a theme with sass
     Given a WP install
-    And I run `wp theme path`
-    And save STDOUT as {THEME_DIR}
 
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
     When I try `wp scaffold _s starter-theme --sassify`
@@ -432,8 +417,6 @@ Feature: WordPress code scaffolding
   @require-php-5.6 @require-wp-4.6
   Scenario: Scaffold starter code for a WooCommerce theme
     Given a WP install
-    And I run `wp theme path`
-    And save STDOUT as {THEME_DIR}
 
     # Allow for warnings to be generated due to https://github.com/wp-cli/scaffold-command/issues/181
     When I try `wp scaffold _s starter-theme --woocommerce`
@@ -532,8 +515,6 @@ Feature: WordPress code scaffolding
     Given a WP install
     When I run `wp core version`
     Then save STDOUT as {WP_VERSION}
-    When I run `wp plugin path`
-    Then save STDOUT as {PLUGIN_DIR}
 
     When I run `wp scaffold plugin hello-world`
     Then STDOUT should not be empty
