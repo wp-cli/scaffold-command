@@ -2,7 +2,10 @@ Feature: Scaffold theme unit tests
 
   Background:
     Given a WP install
-    And I try `wp theme install twentytwelve --force`
+    And these installed themes:
+      """
+      twentytwelve --force
+      """
     And I run `wp scaffold child-theme t12child --parent_theme=twentytwelve`
 
     When I run `wp theme path`
