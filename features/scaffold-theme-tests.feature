@@ -74,8 +74,23 @@ Feature: Scaffold theme unit tests
       """
       <?php echo __FILE__ . " loaded.\n";
       """
+    And a mysql-client.sh file:
+      """
+      # {DB_HOST} can be a host, a host:port or a host:/path/to/socket.
+      host={DB_HOST}
+      case "$host" in
+        *:/*) set -- -h"${host%%:*}" --socket="${host#*:}" "$@" ;;
+        *:*)  set -- -h"${host%%:*}" -P"${host#*:}" --protocol=tcp "$@" ;;
+        *)    set -- -h"$host" --protocol=tcp "$@" ;;
+      esac
+      client=mysql
+      if command -v mariadb > /dev/null 2>&1; then
+        client=mariadb
+      fi
+      "$client" -u{DB_USER} -p{DB_PASSWORD} "$@"
+      """
     # This throws a warning for the password provided via command line.
-    And I try `mysql -u{DB_USER} -p{DB_PASSWORD} -h{MYSQL_HOST} -P{MYSQL_PORT} --protocol=tcp -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
+    And I try `bash mysql-client.sh -e "DROP DATABASE IF EXISTS wp_cli_test_scaffold"`
 
     And I try `WP_TESTS_DIR={RUN_DIR}/wordpress-tests-lib WP_CORE_DIR={RUN_DIR}/wordpress {THEME_DIR}/t12child/bin/install-wp-tests.sh wp_cli_test_scaffold {DB_USER} {DB_PASSWORD} {DB_HOST} latest`
     Then the return code should be 0
